@@ -1,0 +1,58 @@
+[
+  {
+    "id": "usc-aetna-student",
+    "provider": "Aetna",
+    "plan_name": "USC Student Health PPO",
+    "plan_type": "PPO",
+    "referral_required_for_specialists": false,
+    "primary_care_copay": 25,
+    "specialist_copay": 40,
+    "urgent_care_copay": 55,
+    "notes": "Strong fit for USC-area primary care and urgent care clinics."
+  },
+  {
+    "id": "uhc-student-choice",
+    "provider": "UnitedHealthcare",
+    "plan_name": "Student Choice",
+    "plan_type": "PPO",
+    "referral_required_for_specialists": false,
+    "primary_care_copay": 30,
+    "specialist_copay": 50,
+    "urgent_care_copay": 60,
+    "notes": "Good regional coverage with moderate specialist costs."
+  },
+  {
+    "id": "anthem-blue-hmo",
+    "provider": "Anthem Blue Cross",
+    "plan_name": "California Care HMO",
+    "plan_type": "HMO",
+    "referral_required_for_specialists": true,
+    "primary_care_copay": 20,
+    "specialist_copay": 35,
+    "urgent_care_copay": 45,
+    "notes": "Requires referral for most specialists."
+  },
+  {
+    "id": "cigna-open-access",
+    "provider": "Cigna",
+    "plan_name": "Open Access Plus",
+    "plan_type": "PPO",
+    "referral_required_for_specialists": false,
+    "primary_care_copay": 30,
+    "specialist_copay": 45,
+    "urgent_care_copay": 65,
+    "notes": "Wide network coverage and flexible specialist access."
+  },
+  {
+    "id": "blue-shield-ppo",
+    "provider": "Blue Shield",
+    "plan_name": "Access Plus PPO",
+    "plan_type": "PPO",
+    "referral_required_for_specialists": false,
+    "primary_care_copay": 35,
+    "specialist_copay": 55,
+    "urgent_care_copay": 65,
+    "notes": "Broad specialty network with slightly higher out-of-pocket costs."
+  }
+]
+

@@ -1,0 +1,63 @@
+[
+  {
+    "id": "clinic-union",
+    "name": "Union Health Primary Care",
+    "care_types": ["primary_care", "general_practitioner"],
+    "address": "1220 W 28th St, Los Angeles, CA 90007",
+    "city": "Los Angeles",
+    "state": "CA",
+    "zip": "90007",
+    "latitude": 34.0270,
+    "longitude": -118.2851,
+    "languages": ["English", "Mandarin", "Spanish"],
+    "open_weekends": false,
+    "urgent_care": false,
+    "phone": "(213) 555-0101"
+  },
+  {
+    "id": "clinic-fig",
+    "name": "Fig Wellness Urgent Care",
+    "care_types": ["urgent_care", "same_day"],
+    "address": "2825 S Figueroa St, Los Angeles, CA 90007",
+    "city": "Los Angeles",
+    "state": "CA",
+    "zip": "90007",
+    "latitude": 34.0189,
+    "longitude": -118.2827,
+    "languages": ["English", "Korean", "Spanish"],
+    "open_weekends": true,
+    "urgent_care": true,
+    "phone": "(213) 555-0102"
+  },
+  {
+    "id": "clinic-k-town",
+    "name": "K-Town Specialty Clinic",
+    "care_types": ["specialist", "referral_only"],
+    "address": "3500 W 6th St, Los Angeles, CA 90020",
+    "city": "Los Angeles",
+    "state": "CA",
+    "zip": "90020",
+    "latitude": 34.0638,
+    "longitude": -118.3009,
+    "languages": ["English", "Korean", "Mandarin"],
+    "open_weekends": false,
+    "urgent_care": false,
+    "phone": "(213) 555-0103"
+  },
+  {
+    "id": "clinic-santa-monica",
+    "name": "Ocean Park Multispecialty",
+    "care_types": ["specialist", "women_health", "dermatology"],
+    "address": "2020 Santa Monica Blvd, Santa Monica, CA 90404",
+    "city": "Santa Monica",
+    "state": "CA",
+    "zip": "90404",
+    "latitude": 34.0259,
+    "longitude": -118.4768,
+    "languages": ["English", "Spanish"],
+    "open_weekends": true,
+    "urgent_care": false,
+    "phone": "(310) 555-0104"
+  }
+]
+
