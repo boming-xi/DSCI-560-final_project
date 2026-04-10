@@ -81,6 +81,18 @@ export default function DoctorsPage() {
     router.push("/booking");
   }
 
+  function handleViewDoctor(doctorId: string) {
+    const flow = getFlowState();
+    const selectedDoctor =
+      flow.searchResult?.doctors.find((doctor) => doctor.id === doctorId) ??
+      result?.doctors.find((doctor) => doctor.id === doctorId);
+
+    if (selectedDoctor) {
+      patchFlowState({ selectedDoctor });
+    }
+    router.push(`/doctors/${doctorId}`);
+  }
+
   return (
     <main className="page-shell">
       <section className="results-header panel">
@@ -123,6 +135,7 @@ export default function DoctorsPage() {
                 doctor={doctor}
                 key={doctor.id}
                 onBook={() => handleBookDoctor(doctor.id)}
+                onView={() => handleViewDoctor(doctor.id)}
               />
             ))}
           </section>

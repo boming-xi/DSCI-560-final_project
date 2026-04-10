@@ -20,11 +20,13 @@ class RankingBreakdown(BaseModel):
 class ClinicInfo(BaseModel):
     id: str
     name: str
+    care_types: list[str] = Field(default_factory=list)
     address: str
     city: str
     state: str
     zip: str
     phone: str
+    languages: list[str] = Field(default_factory=list)
     urgent_care: bool
     open_weekends: bool
 
@@ -42,6 +44,14 @@ class DoctorProfile(BaseModel):
     telehealth: bool
     gender: str
     profile_blurb: str
+    appointment_modes: list[str] = Field(default_factory=list)
+    accepts_new_patients: bool = True
+    next_opening_label: str
+    clinical_focus: list[str] = Field(default_factory=list)
+    care_approach: str
+    education: list[str] = Field(default_factory=list)
+    board_certifications: list[str] = Field(default_factory=list)
+    visit_highlights: list[str] = Field(default_factory=list)
     clinic: ClinicInfo
     distance_km: float
     estimated_cost: int | None = None
@@ -63,4 +73,3 @@ class DoctorSearchResponse(BaseModel):
     insurance_summary: InsuranceSummary | None = None
     doctors: list[DoctorProfile] = Field(default_factory=list)
     explanation: list[str] = Field(default_factory=list)
-

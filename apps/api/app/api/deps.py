@@ -12,6 +12,7 @@ from app.ai.embedding_client import (
     ResilientEmbeddingClient,
 )
 from app.ai.llm_client import DemoLLMClient, LLMClient, OpenAILLMClient, ResilientLLMClient
+from app.ai.ocr_client import DemoOCRClient, OCRClient, OpenAIOCRClient, ResilientOCRClient
 from app.core.config import Settings, get_settings as load_settings
 from app.repositories.booking_repo import BookingRepository
 from app.repositories.chat_repo import ChatRepository
@@ -19,6 +20,7 @@ from app.repositories.doctor_repo import DoctorRepository
 from app.repositories.insurance_repo import InsuranceRepository
 from app.repositories.user_repo import UserRepository
 from app.models.user import User
+from app.retrieval.vector_store import QdrantVectorStore, VectorStore
 from app.services.auth_service import AuthService
 from app.services.booking_service import BookingService
 from app.services.chat_service import ChatService
@@ -106,6 +108,32 @@ def get_embedding_client() -> EmbeddingClient:
 
 
 @lru_cache
+def get_ocr_client() -> OCRClient:
+    settings = get_settings()
+    fallback = DemoOCRClient()
+    if not settings.openai_api_key:
+        return fallback
+    return ResilientOCRClient(
+        primary=OpenAIOCRClient(
+            api_key=settings.openai_api_key,
+            model=settings.openai_ocr_model,
+            max_output_tokens=max(settings.openai_max_output_tokens, 1800),
+        ),
+        fallback=fallback,
+    )
+
+
+@lru_cache
+def get_vector_store() -> VectorStore:
+    settings = get_settings()
+    return QdrantVectorStore.create(
+        qdrant_url=settings.qdrant_url,
+        local_path=settings.qdrant_local_path,
+        base_collection_prefix=settings.qdrant_collection_prefix,
+    )
+
+
+@lru_cache
 def get_triage_service() -> TriageService:
     return TriageService()
 
@@ -150,4 +178,6 @@ def get_document_service() -> DocumentService:
     return DocumentService(
         llm_client=get_llm_client(),
         embedding_client=get_embedding_client(),
+        vector_store=get_vector_store(),
+        ocr_client=get_ocr_client(),
     )

@@ -7,6 +7,7 @@ import type {
   ChatTurn,
   DoctorProfile,
   DoctorSearchResponse,
+  DocumentExtractResponse,
   DocumentExplainResponse,
   InsuranceSummary,
   Location,
@@ -16,6 +17,23 @@ import { getAccessToken } from "@/lib/auth";
 
 const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8000/api/v1";
+
+async function readErrorMessage(response: Response): Promise<string> {
+  const contentType = response.headers.get("content-type") ?? "";
+  if (contentType.includes("application/json")) {
+    try {
+      const payload = (await response.json()) as { detail?: string };
+      if (typeof payload.detail === "string" && payload.detail.trim()) {
+        return payload.detail;
+      }
+    } catch {
+      return "Request failed";
+    }
+  }
+
+  const errorText = await response.text();
+  return errorText || "Request failed";
+}
 
 async function request<T>(
   path: string,
@@ -38,8 +56,31 @@ async function request<T>(
   });
 
   if (!response.ok) {
-    const errorText = await response.text();
-    throw new Error(errorText || "Request failed");
+    throw new Error(await readErrorMessage(response));
+  }
+
+  return (await response.json()) as T;
+}
+
+async function uploadRequest<T>(
+  path: string,
+  body: FormData,
+  options?: { authRequired?: boolean },
+): Promise<T> {
+  const accessToken = options?.authRequired ? getAccessToken() : null;
+  if (options?.authRequired && !accessToken) {
+    throw new Error("Please log in to continue.");
+  }
+
+  const response = await fetch(`${API_BASE_URL}${path}`, {
+    method: "POST",
+    body,
+    headers: accessToken ? { Authorization: `Bearer ${accessToken}` } : undefined,
+    cache: "no-store",
+  });
+
+  if (!response.ok) {
+    throw new Error(await readErrorMessage(response));
   }
 
   return (await response.json()) as T;
@@ -115,13 +156,36 @@ export const api = {
 
   explainDocument: (payload: {
     title?: string;
-    content: string;
+    content?: string;
     document_type?: string;
+    document_id?: string;
+    focus_question?: string;
   }) =>
     request<DocumentExplainResponse>("/documents/explain", {
       method: "POST",
       body: JSON.stringify(payload),
     }, { authRequired: true }),
+
+  extractDocument: (payload: {
+    file: File;
+    document_type?: string;
+    title?: string;
+  }) => {
+    const formData = new FormData();
+    formData.append("file", payload.file);
+    if (payload.document_type) {
+      formData.append("document_type", payload.document_type);
+    }
+    if (payload.title) {
+      formData.append("title", payload.title);
+    }
+
+    return uploadRequest<DocumentExtractResponse>(
+      "/documents/extract",
+      formData,
+      { authRequired: true },
+    );
+  },
 
   register: (payload: { name: string; email: string; password: string }) =>
     request<AuthResponse>("/auth/register", {

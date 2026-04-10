@@ -5,9 +5,10 @@ import type { DoctorProfile } from "@/lib/types";
 type DoctorCardProps = {
   doctor: DoctorProfile;
   onBook: () => void;
+  onView: () => void;
 };
 
-export function DoctorCard({ doctor, onBook }: DoctorCardProps) {
+export function DoctorCard({ doctor, onBook, onView }: DoctorCardProps) {
   return (
     <article className="panel doctor-card">
       <div className="doctor-card-top">
@@ -26,12 +27,26 @@ export function DoctorCard({ doctor, onBook }: DoctorCardProps) {
         <span className="badge">{doctor.years_experience} yrs experience</span>
         <span className="badge">{doctor.distance_km} km away</span>
         <span className="badge">{doctor.rating} rating</span>
+        <span className="badge">{doctor.next_opening_label}</span>
         <span className="badge">
           {doctor.availability_days === 0
             ? "Same-day availability"
             : `Available in ${doctor.availability_days} days`}
         </span>
       </div>
+
+      {doctor.clinical_focus.length ? (
+        <div className="doctor-focus-preview">
+          <h4>Good fit for</h4>
+          <div className="badge-row compact-badge-row">
+            {doctor.clinical_focus.slice(0, 3).map((focus) => (
+              <span className="badge" key={focus}>
+                {focus}
+              </span>
+            ))}
+          </div>
+        </div>
+      ) : null}
 
       <div className="doctor-meta-grid">
         <div>
@@ -62,6 +77,9 @@ export function DoctorCard({ doctor, onBook }: DoctorCardProps) {
       ) : null}
 
       <div className="form-actions">
+        <button className="button button-secondary" onClick={onView} type="button">
+          View full profile
+        </button>
         <button className="button button-primary" onClick={onBook} type="button">
           Book this doctor
         </button>

@@ -7,6 +7,7 @@ from app.rules.ranking_rules import combine_scores
 from app.rules.referral_rules import requires_referral
 from app.schemas.doctor import ClinicInfo, DoctorProfile, RankingBreakdown
 from app.schemas.symptom import TriageRecommendation
+from app.services.doctor_profile_content import get_doctor_detail_content
 from app.utils.geo import haversine_km
 
 
@@ -20,6 +21,7 @@ class RankingService:
         plan: InsurancePlanRecord | None,
         preferred_language: str | None,
     ) -> DoctorProfile:
+        detail_content = get_doctor_detail_content(doctor)
         specialty_score = self._specialty_score(doctor, triage)
         insurance_score = insurance_fit_score(plan, doctor)
         distance_km = haversine_km(location[0], location[1], clinic.latitude, clinic.longitude)
@@ -66,14 +68,33 @@ class RankingService:
             telehealth=doctor.telehealth,
             gender=doctor.gender,
             profile_blurb=doctor.profile_blurb,
+            appointment_modes=self._appointment_modes(doctor),
+            accepts_new_patients=bool(detail_content.get("accepts_new_patients", True)),
+            next_opening_label=self._next_opening_label(doctor.availability_days),
+            clinical_focus=[
+                str(item) for item in detail_content.get("clinical_focus", [])
+            ],
+            care_approach=str(
+                detail_content.get(
+                    "care_approach",
+                    "Focuses on clear next steps, symptom review, and practical follow-up planning.",
+                )
+            ),
+            education=[str(item) for item in detail_content.get("education", [])],
+            board_certifications=[
+                str(item) for item in detail_content.get("board_certifications", [])
+            ],
+            visit_highlights=[str(item) for item in detail_content.get("visit_highlights", [])],
             clinic=ClinicInfo(
                 id=clinic.id,
                 name=clinic.name,
+                care_types=clinic.care_types,
                 address=clinic.address,
                 city=clinic.city,
                 state=clinic.state,
                 zip=clinic.zip,
                 phone=clinic.phone,
+                languages=clinic.languages,
                 urgent_care=clinic.urgent_care,
                 open_weekends=clinic.open_weekends,
             ),
@@ -118,3 +139,17 @@ class RankingService:
         review_component = min(review_count, 250) / 250
         return (rating_component * 0.7) + (review_component * 0.3)
 
+    def _appointment_modes(self, doctor: DoctorRecord) -> list[str]:
+        modes = ["In-person"]
+        if doctor.telehealth:
+            modes.append("Telehealth")
+        if doctor.availability_days == 0:
+            modes.append("Same-day")
+        return modes
+
+    def _next_opening_label(self, days: int) -> str:
+        if days == 0:
+            return "Today"
+        if days == 1:
+            return "Tomorrow"
+        return f"In {days} days"

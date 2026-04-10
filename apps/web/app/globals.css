@@ -420,6 +420,16 @@ h4 {
   gap: 18px;
 }
 
+.doctor-focus-preview h4,
+.doctor-detail-card h3,
+.doctor-detail-card h4 {
+  margin: 0 0 8px;
+}
+
+.compact-badge-row {
+  margin: 10px 0 0;
+}
+
 .doctor-card-top {
   display: flex;
   justify-content: space-between;
@@ -497,6 +507,66 @@ h4 {
   display: grid;
   grid-template-columns: 1.1fr 0.9fr;
   gap: 24px;
+}
+
+.doctor-detail-hero {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.doctor-detail-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+  align-items: flex-start;
+}
+
+.doctor-detail-header h1 {
+  margin: 0 0 8px;
+}
+
+.doctor-detail-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+.doctor-detail-intro {
+  margin: 0;
+}
+
+.doctor-detail-grid,
+.doctor-detail-insurance-grid {
+  display: grid;
+  gap: 18px;
+}
+
+.doctor-detail-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.doctor-detail-card {
+  min-height: 100%;
+}
+
+.doctor-detail-card-wide {
+  grid-column: 1 / -1;
+}
+
+.doctor-detail-meta-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.doctor-detail-meta-list p {
+  margin: 0;
+}
+
+.doctor-detail-insurance-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
 .booking-side-card {
@@ -678,10 +748,77 @@ h4 {
   text-decoration: underline;
 }
 
+.document-status-copy,
+.document-dirty-notice {
+  margin: 6px 0 0;
+  color: var(--muted);
+}
+
+.document-dirty-notice {
+  color: #9f5a1d;
+}
+
+.document-meta-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.meta-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.45rem 0.8rem;
+  border-radius: 999px;
+  background: rgba(13, 107, 102, 0.1);
+  color: var(--primary-strong);
+  font-size: 0.88rem;
+  font-weight: 600;
+}
+
+.chip-button {
+  border: 1px solid rgba(13, 107, 102, 0.14);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.75);
+  color: var(--text);
+  cursor: pointer;
+  font: inherit;
+  line-height: 1.5;
+  padding: 0.55rem 0.8rem;
+  text-align: left;
+  width: 100%;
+}
+
+.chip-button:hover {
+  border-color: rgba(13, 107, 102, 0.28);
+  background: rgba(13, 107, 102, 0.07);
+}
+
+.chip-button:disabled {
+  cursor: wait;
+  opacity: 0.7;
+}
+
+.supporting-chunk-list li + li {
+  margin-top: 0.45rem;
+}
+
+.upload-status-copy,
+.document-warning-copy {
+  margin: 6px 0 0;
+  color: var(--muted);
+}
+
+.document-warning-copy {
+  color: #8c5a17;
+}
+
 @media (max-width: 980px) {
   .hero,
   .chat-layout,
   .booking-layout,
+  .doctor-detail-grid,
+  .doctor-detail-insurance-grid,
   .summary-grid,
   .step-grid,
   .hero-card-grid,
@@ -698,6 +835,14 @@ h4 {
     width: 100%;
     flex-direction: column;
     align-items: flex-start;
+  }
+
+  .doctor-detail-header {
+    flex-direction: column;
+  }
+
+  .doctor-detail-actions {
+    justify-content: flex-start;
   }
 }
 

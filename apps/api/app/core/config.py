@@ -15,12 +15,15 @@ class Settings:
     openai_api_key: str | None
     openai_chat_model: str
     openai_embedding_model: str
+    openai_ocr_model: str
     openai_reasoning_effort: str
     openai_max_output_tokens: int
     demo_users_file: Path
     demo_auth_secret: str
     postgres_url: str
     qdrant_url: str
+    qdrant_local_path: Path
+    qdrant_collection_prefix: str
     project_root: Path
     mock_data_dir: Path
 
@@ -42,6 +45,10 @@ def get_settings() -> Settings:
         openai_embedding_model=os.getenv(
             "OPENAI_EMBEDDING_MODEL", "text-embedding-3-small"
         ),
+        openai_ocr_model=os.getenv(
+            "OPENAI_OCR_MODEL",
+            os.getenv("OPENAI_CHAT_MODEL", "gpt-5.4-mini"),
+        ),
         openai_reasoning_effort=os.getenv("OPENAI_REASONING_EFFORT", "low"),
         openai_max_output_tokens=int(os.getenv("OPENAI_MAX_OUTPUT_TOKENS", "700")),
         demo_users_file=Path(os.getenv("DEMO_USERS_FILE", str(default_demo_users_file))),
@@ -50,6 +57,13 @@ def get_settings() -> Settings:
             "POSTGRES_URL", "postgresql://postgres:postgres@localhost:5432/ai_healthcare"
         ),
         qdrant_url=os.getenv("QDRANT_URL", "http://localhost:6333"),
+        qdrant_local_path=Path(
+            os.getenv(
+                "QDRANT_LOCAL_PATH",
+                str(project_root / "apps" / "api" / "data" / "qdrant_local"),
+            )
+        ),
+        qdrant_collection_prefix=os.getenv("QDRANT_COLLECTION_PREFIX", "documents"),
         project_root=project_root,
         mock_data_dir=project_root / "packages" / "mock-data",
     )

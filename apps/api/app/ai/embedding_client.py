@@ -37,7 +37,7 @@ class EmbeddingClient(Protocol):
 
 
 class DemoEmbeddingClient:
-    provider_name = "demo"
+    provider_name = "demo-bow-v1"
 
     def embed_text(self, text: str) -> list[float]:
         counts = Counter(tokenize(text))
@@ -46,11 +46,10 @@ class DemoEmbeddingClient:
 
 
 class OpenAIEmbeddingClient:
-    provider_name = "openai"
-
     def __init__(self, api_key: str, model: str) -> None:
         self.client = OpenAI(api_key=api_key)
         self.model = model
+        self.provider_name = f"openai-{model}"
 
     def embed_text(self, text: str) -> list[float]:
         response = self.client.embeddings.create(
@@ -66,11 +65,19 @@ class ResilientEmbeddingClient:
         self.primary = primary
         self.fallback = fallback
         self.provider_name = primary.provider_name
+        self._fallback_active = False
 
     def embed_text(self, text: str) -> list[float]:
+        if self._fallback_active:
+            self.provider_name = self.fallback.provider_name
+            return self.fallback.embed_text(text)
+
         try:
-            return self.primary.embed_text(text)
+            vector = self.primary.embed_text(text)
+            self.provider_name = self.primary.provider_name
+            return vector
         except Exception as exc:
             logger.warning("OpenAI embedding failed, falling back to demo embedding: %s", exc)
+            self._fallback_active = True
             self.provider_name = self.fallback.provider_name
             return self.fallback.embed_text(text)

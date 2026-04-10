@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 
 import { api } from "@/lib/api";
 import { getFlowState, patchFlowState } from "@/lib/flow";
+import type { DocumentExtractResponse } from "@/lib/types";
 
 export function InsuranceUpload() {
   const router = useRouter();
@@ -13,18 +14,40 @@ export function InsuranceUpload() {
     initialFlow.insuranceQuery ?? "USC Aetna student PPO"
   );
   const [uploadedText, setUploadedText] = useState("");
+  const [uploadedDocument, setUploadedDocument] = useState<DocumentExtractResponse | null>(null);
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [isExtracting, setIsExtracting] = useState(false);
 
   async function handleFileChange(event: ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0];
     if (!file) {
       return;
     }
-    const text = await file.text();
-    setUploadedText(text.slice(0, 3000));
-    if (!insuranceQuery) {
-      setInsuranceQuery(text.slice(0, 120));
+
+    setIsExtracting(true);
+    setError("");
+    try {
+      const extracted = await api.extractDocument({
+        file,
+        document_type: "insurance_document",
+        title: file.name.replace(/\.[^.]+$/, ""),
+      });
+      setUploadedDocument(extracted);
+      setUploadedText(extracted.extracted_text.slice(0, 6000));
+      if (!insuranceQuery || insuranceQuery === "USC Aetna student PPO") {
+        setInsuranceQuery(extracted.extracted_text.slice(0, 160));
+      }
+    } catch (uploadError) {
+      setUploadedDocument(null);
+      setUploadedText("");
+      setError(
+        uploadError instanceof Error
+          ? uploadError.message
+          : "Unable to read that insurance file right now.",
+      );
+    } finally {
+      setIsExtracting(false);
     }
   }
 
@@ -91,14 +114,29 @@ export function InsuranceUpload() {
       </label>
 
       <label className="field">
-        <span>Upload text file from insurance card or policy</span>
-        <input type="file" accept=".txt,.md,.json" onChange={handleFileChange} />
+        <span>Upload insurance card, screenshot, PDF, or text file</span>
+        <input
+          type="file"
+          accept=".txt,.md,.json,.csv,.pdf,.png,.jpg,.jpeg,.gif,.webp,image/*,application/pdf,text/plain"
+          onChange={handleFileChange}
+        />
       </label>
 
-      {uploadedText ? (
+      {isExtracting ? <p className="upload-status-copy">Extracting text from file...</p> : null}
+
+      {uploadedDocument ? (
         <div className="info-box">
+          <div className="document-meta-row">
+            <span className="meta-pill">{uploadedDocument.extraction_method}</span>
+            <span className="meta-pill">{uploadedDocument.source_mime_type}</span>
+          </div>
           <strong>Uploaded preview:</strong>
-          <p>{uploadedText.slice(0, 160)}...</p>
+          <p>{uploadedDocument.extracted_preview}...</p>
+          {uploadedDocument.warnings.map((warning) => (
+            <p className="document-warning-copy" key={warning}>
+              {warning}
+            </p>
+          ))}
         </div>
       ) : null}
 
@@ -115,4 +153,3 @@ export function InsuranceUpload() {
     </form>
   );
 }
-
