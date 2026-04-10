@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import Link from "next/link";
 
 import { AuthStatus } from "@/components/AuthStatus";
+import "leaflet/dist/leaflet.css";
 import "./globals.css";
 
 const navItems = [

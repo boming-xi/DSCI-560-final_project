@@ -292,6 +292,96 @@ h4 {
   gap: 16px;
 }
 
+.location-section {
+  margin-bottom: 16px;
+}
+
+.location-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 14px;
+}
+
+.location-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.location-copy h3 {
+  margin: 0;
+}
+
+.location-copy p,
+.location-helper-text,
+.location-status {
+  margin: 0;
+  color: var(--muted);
+}
+
+.location-map-shell {
+  overflow: hidden;
+  border-radius: 26px;
+  border: 1px solid rgba(88, 63, 32, 0.1);
+  background:
+    linear-gradient(160deg, rgba(255, 255, 255, 0.78), rgba(255, 244, 235, 0.92)),
+    rgba(255, 255, 255, 0.86);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.55);
+}
+
+.location-map,
+.location-map-skeleton {
+  width: 100%;
+  height: 320px;
+}
+
+.location-map-skeleton {
+  display: grid;
+  place-items: center;
+  color: var(--muted);
+  background:
+    radial-gradient(circle at top, rgba(13, 107, 102, 0.12), transparent 42%),
+    linear-gradient(180deg, rgba(255, 248, 241, 0.96), rgba(248, 242, 236, 0.9));
+}
+
+.location-pin {
+  background: transparent;
+  border: none;
+}
+
+.location-pin span {
+  position: relative;
+  display: block;
+  width: 20px;
+  height: 20px;
+  border-radius: 999px;
+  background: var(--accent);
+  border: 3px solid white;
+  box-shadow: 0 12px 28px rgba(199, 100, 42, 0.35);
+}
+
+.location-pin span::after {
+  content: "";
+  position: absolute;
+  inset: -7px;
+  border-radius: inherit;
+  border: 1px solid rgba(199, 100, 42, 0.28);
+}
+
+.location-status {
+  margin-top: 12px;
+}
+
+.location-status strong {
+  color: var(--primary-strong);
+}
+
+.location-grid {
+  margin-top: 14px;
+}
+
 .error-text {
   color: #9f2f1d;
   margin: 4px 0 0;
@@ -639,5 +729,14 @@ h4 {
 
   .chat-bubble {
     max-width: 100%;
+  }
+
+  .location-toolbar {
+    flex-direction: column;
+  }
+
+  .location-map,
+  .location-map-skeleton {
+    height: 280px;
   }
 }

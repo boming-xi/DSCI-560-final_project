@@ -3,6 +3,7 @@
 import { FormEvent, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 
+import { LocationPicker } from "@/components/LocationPicker";
 import { api } from "@/lib/api";
 import { getFlowState, patchFlowState } from "@/lib/flow";
 import type { Location } from "@/lib/types";
@@ -15,6 +16,7 @@ const defaultLocation: Location = {
 export function SymptomForm() {
   const router = useRouter();
   const initialFlow = useMemo(() => getFlowState(), []);
+  const hasSavedLocation = Boolean(initialFlow.location);
   const [symptomText, setSymptomText] = useState(
     initialFlow.symptomText ?? "I have had a sore throat and fever for three days."
   );
@@ -107,36 +109,11 @@ export function SymptomForm() {
         </label>
       </div>
 
-      <div className="form-grid">
-        <label className="field">
-          <span>Latitude</span>
-          <input
-            type="number"
-            step="0.0001"
-            value={location.latitude}
-            onChange={(event) =>
-              setLocation((current) => ({
-                ...current,
-                latitude: Number(event.target.value),
-              }))
-            }
-          />
-        </label>
-        <label className="field">
-          <span>Longitude</span>
-          <input
-            type="number"
-            step="0.0001"
-            value={location.longitude}
-            onChange={(event) =>
-              setLocation((current) => ({
-                ...current,
-                longitude: Number(event.target.value),
-              }))
-            }
-          />
-        </label>
-      </div>
+      <LocationPicker
+        autoLocateOnMount={!hasSavedLocation}
+        onChange={setLocation}
+        value={location}
+      />
 
       {error ? <p className="error-text">{error}</p> : null}
 
@@ -148,4 +125,3 @@ export function SymptomForm() {
     </form>
   );
 }
-
