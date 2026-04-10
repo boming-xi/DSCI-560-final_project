@@ -6,9 +6,11 @@ import Link from "next/link";
 import { BookingModal } from "@/components/BookingModal";
 import { api } from "@/lib/api";
 import { getFlowState, patchFlowState } from "@/lib/flow";
+import { useProtectedRoute } from "@/lib/useProtectedRoute";
 import type { BookingConfirmation, DoctorProfile, TimeSlot } from "@/lib/types";
 
 export default function BookingPage() {
+  const { isCheckingAuth, session } = useProtectedRoute();
   const [doctor, setDoctor] = useState<DoctorProfile | null>(null);
   const [slots, setSlots] = useState<TimeSlot[]>([]);
   const [confirmation, setConfirmation] = useState<BookingConfirmation | null>(null);
@@ -18,6 +20,9 @@ export default function BookingPage() {
 
   useEffect(() => {
     async function loadBookingContext() {
+      if (isCheckingAuth || !session) {
+        return;
+      }
       const flow = getFlowState();
       const selectedDoctor = flow.selectedDoctor ?? flow.searchResult?.doctors[0] ?? null;
       if (!selectedDoctor) {
@@ -42,7 +47,19 @@ export default function BookingPage() {
     }
 
     void loadBookingContext();
-  }, []);
+  }, [isCheckingAuth, session]);
+
+  if (isCheckingAuth) {
+    return (
+      <main className="page-shell">
+        <div className="panel">Checking your account before opening booking...</div>
+      </main>
+    );
+  }
+
+  if (!session) {
+    return null;
+  }
 
   return (
     <main className="page-shell">
@@ -123,4 +140,3 @@ export default function BookingPage() {
     </main>
   );
 }
-

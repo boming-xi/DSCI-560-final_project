@@ -119,6 +119,19 @@ export type DocumentExplainResponse = {
   disclaimer: string;
 };
 
+export type AuthenticatedUser = {
+  id: string;
+  name: string;
+  email: string;
+  role: string;
+};
+
+export type AuthResponse = {
+  access_token: string;
+  token_type: string;
+  user: AuthenticatedUser;
+};
+
 export type FlowState = {
   symptomText?: string;
   durationDays?: number;
@@ -131,4 +144,3 @@ export type FlowState = {
   selectedDoctor?: DoctorProfile;
   booking?: BookingConfirmation;
 };
-

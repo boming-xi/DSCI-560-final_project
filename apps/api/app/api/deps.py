@@ -1,6 +1,9 @@
 from __future__ import annotations
 
 from functools import lru_cache
+from typing import Annotated
+
+from fastapi import Depends, Header
 
 from app.ai.embedding_client import (
     DemoEmbeddingClient,
@@ -15,6 +18,8 @@ from app.repositories.chat_repo import ChatRepository
 from app.repositories.doctor_repo import DoctorRepository
 from app.repositories.insurance_repo import InsuranceRepository
 from app.repositories.user_repo import UserRepository
+from app.models.user import User
+from app.services.auth_service import AuthService
 from app.services.booking_service import BookingService
 from app.services.chat_service import ChatService
 from app.services.doctor_search_service import DoctorSearchService
@@ -31,7 +36,21 @@ def get_settings() -> Settings:
 
 @lru_cache
 def get_user_repo() -> UserRepository:
-    return UserRepository()
+    return UserRepository(get_settings())
+
+
+@lru_cache
+def get_auth_service() -> AuthService:
+    settings = get_settings()
+    return AuthService(get_user_repo(), auth_secret=settings.demo_auth_secret)
+
+
+def get_authenticated_user(
+    authorization: Annotated[str | None, Header()] = None,
+    auth_service: AuthService = Depends(get_auth_service),
+) -> User:
+    token = authorization.removeprefix("Bearer ").strip() if authorization else None
+    return auth_service.get_current_user(token)
 
 
 @lru_cache

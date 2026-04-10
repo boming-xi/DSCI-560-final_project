@@ -1,5 +1,7 @@
 import type { ReactNode } from "react";
 import Link from "next/link";
+
+import { AuthStatus } from "@/components/AuthStatus";
 import "./globals.css";
 
 const navItems = [
@@ -30,13 +32,16 @@ export default function RootLayout({
               <span>AI Healthcare Assistant</span>
               <small>Symptom to booking demo</small>
             </Link>
-            <nav className="topnav">
-              {navItems.map((item) => (
-                <Link href={item.href} key={item.href}>
-                  {item.label}
-                </Link>
-              ))}
-            </nav>
+            <div className="topbar-controls">
+              <nav className="topnav">
+                {navItems.map((item) => (
+                  <Link href={item.href} key={item.href}>
+                    {item.label}
+                  </Link>
+                ))}
+              </nav>
+              <AuthStatus />
+            </div>
           </header>
           {children}
         </div>

@@ -4,6 +4,7 @@ An end-to-end demo platform for helping users describe symptoms, understand insu
 
 ## What is included
 
+- Demo registration and login with persistent local credentials
 - Symptom intake and rule-based triage
 - Insurance parsing and coverage matching
 - Ranked doctor recommendations using specialty, distance, availability, insurance, language, and trust signals
@@ -57,6 +58,13 @@ npm run dev
 
 - Frontend: `http://localhost:3000`
 - API docs: `http://localhost:8000/docs`
+
+### Demo authentication
+
+- Register at `/register`
+- Log in at `/login`
+- Demo users are stored locally in `apps/api/data/demo_users.json`
+- Passwords are hashed before being stored
 
 ## Demo flow
 

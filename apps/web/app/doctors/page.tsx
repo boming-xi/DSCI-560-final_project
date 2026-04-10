@@ -7,16 +7,21 @@ import { DoctorCard } from "@/components/DoctorCard";
 import { RankingExplanation } from "@/components/RankingExplanation";
 import { api } from "@/lib/api";
 import { getFlowState, patchFlowState } from "@/lib/flow";
+import { useProtectedRoute } from "@/lib/useProtectedRoute";
 import type { DoctorSearchResponse } from "@/lib/types";
 
 export default function DoctorsPage() {
   const router = useRouter();
+  const { isCheckingAuth, session } = useProtectedRoute();
   const [result, setResult] = useState<DoctorSearchResponse | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
 
   useEffect(() => {
     async function loadDoctors() {
+      if (isCheckingAuth || !session) {
+        return;
+      }
       const flow = getFlowState();
       if (!flow.symptomText || !flow.location) {
         setError("Please complete the symptom step first.");
@@ -48,7 +53,19 @@ export default function DoctorsPage() {
     }
 
     void loadDoctors();
-  }, []);
+  }, [isCheckingAuth, session]);
+
+  if (isCheckingAuth) {
+    return (
+      <main className="page-shell">
+        <div className="panel">Checking your account before opening doctor search...</div>
+      </main>
+    );
+  }
+
+  if (!session) {
+    return null;
+  }
 
   function handleBookDoctor(doctorId: string) {
     const flow = getFlowState();
@@ -114,4 +131,3 @@ export default function DoctorsPage() {
     </main>
   );
 }
-

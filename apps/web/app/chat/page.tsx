@@ -2,11 +2,14 @@
 
 import { FormEvent, useMemo, useState } from "react";
 
+import { ChatMessageContent } from "@/components/ChatMessageContent";
 import { api } from "@/lib/api";
 import { getFlowState } from "@/lib/flow";
+import { useProtectedRoute } from "@/lib/useProtectedRoute";
 import type { ChatTurn, DocumentExplainResponse } from "@/lib/types";
 
 export default function ChatPage() {
+  const { isCheckingAuth, session } = useProtectedRoute();
   const flow = useMemo(() => getFlowState(), []);
   const [conversation, setConversation] = useState<ChatTurn[]>([
     {
@@ -49,6 +52,17 @@ export default function ChatPage() {
         ...current,
         { role: "assistant", content: reply.reply },
       ]);
+    } catch (error) {
+      setConversation((current) => [
+        ...current,
+        {
+          role: "assistant",
+          content:
+            error instanceof Error
+              ? error.message
+              : "Unable to send your message right now.",
+        },
+      ]);
     } finally {
       setIsSending(false);
     }
@@ -66,9 +80,23 @@ export default function ChatPage() {
         content: documentText,
       });
       setDocumentSummary(response);
+    } catch {
+      setDocumentSummary(null);
     } finally {
       setIsExplaining(false);
     }
+  }
+
+  if (isCheckingAuth) {
+    return (
+      <main className="page-shell">
+        <div className="panel">Checking your account before opening chat...</div>
+      </main>
+    );
+  }
+
+  if (!session) {
+    return null;
   }
 
   return (
@@ -90,7 +118,7 @@ export default function ChatPage() {
               key={`${turn.role}-${index}`}
             >
               <strong>{turn.role === "assistant" ? "Assistant" : "You"}</strong>
-              <p>{turn.content}</p>
+              <ChatMessageContent content={turn.content} role={turn.role} />
             </article>
           ))}
         </div>

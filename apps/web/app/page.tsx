@@ -1,5 +1,7 @@
 import Link from "next/link";
 
+import { StartDemoLink } from "@/components/StartDemoLink";
+
 const featureCards = [
   {
     title: "Symptom triage",
@@ -32,9 +34,7 @@ export default function HomePage() {
             book the next step with confidence.
           </p>
           <div className="hero-actions">
-            <Link className="button button-primary" href="/symptom">
-              Start the demo
-            </Link>
+            <StartDemoLink />
             <Link className="button button-secondary" href="/chat">
               Open assistant chat
             </Link>
@@ -75,4 +75,3 @@ export default function HomePage() {
     </main>
   );
 }
-

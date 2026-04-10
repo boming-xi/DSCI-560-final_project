@@ -12,4 +12,4 @@ __pycache__/
 *.pyd
 .mypy_cache/
 .ruff_cache/
-
+apps/api/data/demo_users.json
