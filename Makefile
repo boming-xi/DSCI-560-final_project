@@ -1,7 +1,7 @@
 API_DIR=apps/api
 WEB_DIR=apps/web
 
-.PHONY: api-install api-dev api-test web-install web-dev up down
+.PHONY: api-install api-dev api-test api-seed api-sync-providers api-sync-availability web-install web-dev up down
 
 api-install:
 	cd $(API_DIR) && python3 -m venv .venv && . .venv/bin/activate && pip install -r requirements.txt
@@ -11,6 +11,15 @@ api-dev:
 
 api-test:
 	cd $(API_DIR) && . .venv/bin/activate && pytest
+
+api-seed:
+	cd $(API_DIR) && . .venv/bin/activate && python -m app.scripts.bootstrap_reference_data
+
+api-sync-providers:
+	cd $(API_DIR) && . .venv/bin/activate && python -m app.scripts.sync_providers
+
+api-sync-availability:
+	cd $(API_DIR) && . .venv/bin/activate && python -m app.scripts.sync_availability
 
 web-install:
 	cd $(WEB_DIR) && npm install
@@ -23,4 +32,3 @@ up:
 
 down:
 	cd infra && docker-compose down
-

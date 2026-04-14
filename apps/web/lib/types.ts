@@ -93,12 +93,16 @@ export type TimeSlot = {
   end: string;
   label: string;
   available: boolean;
+  appointment_mode?: string | null;
+  source?: string | null;
+  comments?: string | null;
 };
 
 export type BookingSlotsResponse = {
   doctor_id: string;
   doctor_name: string;
   slots: TimeSlot[];
+  source: string;
 };
 
 export type BookingConfirmation = {

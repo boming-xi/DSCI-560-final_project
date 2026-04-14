@@ -8,6 +8,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.api.deps import get_settings, get_vector_store
 from app.api.v1.router import router as api_v1_router
 from app.core.logging import configure_logging
+from app.db.bootstrap import bootstrap_reference_data
 
 configure_logging()
 settings = get_settings()
@@ -15,6 +16,7 @@ settings = get_settings()
 
 @asynccontextmanager
 async def lifespan(_: FastAPI):
+    bootstrap_reference_data(settings)
     yield
     get_vector_store().close()
 

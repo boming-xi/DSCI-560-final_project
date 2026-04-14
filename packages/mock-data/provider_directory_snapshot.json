@@ -1,0 +1,38 @@
+{
+  "source": "demo_provider_directory",
+  "clinics": [
+    {
+      "external_id": "ext-clinic-westlake",
+      "name": "Westlake Community Primary Care",
+      "care_types": ["primary_care", "general_practitioner"],
+      "address": "1919 W 7th St, Los Angeles, CA 90057",
+      "city": "Los Angeles",
+      "state": "CA",
+      "zip": "90057",
+      "latitude": 34.0545,
+      "longitude": -118.2767,
+      "languages": ["English", "Spanish"],
+      "open_weekends": true,
+      "urgent_care": false,
+      "phone": "(213) 555-0201"
+    }
+  ],
+  "doctors": [
+    {
+      "external_id": "ext-doctor-lucia-morales",
+      "name": "Dr. Lucia Morales",
+      "specialty": "Family Medicine",
+      "care_types": ["general_practitioner", "primary_care"],
+      "clinic_external_id": "ext-clinic-westlake",
+      "years_experience": 13,
+      "languages": ["English", "Spanish"],
+      "rating": 4.7,
+      "review_count": 89,
+      "accepted_insurance": ["usc-aetna-student", "cigna-open-access"],
+      "availability_days": 2,
+      "telehealth": true,
+      "gender": "Female",
+      "profile_blurb": "External provider directory sample for Postgres sync demos."
+    }
+  ]
+}

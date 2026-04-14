@@ -8,12 +8,16 @@ class TimeSlot(BaseModel):
     end: str
     label: str
     available: bool = True
+    appointment_mode: str | None = None
+    source: str | None = None
+    comments: str | None = None
 
 
 class BookingSlotsResponse(BaseModel):
     doctor_id: str
     doctor_name: str
     slots: list[TimeSlot] = Field(default_factory=list)
+    source: str = "demo_fallback"
 
 
 class BookingRequest(BaseModel):

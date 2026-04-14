@@ -13,6 +13,9 @@ export default function BookingPage() {
   const { isCheckingAuth, session } = useProtectedRoute();
   const [doctor, setDoctor] = useState<DoctorProfile | null>(null);
   const [slots, setSlots] = useState<TimeSlot[]>([]);
+  const [slotSource, setSlotSource] = useState<"external_sync" | "demo_fallback" | string>(
+    "demo_fallback"
+  );
   const [confirmation, setConfirmation] = useState<BookingConfirmation | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -35,6 +38,7 @@ export default function BookingPage() {
         const slotsResponse = await api.getBookingSlots(selectedDoctor.id);
         setDoctor(selectedDoctor);
         setSlots(slotsResponse.slots);
+        setSlotSource(slotsResponse.source);
         setConfirmation(flow.booking ?? null);
         patchFlowState({ selectedDoctor });
       } catch (loadError) {
@@ -90,9 +94,17 @@ export default function BookingPage() {
 
           <div className="booking-side-card">
             <h3>Available slots</h3>
+            <p className="subtle-copy">
+              {slotSource === "external_sync"
+                ? "Using synced scheduling data from the external slot feed."
+                : "Using demo fallback availability."}
+            </p>
             <ul className="slot-list">
               {slots.map((slot) => (
-                <li key={slot.start}>{slot.label}</li>
+                <li key={slot.start}>
+                  {slot.label}
+                  {slot.appointment_mode ? ` · ${slot.appointment_mode}` : ""}
+                </li>
               ))}
             </ul>
             <div className="form-actions">

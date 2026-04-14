@@ -6,20 +6,47 @@ from uuid import uuid4
 from fastapi import HTTPException, status
 
 from app.models.appointment import AppointmentRecord
+from app.repositories.availability_repo import AvailabilityRepository
 from app.repositories.booking_repo import BookingRepository
 from app.repositories.doctor_repo import DoctorRepository
 from app.schemas.booking import BookingConfirmation, BookingRequest, BookingSlotsResponse, TimeSlot
 
 
 class BookingService:
-    def __init__(self, doctor_repo: DoctorRepository, booking_repo: BookingRepository) -> None:
+    def __init__(
+        self,
+        doctor_repo: DoctorRepository,
+        booking_repo: BookingRepository,
+        availability_repo: AvailabilityRepository,
+    ) -> None:
         self.doctor_repo = doctor_repo
         self.booking_repo = booking_repo
+        self.availability_repo = availability_repo
 
     def get_slots(self, doctor_id: str) -> BookingSlotsResponse:
         doctor = self.doctor_repo.get_doctor(doctor_id)
         if doctor is None:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Doctor not found.")
+
+        synced_slots = self.availability_repo.list_current_slots_for_doctor(doctor_id)
+        if synced_slots:
+            return BookingSlotsResponse(
+                doctor_id=doctor_id,
+                doctor_name=doctor.name,
+                source="external_sync",
+                slots=[
+                    TimeSlot(
+                        start=slot.start.isoformat(),
+                        end=slot.end.isoformat(),
+                        label=slot.label,
+                        available=slot.available,
+                        appointment_mode=slot.appointment_mode,
+                        source=slot.source,
+                        comments=slot.comments,
+                    )
+                    for slot in synced_slots
+                ],
+            )
 
         start_day = datetime.now(UTC) + timedelta(days=doctor.availability_days)
         slots: list[TimeSlot] = []
@@ -32,10 +59,16 @@ class BookingService:
                     start=start.isoformat(),
                     end=end.isoformat(),
                     label=start.strftime("%a %b %d, %I:%M %p"),
+                    source="demo_fallback",
                 )
             )
 
-        return BookingSlotsResponse(doctor_id=doctor_id, doctor_name=doctor.name, slots=slots)
+        return BookingSlotsResponse(
+            doctor_id=doctor_id,
+            doctor_name=doctor.name,
+            slots=slots,
+            source="demo_fallback",
+        )
 
     def create_booking(self, request: BookingRequest) -> BookingConfirmation:
         doctor = self.doctor_repo.get_doctor(request.doctor_id)
@@ -68,4 +101,3 @@ class BookingService:
                 "If symptoms worsen before the appointment, seek more urgent care.",
             ],
         )
-

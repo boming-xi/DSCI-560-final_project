@@ -1,0 +1,27 @@
+{
+  "source": "demo_scheduling_api",
+  "slots": [
+    {
+      "external_id": "slot-michelle-1",
+      "doctor_id": "dr-michelle-lin",
+      "clinic_id": "clinic-union",
+      "start": "2026-04-15T16:00:00-07:00",
+      "end": "2026-04-15T16:30:00-07:00",
+      "label": "Wed Apr 15, 04:00 PM",
+      "available": true,
+      "appointment_mode": "In person",
+      "comments": "Imported from demo scheduling snapshot."
+    },
+    {
+      "external_id": "slot-michelle-2",
+      "doctor_id": "dr-michelle-lin",
+      "clinic_id": "clinic-union",
+      "start": "2026-04-16T10:00:00-07:00",
+      "end": "2026-04-16T10:30:00-07:00",
+      "label": "Thu Apr 16, 10:00 AM",
+      "available": true,
+      "appointment_mode": "Telehealth",
+      "comments": "Imported from demo scheduling snapshot."
+    }
+  ]
+}

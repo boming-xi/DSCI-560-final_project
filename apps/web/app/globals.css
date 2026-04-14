@@ -576,6 +576,13 @@ h4 {
   border: 1px solid rgba(88, 63, 32, 0.1);
 }
 
+.subtle-copy {
+  margin: 8px 0 0;
+  color: var(--muted);
+  font-size: 0.96rem;
+  line-height: 1.5;
+}
+
 .slot-list,
 .detail-list {
   padding-left: 1.1rem;

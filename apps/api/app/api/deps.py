@@ -14,6 +14,7 @@ from app.ai.embedding_client import (
 from app.ai.llm_client import DemoLLMClient, LLMClient, OpenAILLMClient, ResilientLLMClient
 from app.ai.ocr_client import DemoOCRClient, OCRClient, OpenAIOCRClient, ResilientOCRClient
 from app.core.config import Settings, get_settings as load_settings
+from app.repositories.availability_repo import AvailabilityRepository
 from app.repositories.booking_repo import BookingRepository
 from app.repositories.chat_repo import ChatRepository
 from app.repositories.doctor_repo import DoctorRepository
@@ -22,11 +23,13 @@ from app.repositories.user_repo import UserRepository
 from app.models.user import User
 from app.retrieval.vector_store import QdrantVectorStore, VectorStore
 from app.services.auth_service import AuthService
+from app.services.availability_sync_service import AvailabilitySyncService
 from app.services.booking_service import BookingService
 from app.services.chat_service import ChatService
 from app.services.doctor_search_service import DoctorSearchService
 from app.services.document_service import DocumentService
 from app.services.insurance_service import InsuranceService
+from app.services.provider_sync_service import ProviderSyncService
 from app.services.ranking_service import RankingService
 from app.services.triage_service import TriageService
 
@@ -68,6 +71,11 @@ def get_insurance_repo() -> InsuranceRepository:
 @lru_cache
 def get_booking_repo() -> BookingRepository:
     return BookingRepository()
+
+
+@lru_cache
+def get_availability_repo() -> AvailabilityRepository:
+    return AvailabilityRepository(get_settings())
 
 
 @lru_cache
@@ -161,7 +169,7 @@ def get_doctor_search_service() -> DoctorSearchService:
 
 @lru_cache
 def get_booking_service() -> BookingService:
-    return BookingService(get_doctor_repo(), get_booking_repo())
+    return BookingService(get_doctor_repo(), get_booking_repo(), get_availability_repo())
 
 
 @lru_cache
@@ -181,3 +189,13 @@ def get_document_service() -> DocumentService:
         vector_store=get_vector_store(),
         ocr_client=get_ocr_client(),
     )
+
+
+@lru_cache
+def get_provider_sync_service() -> ProviderSyncService:
+    return ProviderSyncService(get_settings())
+
+
+@lru_cache
+def get_availability_sync_service() -> AvailabilitySyncService:
+    return AvailabilitySyncService(get_settings())
