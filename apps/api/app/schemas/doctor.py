@@ -62,6 +62,7 @@ class DoctorProfile(BaseModel):
 class DoctorSearchRequest(BaseModel):
     symptom_text: str
     insurance_query: str | None = None
+    insurance_plan_id_override: str | None = None
     location: Location | None = None
     preferred_language: str | None = None
     duration_days: int | None = 1

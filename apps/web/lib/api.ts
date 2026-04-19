@@ -9,6 +9,8 @@ import type {
   DoctorSearchResponse,
   DocumentExtractResponse,
   DocumentExplainResponse,
+  InsuranceAdvisorProfile,
+  InsuranceAdvisorResponse,
   InsuranceSummary,
   Location,
   TriageRecommendation,
@@ -106,9 +108,20 @@ export const api = {
       body: JSON.stringify(payload),
     }),
 
+  sendInsuranceAdvisorMessage: (payload: {
+    message: string;
+    conversation: ChatTurn[];
+    profile?: InsuranceAdvisorProfile;
+  }) =>
+    request<InsuranceAdvisorResponse>("/insurance/advisor/message", {
+      method: "POST",
+      body: JSON.stringify(payload),
+    }, { authRequired: true }),
+
   searchDoctors: (payload: {
     symptom_text: string;
     insurance_query?: string;
+    insurance_plan_id_override?: string;
     location: Location;
     preferred_language?: string;
     duration_days: number;

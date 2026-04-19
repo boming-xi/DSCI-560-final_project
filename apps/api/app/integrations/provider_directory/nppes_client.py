@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import re
 from typing import Any
 
 import httpx
@@ -97,14 +98,10 @@ class NPPESProviderDirectoryClient(ProviderDirectoryClient):
             or f"{specialty} Clinic"
         )
         full_address = self._format_address(address)
-        try:
-            coordinates = self.geocoder.geocode(full_address)
-        except httpx.HTTPError:
-            coordinates = None
-        latitude, longitude = coordinates if coordinates else (
-            self.default_latitude,
-            self.default_longitude,
-        )
+        coordinates = self._resolve_coordinates(full_address, address)
+        if coordinates is None:
+            return None, None
+        latitude, longitude = coordinates
 
         clinic = ProviderClinicPayload(
             external_id=clinic_external_id,
@@ -211,3 +208,40 @@ class NPPESProviderDirectoryClient(ProviderDirectoryClient):
         if "otolaryng" in normalized or "ent" in normalized:
             return ["specialist", "ent"]
         return ["specialist", normalized.replace(" ", "_")]
+
+    def _resolve_coordinates(
+        self,
+        full_address: str,
+        address: dict[str, Any],
+    ) -> tuple[float, float] | None:
+        for candidate in [
+            full_address,
+            self._format_city_state_query(address),
+        ]:
+            if not candidate:
+                continue
+            try:
+                coordinates = self.geocoder.geocode(candidate)
+            except httpx.HTTPError:
+                coordinates = None
+            if coordinates is not None:
+                return coordinates
+        return None
+
+    @staticmethod
+    def _format_city_state_query(address: dict[str, Any]) -> str:
+        query = " ".join(
+            part
+            for part in [
+                str(address.get("city") or "").strip(),
+                str(address.get("state") or "").strip(),
+                NPPESProviderDirectoryClient._normalize_postal_code(str(address.get("postal_code") or "").strip()),
+            ]
+            if part
+        )
+        return query.strip()
+
+    @staticmethod
+    def _normalize_postal_code(postal_code: str) -> str:
+        match = re.match(r"^(\d{5})", postal_code)
+        return match.group(1) if match else postal_code

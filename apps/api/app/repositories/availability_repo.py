@@ -51,6 +51,24 @@ class AvailabilityRepository:
         except SQLAlchemyError:
             return []
 
+    def has_recent_sync_for_doctor(self, doctor_id: str) -> bool:
+        if not database_is_available(self.settings.postgres_url):
+            return False
+        freshness_cutoff = datetime.now(UTC) - timedelta(hours=self.settings.scheduling_slot_stale_hours)
+        try:
+            with session_scope(self.settings.postgres_url) as session:
+                slot = session.scalars(
+                    select(AvailabilitySlotORM)
+                    .where(
+                        AvailabilitySlotORM.doctor_id == doctor_id,
+                        AvailabilitySlotORM.last_synced_at >= freshness_cutoff,
+                    )
+                    .limit(1)
+                ).first()
+            return slot is not None
+        except SQLAlchemyError:
+            return False
+
     @staticmethod
     def _from_orm(slot: AvailabilitySlotORM) -> AvailabilitySlotRecord:
         return AvailabilitySlotRecord(

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+from datetime import UTC, datetime, timedelta
 from pathlib import Path
 
 from app.core.config import Settings
@@ -58,6 +59,8 @@ def build_test_settings(tmp_path: Path, snapshot_path: Path) -> Settings:
 
 
 def test_availability_sync_populates_slots_and_booking_prefers_them(tmp_path: Path) -> None:
+    start = datetime.now(UTC) + timedelta(days=2)
+    end = start + timedelta(minutes=30)
     snapshot_path = tmp_path / "availability_snapshot.json"
     snapshot_path.write_text(
         json.dumps(
@@ -68,9 +71,9 @@ def test_availability_sync_populates_slots_and_booking_prefers_them(tmp_path: Pa
                         "external_id": "slot-1",
                         "doctor_id": "dr-michelle-lin",
                         "clinic_id": "clinic-union",
-                        "start": "2026-04-20T09:00:00-07:00",
-                        "end": "2026-04-20T09:30:00-07:00",
-                        "label": "Mon Apr 20, 09:00 AM",
+                        "start": start.isoformat(),
+                        "end": end.isoformat(),
+                        "label": start.strftime("%a %b %d, %I:%M %p"),
                         "available": True,
                         "appointment_mode": "In person",
                         "comments": "Real slot sync test",
@@ -99,3 +102,56 @@ def test_availability_sync_populates_slots_and_booking_prefers_them(tmp_path: Pa
     assert booking_response.source == "external_sync"
     assert booking_response.slots[0].appointment_mode == "In person"
     assert booking_response.slots[0].source == "test_scheduling_api"
+
+
+def test_availability_sync_matches_doctor_across_sources_and_invalidates_missing_slots(tmp_path: Path) -> None:
+    first_start = datetime.now(UTC) + timedelta(days=3)
+    first_end = first_start + timedelta(minutes=30)
+    second_start = first_start + timedelta(days=1)
+    second_end = second_start + timedelta(minutes=30)
+    snapshot_path = tmp_path / "availability_snapshot.json"
+    settings = build_test_settings(tmp_path, snapshot_path)
+    bootstrap_reference_data(settings)
+
+    snapshot_path.write_text(
+        json.dumps(
+            {
+                "source": "test_scheduling_api",
+                "slots": [
+                    {
+                        "external_id": "slot-1",
+                        "doctor_external_id": "dr-michelle-lin",
+                        "start": first_start.isoformat(),
+                        "end": first_end.isoformat(),
+                        "label": first_start.strftime("%a %b %d, %I:%M %p"),
+                        "available": True,
+                    }
+                ],
+            }
+        )
+    )
+    AvailabilitySyncService(settings).sync()
+
+    snapshot_path.write_text(
+        json.dumps(
+            {
+                "source": "test_scheduling_api",
+                "slots": [
+                    {
+                        "external_id": "slot-2",
+                        "doctor_external_id": "dr-michelle-lin",
+                        "start": second_start.isoformat(),
+                        "end": second_end.isoformat(),
+                        "label": second_start.strftime("%a %b %d, %I:%M %p"),
+                        "available": True,
+                    }
+                ],
+            }
+        )
+    )
+    AvailabilitySyncService(settings).sync()
+
+    slots = AvailabilityRepository(settings).list_current_slots_for_doctor("dr-michelle-lin")
+
+    assert len(slots) == 1
+    assert slots[0].source_record_id == "slot-2"

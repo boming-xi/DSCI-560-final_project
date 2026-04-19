@@ -14,3 +14,5 @@ class BookingRepository:
     def list_all(self) -> list[AppointmentRecord]:
         return list(self._appointments)
 
+    def is_slot_booked(self, doctor_id: str, slot: str) -> bool:
+        return any(appointment.doctor_id == doctor_id and appointment.slot == slot for appointment in self._appointments)

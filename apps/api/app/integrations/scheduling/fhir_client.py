@@ -75,8 +75,9 @@ class FHIRSchedulingClient(SchedulingClient):
             return None
 
         doctor_external_id = self._extract_npi(practitioner) or practitioner.get("id")
+        doctor_name = self._extract_display_name(practitioner)
         clinic_external_id = self._resolve_location_id(schedule, by_ref)
-        if not doctor_external_id:
+        if not doctor_external_id and not doctor_name:
             return None
 
         appointment_mode = None
@@ -94,7 +95,8 @@ class FHIRSchedulingClient(SchedulingClient):
 
         return AvailabilitySlotPayload(
             external_id=str(slot.get("id") or ""),
-            doctor_external_id=str(doctor_external_id),
+            doctor_external_id=str(doctor_external_id) if doctor_external_id else None,
+            doctor_name=doctor_name,
             clinic_external_id=str(clinic_external_id) if clinic_external_id else None,
             start=str(start),
             end=str(end),
@@ -143,4 +145,16 @@ class FHIRSchedulingClient(SchedulingClient):
                 code = str(coding.get("code") or "").upper()
                 if code == "NPI":
                     return str(value)
+        return None
+
+    @staticmethod
+    def _extract_display_name(practitioner: dict[str, Any]) -> str | None:
+        for name in practitioner.get("name") or []:
+            given = " ".join(str(item).strip() for item in name.get("given") or [] if str(item).strip())
+            family = str(name.get("family") or "").strip()
+            text = str(name.get("text") or "").strip()
+            if given or family:
+                return f"Dr. {' '.join(part for part in [given, family] if part)}".strip()
+            if text:
+                return text
         return None

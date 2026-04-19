@@ -65,6 +65,8 @@ export function InsuranceUpload() {
       patchFlowState({
         insuranceQuery,
         insuranceSummary,
+        insurancePlanIdOverride: undefined,
+        insurancePurchaseUrl: undefined,
         searchResult: undefined,
         selectedDoctor: undefined,
         booking: undefined,
@@ -85,6 +87,8 @@ export function InsuranceUpload() {
     patchFlowState({
       insuranceQuery: "",
       insuranceSummary: undefined,
+      insurancePlanIdOverride: undefined,
+      insurancePurchaseUrl: undefined,
       searchResult: undefined,
       selectedDoctor: undefined,
       booking: undefined,

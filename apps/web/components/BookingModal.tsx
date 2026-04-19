@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 
 import { api } from "@/lib/api";
 import { getFlowState, patchFlowState } from "@/lib/flow";
@@ -35,6 +35,10 @@ export function BookingModal({
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
+  useEffect(() => {
+    setPreferredSlot(slots[0]?.start ?? "");
+  }, [slots]);
+
   if (!isOpen) {
     return null;
   }
@@ -50,7 +54,8 @@ export function BookingModal({
         patient_name: patientName,
         email,
         preferred_slot: preferredSlot,
-        insurance_plan_id: flow.insuranceSummary?.plan_id ?? undefined,
+        insurance_plan_id:
+          flow.insurancePlanIdOverride ?? flow.insuranceSummary?.plan_id ?? undefined,
         symptom_text: flow.symptomText,
         notes,
       });
@@ -90,6 +95,7 @@ export function BookingModal({
           <label className="field">
             <span>Preferred slot</span>
             <select
+              disabled={slots.length === 0}
               value={preferredSlot}
               onChange={(event) => setPreferredSlot(event.target.value)}
             >
@@ -112,7 +118,11 @@ export function BookingModal({
           {error ? <p className="error-text">{error}</p> : null}
 
           <div className="form-actions">
-            <button className="button button-primary" disabled={isLoading} type="submit">
+            <button
+              className="button button-primary"
+              disabled={isLoading || !preferredSlot}
+              type="submit"
+            >
               {isLoading ? "Booking..." : "Confirm booking"}
             </button>
             <button className="button button-secondary" onClick={onClose} type="button">
@@ -124,4 +134,3 @@ export function BookingModal({
     </div>
   );
 }
-

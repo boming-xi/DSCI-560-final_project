@@ -22,6 +22,27 @@ class DemoLLMClient:
     provider_name = "demo"
 
     def complete(self, system_prompt: str, user_prompt: str) -> str:
+        if "Insurance advisor profile:" in user_prompt:
+            missing_match = re.search(r"Missing fields:\s*(.+)\n", user_prompt)
+            shortlist_match = re.search(r"Current shortlist:\s*(.+)", user_prompt)
+            current_message_match = re.search(r"Current user message:\s*(.+?)\nCurrent shortlist:", user_prompt, re.DOTALL)
+            missing_fields = missing_match.group(1).strip() if missing_match else "[]"
+            shortlist = shortlist_match.group(1).strip() if shortlist_match else "none yet"
+            current_message = (
+                current_message_match.group(1).strip()
+                if current_message_match
+                else "the user wants help choosing insurance"
+            )
+            if "none" not in shortlist and shortlist != "none yet":
+                return (
+                    f"Thanks, that helps. I already have a preliminary shortlist: {shortlist}. "
+                    "Tell me whether lower monthly cost or easier specialist access matters more so I can tighten the ranking."
+                )
+            return (
+                f"Thanks, that gives me a better starting point. I still want to clarify {missing_fields}. "
+                f"You just mentioned: {current_message}"
+            )
+
         current_message_match = re.search(r"Current user message:\s*(.+)$", user_prompt, re.DOTALL)
         next_step_match = re.search(r"Suggested next step:\s*(.+)", user_prompt)
         if current_message_match:

@@ -100,20 +100,25 @@ export default function BookingPage() {
                 : "Using demo fallback availability."}
             </p>
             <ul className="slot-list">
-              {slots.map((slot) => (
-                <li key={slot.start}>
-                  {slot.label}
-                  {slot.appointment_mode ? ` · ${slot.appointment_mode}` : ""}
-                </li>
-              ))}
+              {slots.length ? (
+                slots.map((slot) => (
+                  <li key={slot.start}>
+                    {slot.label}
+                    {slot.appointment_mode ? ` · ${slot.appointment_mode}` : ""}
+                  </li>
+                ))
+              ) : (
+                <li>No appointment times are currently available.</li>
+              )}
             </ul>
             <div className="form-actions">
               <button
                 className="button button-primary"
+                disabled={slots.length === 0}
                 onClick={() => setIsModalOpen(true)}
                 type="button"
               >
-                Open booking form
+                {slots.length === 0 ? "No slots available" : "Open booking form"}
               </button>
               <Link className="button button-secondary" href="/doctors">
                 Back to doctors

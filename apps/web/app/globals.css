@@ -223,6 +223,12 @@ h4 {
   grid-template-columns: 1.2fr 0.8fr;
 }
 
+.insurance-layout {
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+  gap: 18px;
+}
+
 .panel-heading {
   margin-bottom: 18px;
 }
@@ -820,8 +826,117 @@ h4 {
   color: #8c5a17;
 }
 
+.insurance-advisor-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.insurance-advisor-conversation {
+  max-height: 430px;
+  overflow-y: auto;
+}
+
+.insurance-advisor-grid,
+.suggested-prompts-grid {
+  display: grid;
+  gap: 14px;
+}
+
+.insurance-advisor-grid {
+  grid-template-columns: minmax(300px, 0.85fr) minmax(0, 1.15fr);
+}
+
+.insurance-advisor-summary-card,
+.advisor-recommendation-card {
+  padding: 18px;
+  border-radius: var(--radius-lg);
+  border: 1px solid rgba(88, 63, 32, 0.1);
+  background: rgba(255, 255, 255, 0.72);
+}
+
+.advisor-recommendation-header,
+.detail-section-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 14px;
+}
+
+.advisor-recommendation-score {
+  display: flex;
+  min-width: 88px;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+  color: var(--primary-strong);
+}
+
+.advisor-recommendation-score strong {
+  font-size: 1.55rem;
+}
+
+.advisor-recommendation-card h4,
+.insurance-advisor-summary-card h3,
+.insurance-advisor-summary-card h4,
+.advisor-recommendation-card h5 {
+  margin: 0 0 8px;
+}
+
+.advisor-recommendation-card h5 {
+  margin-top: 14px;
+}
+
+.insurance-advisor-carousel-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.insurance-carousel-button {
+  min-width: 48px;
+  min-height: 48px;
+  padding: 0;
+}
+
+.insurance-carousel-copy,
+.advisor-plan-subtitle {
+  margin: 0;
+}
+
+.insurance-advisor-recommendation-list {
+  display: flex;
+  gap: 16px;
+  overflow-x: auto;
+  padding: 4px 4px 10px;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: thin;
+}
+
+.advisor-recommendation-card {
+  min-width: min(380px, 82vw);
+  max-width: 380px;
+  scroll-snap-align: start;
+}
+
+.advisor-card-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: auto;
+  padding-top: 8px;
+}
+
+.insurance-advisor-disclaimer,
+.muted-copy {
+  color: var(--muted);
+  line-height: 1.6;
+}
+
 @media (max-width: 980px) {
   .hero,
+  .insurance-layout,
   .chat-layout,
   .booking-layout,
   .doctor-detail-grid,
@@ -829,7 +944,8 @@ h4 {
   .summary-grid,
   .step-grid,
   .hero-card-grid,
-  .doctor-meta-grid {
+  .doctor-meta-grid,
+  .insurance-advisor-grid {
     grid-template-columns: 1fr;
   }
 
@@ -850,6 +966,14 @@ h4 {
 
   .doctor-detail-actions {
     justify-content: flex-start;
+  }
+
+  .insurance-advisor-carousel-controls {
+    flex-wrap: wrap;
+  }
+
+  .advisor-recommendation-card {
+    min-width: min(320px, 88vw);
   }
 }
 

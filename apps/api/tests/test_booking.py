@@ -39,3 +39,45 @@ def test_booking_slots_and_confirmation() -> None:
     payload = book_response.json()
     assert payload["confirmation_id"].startswith("APT-")
     assert payload["doctor_name"] == "Dr. Michelle Lin"
+
+
+def test_booking_rejects_invalid_or_already_booked_slots() -> None:
+    headers = _demo_auth_headers()
+    slots_response = client.get("/api/v1/booking/slots/dr-michelle-lin", headers=headers)
+    valid_slot = slots_response.json()["slots"][0]["start"]
+
+    invalid_response = client.post(
+        "/api/v1/booking/appointments",
+        json={
+            "doctor_id": "dr-michelle-lin",
+            "patient_name": "Boming Xi",
+            "email": "boming@example.com",
+            "preferred_slot": "2099-01-01T00:00:00+00:00",
+        },
+        headers=headers,
+    )
+    assert invalid_response.status_code == 400
+
+    first_booking = client.post(
+        "/api/v1/booking/appointments",
+        json={
+            "doctor_id": "dr-michelle-lin",
+            "patient_name": "Boming Xi",
+            "email": "boming@example.com",
+            "preferred_slot": valid_slot,
+        },
+        headers=headers,
+    )
+    assert first_booking.status_code == 200
+
+    duplicate_booking = client.post(
+        "/api/v1/booking/appointments",
+        json={
+            "doctor_id": "dr-michelle-lin",
+            "patient_name": "Boming Xi",
+            "email": "boming@example.com",
+            "preferred_slot": valid_slot,
+        },
+        headers=headers,
+    )
+    assert duplicate_booking.status_code == 409

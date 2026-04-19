@@ -8,6 +8,7 @@ class AvailabilitySlotPayload(BaseModel):
     external_id: str | None = None
     doctor_id: str | None = None
     doctor_external_id: str | None = None
+    doctor_name: str | None = None
     clinic_id: str | None = None
     clinic_external_id: str | None = None
     start: str
@@ -19,8 +20,10 @@ class AvailabilitySlotPayload(BaseModel):
 
     @model_validator(mode="after")
     def validate_references(self) -> "AvailabilitySlotPayload":
-        if not self.doctor_id and not self.doctor_external_id:
-            raise ValueError("Availability slot must include doctor_id or doctor_external_id.")
+        if not self.doctor_id and not self.doctor_external_id and not self.doctor_name:
+            raise ValueError(
+                "Availability slot must include doctor_id, doctor_external_id, or doctor_name."
+            )
         return self
 
 

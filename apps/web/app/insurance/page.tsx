@@ -1,5 +1,6 @@
 "use client";
 
+import { InsuranceAdvisorChat } from "@/components/InsuranceAdvisorChat";
 import { InsuranceUpload } from "@/components/InsuranceUpload";
 import { useProtectedRoute } from "@/lib/useProtectedRoute";
 
@@ -20,7 +21,10 @@ export default function InsurancePage() {
 
   return (
     <main className="page-shell">
-      <InsuranceUpload />
+      <div className="insurance-layout">
+        <InsuranceAdvisorChat />
+        <InsuranceUpload />
+      </div>
     </main>
   );
 }

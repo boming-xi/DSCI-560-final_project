@@ -1,7 +1,7 @@
 API_DIR=apps/api
 WEB_DIR=apps/web
 
-.PHONY: api-install api-dev api-test api-seed api-sync-providers api-sync-availability web-install web-dev up down
+.PHONY: api-install api-dev api-test api-seed api-sync-providers api-sync-availability api-import-ca-marketplace web-install web-dev up down
 
 api-install:
 	cd $(API_DIR) && python3 -m venv .venv && . .venv/bin/activate && pip install -r requirements.txt
@@ -20,6 +20,9 @@ api-sync-providers:
 
 api-sync-availability:
 	cd $(API_DIR) && . .venv/bin/activate && python -m app.scripts.sync_availability
+
+api-import-ca-marketplace:
+	cd $(API_DIR) && . .venv/bin/activate && python -m app.scripts.import_ca_marketplace_plans
 
 web-install:
 	cd $(WEB_DIR) && npm install

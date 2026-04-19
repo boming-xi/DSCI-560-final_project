@@ -27,6 +27,20 @@ class InsuranceService:
             return None
         return self.insurance_repo.get_plan(plan_id)
 
+    def summarize_plan_id(
+        self,
+        plan_id: str | None,
+        *,
+        raw_query: str | None = None,
+        match_confidence: float = 0.99,
+    ) -> InsuranceSummary | None:
+        if not plan_id:
+            return None
+        plan = self.get_plan(plan_id)
+        if plan is None:
+            return None
+        return self._build_summary(plan, match_confidence, raw_query or f"{plan.provider} {plan.plan_name}")
+
     def _build_summary(
         self,
         plan: InsurancePlanRecord | None,
@@ -57,4 +71,3 @@ class InsuranceService:
             match_confidence=round(confidence, 2),
             normalized_query=normalize_text(raw_query),
         )
-

@@ -36,7 +36,15 @@ class DoctorSearchService:
                 location=request.location,
             )
         )
-        insurance_summary = self.insurance_service.summarize_query(request.insurance_query)
+        insurance_summary = (
+            self.insurance_service.summarize_plan_id(
+                request.insurance_plan_id_override,
+                raw_query=request.insurance_query,
+                match_confidence=0.95,
+            )
+            if request.insurance_plan_id_override
+            else self.insurance_service.summarize_query(request.insurance_query)
+        )
         plan = self.insurance_service.get_plan(
             insurance_summary.plan_id if insurance_summary and insurance_summary.matched else None
         )

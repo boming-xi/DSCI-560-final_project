@@ -61,12 +61,11 @@ class InsuranceRepository:
 
         return best_plan, min(best_score, 0.99)
 
-    @cached_property
     def _database_ready(self) -> bool:
         return database_is_available(self.settings.postgres_url)
 
     def _list_plans_from_db(self) -> list[InsurancePlanRecord]:
-        if not self._database_ready:
+        if not self._database_ready():
             return []
         try:
             with session_scope(self.settings.postgres_url) as session:
@@ -77,7 +76,7 @@ class InsuranceRepository:
             return []
 
     def _get_plan_from_db(self, plan_id: str) -> InsurancePlanRecord | None:
-        if not self._database_ready:
+        if not self._database_ready():
             return None
         try:
             with session_scope(self.settings.postgres_url) as session:

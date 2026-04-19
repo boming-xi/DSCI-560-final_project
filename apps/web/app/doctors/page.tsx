@@ -13,6 +13,7 @@ import type { DoctorSearchResponse } from "@/lib/types";
 export default function DoctorsPage() {
   const router = useRouter();
   const { isCheckingAuth, session } = useProtectedRoute();
+  const flow = getFlowState();
   const [result, setResult] = useState<DoctorSearchResponse | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
@@ -33,6 +34,7 @@ export default function DoctorsPage() {
         const searchResult = await api.searchDoctors({
           symptom_text: flow.symptomText,
           insurance_query: flow.insuranceQuery || undefined,
+          insurance_plan_id_override: flow.insurancePlanIdOverride || undefined,
           location: flow.location,
           preferred_language: flow.preferredLanguage,
           duration_days: flow.durationDays ?? 1,
@@ -119,11 +121,17 @@ export default function DoctorsPage() {
             <article className="panel summary-card">
               <span className="eyebrow">Insurance</span>
               <h2>
-                {result.insurance_summary?.matched
+                {flow.insuranceSummary?.matched
+                  ? `${flow.insuranceSummary.provider} ${flow.insuranceSummary.plan_name}`
+                  : result.insurance_summary?.matched
                   ? `${result.insurance_summary.provider} ${result.insurance_summary.plan_name}`
                   : "No matched plan"}
               </h2>
-              <p>{result.insurance_summary?.notes?.[0] ?? "Browsing without insurance filter."}</p>
+              <p>
+                {flow.insuranceSummary?.notes?.[0] ??
+                  result.insurance_summary?.notes?.[0] ??
+                  "Browsing without insurance filter."}
+              </p>
             </article>
           </section>
 

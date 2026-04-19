@@ -28,6 +28,7 @@ from app.services.booking_service import BookingService
 from app.services.chat_service import ChatService
 from app.services.doctor_search_service import DoctorSearchService
 from app.services.document_service import DocumentService
+from app.services.insurance_advisor_service import InsuranceAdvisorService
 from app.services.insurance_service import InsuranceService
 from app.services.provider_sync_service import ProviderSyncService
 from app.services.ranking_service import RankingService
@@ -149,6 +150,15 @@ def get_triage_service() -> TriageService:
 @lru_cache
 def get_insurance_service() -> InsuranceService:
     return InsuranceService(get_insurance_repo())
+
+
+@lru_cache
+def get_insurance_advisor_service() -> InsuranceAdvisorService:
+    return InsuranceAdvisorService(
+        insurance_repo=get_insurance_repo(),
+        insurance_service=get_insurance_service(),
+        llm_client=get_llm_client(),
+    )
 
 
 @lru_cache

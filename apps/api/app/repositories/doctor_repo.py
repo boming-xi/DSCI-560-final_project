@@ -53,12 +53,11 @@ class DoctorRepository:
             return clinic
         return next((clinic for clinic in self.clinics if clinic.id == clinic_id), None)
 
-    @cached_property
     def _database_ready(self) -> bool:
         return database_is_available(self.settings.postgres_url)
 
     def _list_doctors_from_db(self) -> list[DoctorRecord]:
-        if not self._database_ready:
+        if not self._database_ready():
             return []
         try:
             with session_scope(self.settings.postgres_url) as session:
@@ -69,7 +68,7 @@ class DoctorRepository:
             return []
 
     def _list_clinics_from_db(self) -> list[ClinicRecord]:
-        if not self._database_ready:
+        if not self._database_ready():
             return []
         try:
             with session_scope(self.settings.postgres_url) as session:
@@ -80,7 +79,7 @@ class DoctorRepository:
             return []
 
     def _get_doctor_from_db(self, doctor_id: str) -> DoctorRecord | None:
-        if not self._database_ready:
+        if not self._database_ready():
             return None
         try:
             with session_scope(self.settings.postgres_url) as session:
@@ -91,7 +90,7 @@ class DoctorRepository:
             return None
 
     def _get_clinic_from_db(self, clinic_id: str) -> ClinicRecord | None:
-        if not self._database_ready:
+        if not self._database_ready():
             return None
         try:
             with session_scope(self.settings.postgres_url) as session:

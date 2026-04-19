@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import hashlib
+import re
 from dataclasses import dataclass
 from datetime import UTC, datetime
 
@@ -41,6 +42,8 @@ class AvailabilitySyncService:
             raise RuntimeError(f"Availability sync failed before database upsert: {exc}") from exc
 
         slots_upserted = 0
+        seen_source_record_ids: set[str] = set()
+        touched_doctor_ids: set[str] = set()
         with session_scope(self.settings.postgres_url) as session:
             for slot in snapshot.slots:
                 doctor_id = self._resolve_doctor_id(session, snapshot.source, slot)
@@ -62,6 +65,16 @@ class AvailabilitySyncService:
                     source_record_id=source_record_id,
                 )
                 slots_upserted += 1
+                seen_source_record_ids.add(source_record_id)
+                touched_doctor_ids.add(doctor_id)
+
+            if touched_doctor_ids:
+                self._invalidate_missing_slots(
+                    session=session,
+                    source=snapshot.source,
+                    touched_doctor_ids=touched_doctor_ids,
+                    seen_source_record_ids=seen_source_record_ids,
+                )
 
         return AvailabilitySyncResult(
             source=snapshot.source,
@@ -102,14 +115,29 @@ class AvailabilitySyncService:
             if doctor is not None:
                 return doctor.id
         if slot.doctor_external_id:
-            doctor = session.execute(
+            doctors = session.scalars(
                 select(DoctorORM).where(
-                    DoctorORM.source == source,
                     DoctorORM.source_record_id == slot.doctor_external_id,
                 )
-            ).scalar_one_or_none()
-            if doctor is not None:
-                return doctor.id
+            ).all()
+            if len(doctors) == 1:
+                return doctors[0].id
+            source_scoped_doctors = [doctor for doctor in doctors if doctor.source == source]
+            if len(source_scoped_doctors) == 1:
+                return source_scoped_doctors[0].id
+            if slot.doctor_name:
+                normalized_target = AvailabilitySyncService._normalize_doctor_name(slot.doctor_name)
+                named_matches = [
+                    doctor
+                    for doctor in doctors
+                    if AvailabilitySyncService._normalize_doctor_name(doctor.name) == normalized_target
+                ]
+                if len(named_matches) == 1:
+                    return named_matches[0].id
+        if slot.doctor_name:
+            matched_doctor = AvailabilitySyncService._match_doctor_by_name(session, slot.doctor_name)
+            if matched_doctor is not None:
+                return matched_doctor.id
         raise RuntimeError(f"Could not resolve doctor for slot {slot.external_id or slot.id or slot.start}.")
 
     @staticmethod
@@ -187,3 +215,44 @@ class AvailabilitySyncService:
         slot_orm.source_record_id = source_record_id
         slot_orm.comments = slot.comments
         slot_orm.last_synced_at = datetime.now(UTC)
+
+    @staticmethod
+    def _invalidate_missing_slots(
+        session,
+        source: str,
+        touched_doctor_ids: set[str],
+        seen_source_record_ids: set[str],
+    ) -> None:
+        now = datetime.now(UTC)
+        existing_slots = session.scalars(
+            select(AvailabilitySlotORM).where(
+                AvailabilitySlotORM.source == source,
+                AvailabilitySlotORM.doctor_id.in_(sorted(touched_doctor_ids)),
+            )
+        ).all()
+        for existing_slot in existing_slots:
+            if existing_slot.source_record_id in seen_source_record_ids:
+                continue
+            existing_slot.available = False
+            existing_slot.last_synced_at = now
+
+    @staticmethod
+    def _match_doctor_by_name(session, doctor_name: str) -> DoctorORM | None:
+        normalized_target = AvailabilitySyncService._normalize_doctor_name(doctor_name)
+        if not normalized_target:
+            return None
+        matches: list[DoctorORM] = []
+        for doctor in session.scalars(select(DoctorORM)).all():
+            if AvailabilitySyncService._normalize_doctor_name(doctor.name) == normalized_target:
+                matches.append(doctor)
+        if len(matches) == 1:
+            return matches[0]
+        return None
+
+    @staticmethod
+    def _normalize_doctor_name(name: str) -> str:
+        normalized = name.lower().strip()
+        normalized = re.sub(r"^dr\.?\s+", "", normalized)
+        normalized = normalized.split(",", 1)[0]
+        normalized = re.sub(r"[^a-z0-9]+", " ", normalized)
+        return " ".join(normalized.split())

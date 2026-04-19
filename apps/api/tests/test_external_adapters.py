@@ -82,6 +82,12 @@ def test_fhir_scheduling_client_transforms_bundle_to_slots() -> None:
                 "resource": {
                     "resourceType": "Practitioner",
                     "id": "practitioner-1",
+                    "name": [
+                        {
+                            "given": ["Maria"],
+                            "family": "Lopez",
+                        }
+                    ],
                     "identifier": [
                         {
                             "system": "http://hl7.org/fhir/sid/us-npi",
@@ -104,5 +110,6 @@ def test_fhir_scheduling_client_transforms_bundle_to_slots() -> None:
     assert snapshot.source == "fhir_scheduling"
     assert len(snapshot.slots) == 1
     assert snapshot.slots[0].doctor_external_id == "1234567890"
+    assert snapshot.slots[0].doctor_name == "Dr. Maria Lopez"
     assert snapshot.slots[0].clinic_external_id == "location-1"
     assert snapshot.slots[0].appointment_mode == "In person"

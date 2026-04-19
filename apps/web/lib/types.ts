@@ -28,6 +28,65 @@ export type InsuranceSummary = {
   normalized_query?: string | null;
 };
 
+export type InsuranceAdvisorProfile = {
+  age?: number | null;
+  state?: string | null;
+  zip_code?: string | null;
+  household_size?: number | null;
+  income_band?: string | null;
+  coverage_channel?: "student" | "marketplace" | "employer" | "unsure" | null;
+  monthly_budget?: "low" | "medium" | "high" | null;
+  care_usage?: "low" | "moderate" | "high" | null;
+  referrals_ok?: boolean | null;
+  keep_existing_doctors?: boolean | null;
+  has_prescriptions?: boolean | null;
+  preferred_language?: string | null;
+};
+
+export type InsuranceAdvisorSpeakerMessage = {
+  speaker: "Navigator" | "Eligibility Checker" | "Plan Matcher";
+  content: string;
+};
+
+export type InsuranceAdvisorRecommendation = {
+  plan_id: string;
+  doctor_search_plan_id?: string | null;
+  provider: string;
+  plan_name: string;
+  plan_type: string;
+  metal_level?: string | null;
+  insurance_query: string;
+  fit_score: number;
+  confidence_label: "early" | "good" | "strong";
+  monthly_premium_band: "low" | "medium" | "high";
+  monthly_premium_amount?: number | null;
+  deductible_band: "low" | "medium" | "high";
+  deductible_amount?: number | null;
+  out_of_pocket_max_amount?: number | null;
+  network_flexibility: "low" | "high";
+  quality_rating?: number | null;
+  advisor_blurb: string;
+  reasons: string[];
+  tradeoffs: string[];
+  ideal_for: string[];
+  purchase_url?: string | null;
+  purchase_cta_label?: string | null;
+  source_url?: string | null;
+  network_url?: string | null;
+  insurance_summary: InsuranceSummary;
+};
+
+export type InsuranceAdvisorResponse = {
+  profile: InsuranceAdvisorProfile;
+  profile_summary: string[];
+  missing_fields: string[];
+  readiness_label: "intake" | "narrowing" | "recommended";
+  group_messages: InsuranceAdvisorSpeakerMessage[];
+  recommendations: InsuranceAdvisorRecommendation[];
+  suggested_prompts: string[];
+  disclaimer: string;
+};
+
 export type RankingBreakdown = {
   specialty_score: number;
   insurance_score: number;
@@ -120,6 +179,12 @@ export type ChatTurn = {
   content: string;
 };
 
+export type InsuranceAdvisorConversationTurn = {
+  role: "user" | "assistant";
+  speaker: string;
+  content: string;
+};
+
 export type ChatResponse = {
   reply: string;
   cited_items: string[];
@@ -169,7 +234,15 @@ export type FlowState = {
   triage?: TriageRecommendation;
   insuranceQuery?: string;
   insuranceSummary?: InsuranceSummary;
+  insuranceAdvisorProfile?: InsuranceAdvisorProfile;
+  insuranceAdvisorProfileSummary?: string[];
+  insuranceAdvisorMissingFields?: string[];
+  insuranceAdvisorReadinessLabel?: "intake" | "narrowing" | "recommended";
+  insuranceAdvisorRecommendations?: InsuranceAdvisorRecommendation[];
+  insuranceAdvisorConversation?: InsuranceAdvisorConversationTurn[];
   searchResult?: DoctorSearchResponse;
+  insurancePlanIdOverride?: string;
+  insurancePurchaseUrl?: string;
   selectedDoctor?: DoctorProfile;
   booking?: BookingConfirmation;
   documentTitle?: string;

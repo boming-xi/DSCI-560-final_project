@@ -28,7 +28,11 @@ class BookingService:
         if doctor is None:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Doctor not found.")
 
-        synced_slots = self.availability_repo.list_current_slots_for_doctor(doctor_id)
+        synced_slots = [
+            slot
+            for slot in self.availability_repo.list_current_slots_for_doctor(doctor_id)
+            if not self.booking_repo.is_slot_booked(doctor_id, slot.start.isoformat())
+        ]
         if synced_slots:
             return BookingSlotsResponse(
                 doctor_id=doctor_id,
@@ -47,6 +51,13 @@ class BookingService:
                     for slot in synced_slots
                 ],
             )
+        if self.availability_repo.has_recent_sync_for_doctor(doctor_id):
+            return BookingSlotsResponse(
+                doctor_id=doctor_id,
+                doctor_name=doctor.name,
+                slots=[],
+                source="external_sync",
+            )
 
         start_day = datetime.now(UTC) + timedelta(days=doctor.availability_days)
         slots: list[TimeSlot] = []
@@ -54,6 +65,8 @@ class BookingService:
             start = start_day + timedelta(days=offset)
             start = start.replace(hour=17 if offset % 2 else 9, minute=0, second=0, microsecond=0)
             end = start + timedelta(minutes=30)
+            if self.booking_repo.is_slot_booked(doctor_id, start.isoformat()):
+                continue
             slots.append(
                 TimeSlot(
                     start=start.isoformat(),
@@ -77,6 +90,15 @@ class BookingService:
         clinic = self.doctor_repo.get_clinic(doctor.clinic_id)
         if clinic is None:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Clinic not found.")
+        if self.booking_repo.is_slot_booked(request.doctor_id, request.preferred_slot):
+            raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="That slot has already been booked.")
+
+        available_slots = self.get_slots(request.doctor_id).slots
+        if request.preferred_slot not in {slot.start for slot in available_slots if slot.available}:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Selected slot is no longer available. Please refresh and choose another time.",
+            )
 
         appointment = AppointmentRecord(
             confirmation_id=f"APT-{uuid4().hex[:8].upper()}",

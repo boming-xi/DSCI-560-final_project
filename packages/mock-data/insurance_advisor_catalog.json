@@ -1,0 +1,162 @@
+[
+  {
+    "plan_id": "usc-aetna-student",
+    "provider": "Aetna Student Health",
+    "plan_name": "USC SHIP / Aetna Student Health",
+    "plan_type": "PPO",
+    "coverage_channels": ["student"],
+    "service_states": ["CA"],
+    "monthly_premium_band": "medium",
+    "monthly_premium_amount": 350,
+    "deductible_band": "low",
+    "deductible_amount": 500,
+    "out_of_pocket_max_amount": 4500,
+    "network_flexibility": "high",
+    "care_usage_fit": ["moderate", "high"],
+    "prescription_support": "strong",
+    "quality_band": "strong",
+    "referral_required_for_specialists": false,
+    "advisor_blurb": "A campus-friendly PPO-style student option with predictable copays and good flexibility around USC-area care.",
+    "ideal_for": [
+      "USC or nearby students who expect repeat visits",
+      "People who want PPO-style flexibility without referrals",
+      "Patients who care about easier access to specialists"
+    ],
+    "tradeoffs": [
+      "Only realistic if you can access a student plan",
+      "Usually not the cheapest monthly option in a lean-budget scenario"
+    ],
+    "purchase_url": "https://www.aetnastudenthealth.com/en/usc/enroll-waive.html",
+    "purchase_cta_label": "Enroll or waive on USC Aetna",
+    "source_url": "https://www.aetnastudenthealth.com/en/usc/index.html",
+    "doctor_search_plan_id": "usc-aetna-student"
+  },
+  {
+    "plan_id": "uhc-student-choice",
+    "provider": "UnitedHealthcare StudentResources",
+    "plan_name": "Student Choice PPO",
+    "plan_type": "PPO",
+    "coverage_channels": ["student"],
+    "service_states": ["CA"],
+    "monthly_premium_band": "medium",
+    "monthly_premium_amount": 320,
+    "deductible_band": "medium",
+    "deductible_amount": 1200,
+    "out_of_pocket_max_amount": 6500,
+    "network_flexibility": "high",
+    "care_usage_fit": ["low", "moderate"],
+    "prescription_support": "moderate",
+    "quality_band": "solid",
+    "referral_required_for_specialists": false,
+    "advisor_blurb": "A student-oriented PPO option that works well for lighter year-round usage and straightforward specialist access.",
+    "ideal_for": [
+      "Students who want PPO-style access",
+      "People expecting lighter or moderate care use",
+      "Users who want an easier plan to understand"
+    ],
+    "tradeoffs": [
+      "Not as strong as richer student plans for frequent care",
+      "Cost sharing can feel less favorable if you expect many visits"
+    ],
+    "purchase_url": "https://requestcoverage.uhcsr.com/",
+    "purchase_cta_label": "Find your school on UHCSR",
+    "source_url": "https://requestcoverage.uhcsr.com/AboutUs.aspx",
+    "doctor_search_plan_id": "uhc-student-choice"
+  },
+  {
+    "plan_id": "anthem-blue-hmo",
+    "provider": "Anthem Blue Cross",
+    "plan_name": "Blue Cross HMO",
+    "plan_type": "HMO",
+    "coverage_channels": ["marketplace"],
+    "service_states": ["CA"],
+    "monthly_premium_band": "low",
+    "monthly_premium_amount": 275,
+    "deductible_band": "medium",
+    "deductible_amount": 3500,
+    "out_of_pocket_max_amount": 8200,
+    "network_flexibility": "low",
+    "care_usage_fit": ["low", "moderate"],
+    "prescription_support": "moderate",
+    "quality_band": "solid",
+    "referral_required_for_specialists": true,
+    "advisor_blurb": "A lower-premium HMO option that can work for budget-focused users who are comfortable staying in-network.",
+    "ideal_for": [
+      "Users who prioritize a lower monthly premium",
+      "People okay with in-network coordination and referrals",
+      "Shoppers comparing ACA marketplace plans in California"
+    ],
+    "tradeoffs": [
+      "Less flexible if you want to keep a specific specialist",
+      "Referrals can add friction when you need specialty care"
+    ],
+    "purchase_url": "https://www.coveredca.com/",
+    "purchase_cta_label": "Compare or apply on Covered California",
+    "source_url": "https://www.coveredca.com/support/getting-started/review-plans-and-prices/",
+    "doctor_search_plan_id": "anthem-blue-hmo"
+  },
+  {
+    "plan_id": "cigna-open-access",
+    "provider": "Cigna",
+    "plan_name": "Open Access Plus",
+    "plan_type": "PPO",
+    "coverage_channels": ["marketplace", "employer"],
+    "service_states": ["CA"],
+    "monthly_premium_band": "high",
+    "monthly_premium_amount": 560,
+    "deductible_band": "low",
+    "deductible_amount": 900,
+    "out_of_pocket_max_amount": 5200,
+    "network_flexibility": "high",
+    "care_usage_fit": ["moderate", "high"],
+    "prescription_support": "strong",
+    "quality_band": "strong",
+    "referral_required_for_specialists": false,
+    "advisor_blurb": "A richer PPO-style option for people who expect higher healthcare use and want broader provider flexibility.",
+    "ideal_for": [
+      "Users with ongoing care needs or regular follow-up",
+      "People who want easier specialist access",
+      "Patients trying to keep provider choice open"
+    ],
+    "tradeoffs": [
+      "Monthly cost can feel high if you are very budget-sensitive",
+      "Can be more plan than you need for a light-care year"
+    ],
+    "purchase_url": "https://www.coveredca.com/",
+    "purchase_cta_label": "Compare or apply on Covered California",
+    "source_url": "https://www.coveredca.com/support/getting-started/review-plans-and-prices/",
+    "doctor_search_plan_id": "cigna-open-access"
+  },
+  {
+    "plan_id": "blue-shield-ppo",
+    "provider": "Blue Shield of California",
+    "plan_name": "PPO",
+    "plan_type": "PPO",
+    "coverage_channels": ["marketplace", "employer"],
+    "service_states": ["CA"],
+    "monthly_premium_band": "medium",
+    "monthly_premium_amount": 420,
+    "deductible_band": "medium",
+    "deductible_amount": 2200,
+    "out_of_pocket_max_amount": 7800,
+    "network_flexibility": "high",
+    "care_usage_fit": ["moderate"],
+    "prescription_support": "moderate",
+    "quality_band": "strong",
+    "referral_required_for_specialists": false,
+    "advisor_blurb": "A balanced PPO choice for people who want provider flexibility without always picking the richest plan.",
+    "ideal_for": [
+      "Users who want PPO flexibility with a middle-of-the-road budget",
+      "People who may need occasional specialists",
+      "Shoppers who want a safer all-around marketplace option"
+    ],
+    "tradeoffs": [
+      "Not the cheapest premium option",
+      "Not as cost-protective as the richest PPO if you expect heavy usage"
+    ],
+    "purchase_url": "https://www.coveredca.com/",
+    "purchase_cta_label": "Compare or apply on Covered California",
+    "source_url": "https://www.coveredca.com/support/getting-started/review-plans-and-prices/",
+    "doctor_search_plan_id": "blue-shield-ppo"
+  }
+]
