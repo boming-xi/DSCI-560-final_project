@@ -5,7 +5,7 @@ from app.models.insurance import InsurancePlanRecord
 from app.rules.insurance_rules import compute_estimated_cost, insurance_fit_score
 from app.rules.ranking_rules import combine_scores
 from app.rules.referral_rules import requires_referral
-from app.schemas.doctor import ClinicInfo, DoctorProfile, RankingBreakdown
+from app.schemas.doctor import ClinicInfo, DoctorProfile, InsuranceVerification, RankingBreakdown
 from app.schemas.symptom import TriageRecommendation
 from app.services.doctor_profile_content import get_doctor_detail_content
 from app.utils.geo import haversine_km
@@ -19,11 +19,12 @@ class RankingService:
         triage: TriageRecommendation,
         location: tuple[float, float],
         plan: InsurancePlanRecord | None,
+        insurance_verification: InsuranceVerification | None,
         preferred_language: str | None,
     ) -> DoctorProfile:
         detail_content = get_doctor_detail_content(doctor)
         specialty_score = self._specialty_score(doctor, triage)
-        insurance_score = insurance_fit_score(plan, doctor)
+        insurance_score = insurance_fit_score(plan, doctor, insurance_verification)
         distance_km = haversine_km(location[0], location[1], clinic.latitude, clinic.longitude)
         distance_score = max(0.0, 1 - (distance_km / 20))
         availability_score = self._availability_score(doctor.availability_days)
@@ -50,7 +51,7 @@ class RankingService:
             total_score=total_score,
             summary=(
                 f"Strongest signals: {doctor.specialty}, "
-                f"{'in-network fit' if insurance_score >= 0.9 else 'coverage uncertain'}, "
+                f"{self._insurance_summary_fragment(insurance_verification, insurance_score)}, "
                 f"and {distance_km} km travel distance."
             ),
         )
@@ -101,6 +102,7 @@ class RankingService:
             distance_km=distance_km,
             estimated_cost=compute_estimated_cost(plan, doctor),
             referral_required=requires_referral(plan, doctor.specialty),
+            insurance_verification=insurance_verification,
             ranking_breakdown=ranking_breakdown,
         )
 
@@ -153,3 +155,18 @@ class RankingService:
         if days == 1:
             return "Tomorrow"
         return f"In {days} days"
+
+    def _insurance_summary_fragment(
+        self,
+        insurance_verification: InsuranceVerification | None,
+        insurance_score: float,
+    ) -> str:
+        if insurance_verification is None:
+            return "coverage uncertain" if insurance_score < 0.9 else "in-network fit"
+        if insurance_verification.status == "verified":
+            return "verified network match"
+        if insurance_verification.status == "likely":
+            return "carrier-level match"
+        if insurance_verification.status == "demo":
+            return "demo compatibility only"
+        return "network uncertain"

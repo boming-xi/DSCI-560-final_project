@@ -11,7 +11,6 @@ const navItems = [
   { href: "/insurance", label: "Insurance" },
   { href: "/doctors", label: "Doctors" },
   { href: "/booking", label: "Booking" },
-  { href: "/chat", label: "Chat" },
 ];
 
 export const metadata = {

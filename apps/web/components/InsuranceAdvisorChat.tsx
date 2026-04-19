@@ -94,6 +94,7 @@ export function InsuranceAdvisorChat() {
     nextReadinessLabel: "intake" | "narrowing" | "recommended";
   }) {
     patchFlowState({
+      insuranceEntryMode: "needs_help",
       insuranceAdvisorConversation: next.nextConversation,
       insuranceAdvisorProfile: next.nextProfile,
       insuranceAdvisorProfileSummary: next.nextProfileSummary,
@@ -167,11 +168,13 @@ export function InsuranceAdvisorChat() {
 
   function applyRecommendation(recommendation: InsuranceAdvisorRecommendation) {
     patchFlowState({
+      insuranceEntryMode: "needs_help",
       insuranceQuery: recommendation.insurance_query,
       insuranceSummary: recommendation.insurance_summary,
       insurancePlanIdOverride:
         recommendation.doctor_search_plan_id ?? recommendation.insurance_summary.plan_id ?? undefined,
       insurancePurchaseUrl: recommendation.purchase_url ?? undefined,
+      insuranceNetworkUrl: recommendation.network_url ?? undefined,
       insuranceAdvisorConversation: conversation,
       insuranceAdvisorProfile: profile,
       insuranceAdvisorProfileSummary: profileSummary,
@@ -196,7 +199,7 @@ export function InsuranceAdvisorChat() {
   return (
     <section className="panel insurance-advisor-panel">
       <div className="panel-heading">
-        <span className="eyebrow">AI insurance advisor</span>
+        <span className="eyebrow">Step 2</span>
         <h2>Talk through plan fit before choosing doctors</h2>
         <p>
           This group-style chat gathers a lightweight insurance profile, narrows
@@ -353,6 +356,9 @@ export function InsuranceAdvisorChat() {
                         <span className="meta-pill">
                           quality {recommendation.quality_rating.toFixed(1)} / 5
                         </span>
+                      ) : null}
+                      {recommendation.network_name ? (
+                        <span className="meta-pill">{recommendation.network_name}</span>
                       ) : null}
                     </div>
 

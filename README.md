@@ -245,10 +245,49 @@ npm run dev
 ## Demo flow
 
 1. Enter symptoms and get urgency guidance.
-2. Upload or type insurance information.
+2. Choose an insurance path:
+   existing insurance upload, or AI insurance advisor for plan selection.
 3. Review ranked nearby doctors and the score explanation.
 4. Pick a doctor and book an appointment.
 5. Use the chat page to ask follow-up questions.
+
+## Insurance advisor and plan-first flow
+
+The insurance page now has a two-step branch:
+
+- `Step 1`: choose whether you already have insurance
+- `Step 2`: either upload your current plan details or use the AI advisor to compare plans first
+
+If the advisor recommends a plan and you click `Use this plan for doctor search`, the selected plan, purchase link, and network directory URL are carried into the doctor flow automatically.
+
+## Real-time carrier provider directory verification
+
+Doctor ranking now tries a live carrier provider directory check first when a carrier-specific API is configured. If the live check does not confirm a match, the app safely falls back to stored carrier and network aliases already attached to the doctor record.
+
+Supported carrier env patterns:
+
+- `AETNA_PROVIDER_DIRECTORY_API_TYPE=fhir|json`
+- `AETNA_PROVIDER_DIRECTORY_API_URL=...`
+- `AETNA_PROVIDER_DIRECTORY_API_KEY=...`
+- `AETNA_PROVIDER_DIRECTORY_API_KEY_QUERY_PARAM=...`
+- `ANTHEM_PROVIDER_DIRECTORY_API_TYPE=fhir|json`
+- `BLUE_SHIELD_PROVIDER_DIRECTORY_API_TYPE=fhir|json`
+- `CIGNA_PROVIDER_DIRECTORY_API_TYPE=fhir|json`
+- `HEALTH_NET_PROVIDER_DIRECTORY_API_TYPE=fhir|json`
+- `KAISER_PROVIDER_DIRECTORY_API_TYPE=fhir|json`
+- `UNITEDHEALTHCARE_PROVIDER_DIRECTORY_API_TYPE=fhir|json`
+
+If a carrier sandbox expects credentials in the query string instead of a header, set `*_PROVIDER_DIRECTORY_API_KEY_QUERY_PARAM`. For example, Blue Shield of California's sandbox documentation shows `clientId` as a query parameter for provider directory calls.
+
+The app currently recognizes these carriers from the selected plan metadata and will call the corresponding live provider directory client when configured:
+
+- Aetna
+- Anthem Blue Cross
+- Blue Shield of California
+- Cigna
+- Health Net
+- Kaiser Permanente
+- UnitedHealthcare
 
 ## Notes
 

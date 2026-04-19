@@ -4,16 +4,23 @@ import type { DoctorProfile } from "@/lib/types";
 
 type DoctorCardProps = {
   doctor: DoctorProfile;
+  highlighted?: boolean;
   onBook: () => void;
   onView: () => void;
 };
 
-export function DoctorCard({ doctor, onBook, onView }: DoctorCardProps) {
+export function DoctorCard({
+  doctor,
+  highlighted = false,
+  onBook,
+  onView,
+}: DoctorCardProps) {
   return (
-    <article className="panel doctor-card">
+    <article className={`panel doctor-card ${highlighted ? "recommended-card" : ""}`}>
       <div className="doctor-card-top">
         <div>
           <span className="eyebrow">{doctor.specialty}</span>
+          {highlighted ? <span className="recommended-doctor-tag">Advisor pick</span> : null}
           <h3>{doctor.name}</h3>
           <p>{doctor.profile_blurb}</p>
         </div>
@@ -59,8 +66,11 @@ export function DoctorCard({ doctor, onBook, onView }: DoctorCardProps) {
           <p>{doctor.languages.join(", ")}</p>
         </div>
         <div>
-          <h4>Coverage</h4>
-          <p>{doctor.accepted_insurance.join(", ")}</p>
+          <h4>Network verification</h4>
+          <p>{doctor.insurance_verification?.label ?? "No plan selected yet"}</p>
+          <p className="subtle-copy">
+            {doctor.insurance_verification?.reason ?? "Choose an insurance plan to verify network fit."}
+          </p>
         </div>
         <div>
           <h4>Estimated cost</h4>
@@ -69,6 +79,16 @@ export function DoctorCard({ doctor, onBook, onView }: DoctorCardProps) {
           </p>
         </div>
       </div>
+
+      {doctor.insurance_verification?.network_url ? (
+        <div className="info-box">
+          <strong>{doctor.insurance_verification.label}</strong>
+          <p>{doctor.insurance_verification.reason}</p>
+          <a href={doctor.insurance_verification.network_url} rel="noreferrer" target="_blank">
+            Open official network directory
+          </a>
+        </div>
+      ) : null}
 
       {doctor.referral_required ? (
         <div className="notice-box">

@@ -228,6 +228,35 @@ export default function DoctorDetailPage() {
                   </ul>
                 </div>
                 <div>
+                  <h4>Network verification</h4>
+                  {doctor.insurance_verification ? (
+                    <>
+                      <p>{doctor.insurance_verification.label}</p>
+                      <p>{doctor.insurance_verification.reason}</p>
+                      {doctor.insurance_verification.evidence.length ? (
+                        <ul className="detail-list">
+                          {doctor.insurance_verification.evidence.map((item) => (
+                            <li key={item}>{item}</li>
+                          ))}
+                        </ul>
+                      ) : null}
+                      {doctor.insurance_verification.network_url ? (
+                        <p>
+                          <a
+                            href={doctor.insurance_verification.network_url}
+                            rel="noreferrer"
+                            target="_blank"
+                          >
+                            Open official network directory
+                          </a>
+                        </p>
+                      ) : null}
+                    </>
+                  ) : (
+                    <p>Select an insurance plan first to verify this doctor against a network.</p>
+                  )}
+                </div>
+                <div>
                   <h4>Visit setup</h4>
                   <ul className="detail-list">
                     <li>{doctor.accepts_new_patients ? "Accepting new patients" : "May require a referral or waitlist"}</li>
@@ -241,9 +270,6 @@ export default function DoctorDetailPage() {
                 <button className="button button-primary" onClick={handleBook} type="button">
                   Continue to booking
                 </button>
-                <Link className="button button-secondary" href="/chat">
-                  Ask assistant about this doctor
-                </Link>
               </div>
             </article>
           </section>

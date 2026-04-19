@@ -460,6 +460,7 @@ class InsuranceAdvisorService:
                     provider=provider,
                     plan_name=plan_name,
                     plan_type=plan_type,
+                    network_name=plan_metadata.network_name,
                     metal_level=plan_metadata.metal_level,
                     insurance_query=f"{provider} {plan_name}".strip(),
                     fit_score=round(score, 2),

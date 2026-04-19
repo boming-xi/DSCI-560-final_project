@@ -7,7 +7,11 @@ import { getAuthSession } from "@/lib/auth";
 
 const LOGIN_REDIRECT = "/login?next=%2Fsymptom";
 
-export function StartDemoLink() {
+type StartDemoLinkProps = {
+  label?: string;
+};
+
+export function StartDemoLink({ label = "Start the demo" }: StartDemoLinkProps) {
   const [href, setHref] = useState(LOGIN_REDIRECT);
 
   useEffect(() => {
@@ -28,8 +32,7 @@ export function StartDemoLink() {
 
   return (
     <Link className="button button-primary" href={href}>
-      Start the demo
+      {label}
     </Link>
   );
 }
-

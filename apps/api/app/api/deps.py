@@ -26,10 +26,15 @@ from app.services.auth_service import AuthService
 from app.services.availability_sync_service import AvailabilitySyncService
 from app.services.booking_service import BookingService
 from app.services.chat_service import ChatService
+from app.services.doctor_decision_service import DoctorDecisionService
 from app.services.doctor_search_service import DoctorSearchService
 from app.services.document_service import DocumentService
 from app.services.insurance_advisor_service import InsuranceAdvisorService
+from app.services.insurance_network_service import InsuranceNetworkService
 from app.services.insurance_service import InsuranceService
+from app.services.official_provider_directory_service import (
+    OfficialProviderDirectoryService,
+)
 from app.services.provider_sync_service import ProviderSyncService
 from app.services.ranking_service import RankingService
 from app.services.triage_service import TriageService
@@ -162,6 +167,19 @@ def get_insurance_advisor_service() -> InsuranceAdvisorService:
 
 
 @lru_cache
+def get_insurance_network_service() -> InsuranceNetworkService:
+    return InsuranceNetworkService(
+        get_insurance_service(),
+        official_provider_directory_service=get_official_provider_directory_service(),
+    )
+
+
+@lru_cache
+def get_official_provider_directory_service() -> OfficialProviderDirectoryService:
+    return OfficialProviderDirectoryService(get_settings())
+
+
+@lru_cache
 def get_ranking_service() -> RankingService:
     return RankingService()
 
@@ -173,8 +191,14 @@ def get_doctor_search_service() -> DoctorSearchService:
         insurance_repo=get_insurance_repo(),
         triage_service=get_triage_service(),
         insurance_service=get_insurance_service(),
+        insurance_network_service=get_insurance_network_service(),
         ranking_service=get_ranking_service(),
     )
+
+
+@lru_cache
+def get_doctor_decision_service() -> DoctorDecisionService:
+    return DoctorDecisionService()
 
 
 @lru_cache

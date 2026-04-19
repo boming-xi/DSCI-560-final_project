@@ -54,6 +54,7 @@ export type InsuranceAdvisorRecommendation = {
   provider: string;
   plan_name: string;
   plan_type: string;
+  network_name?: string | null;
   metal_level?: string | null;
   insurance_query: string;
   fit_score: number;
@@ -74,6 +75,16 @@ export type InsuranceAdvisorRecommendation = {
   source_url?: string | null;
   network_url?: string | null;
   insurance_summary: InsuranceSummary;
+};
+
+export type InsuranceVerification = {
+  status: "verified" | "likely" | "demo" | "uncertain";
+  label: string;
+  reason: string;
+  evidence: string[];
+  network_name?: string | null;
+  network_url?: string | null;
+  source?: string | null;
 };
 
 export type InsuranceAdvisorResponse = {
@@ -137,6 +148,7 @@ export type DoctorProfile = {
   distance_km: number;
   estimated_cost?: number | null;
   referral_required: boolean;
+  insurance_verification?: InsuranceVerification | null;
   ranking_breakdown?: RankingBreakdown | null;
 };
 
@@ -183,6 +195,39 @@ export type InsuranceAdvisorConversationTurn = {
   role: "user" | "assistant";
   speaker: string;
   content: string;
+};
+
+export type DoctorDecisionConversationTurn = {
+  role: "user" | "assistant";
+  speaker: string;
+  content: string;
+};
+
+export type DoctorDecisionSpeakerMessage = {
+  speaker: "Fit Analyst" | "Coverage Checker" | "Decision Guide";
+  content: string;
+};
+
+export type DoctorDecisionSharedBrief = {
+  shared_context_confirmed: boolean;
+  case_summary: string;
+  patient_goal: string;
+  symptom_anchor?: string | null;
+  insurance_anchor?: string | null;
+  language_anchor?: string | null;
+  priority_labels: string[];
+  shortlist_names: string[];
+  leading_doctor_name?: string | null;
+  backup_doctor_name?: string | null;
+  coverage_watchout?: string | null;
+};
+
+export type DoctorDecisionResponse = {
+  group_messages: DoctorDecisionSpeakerMessage[];
+  shared_brief?: DoctorDecisionSharedBrief | null;
+  suggested_prompts: string[];
+  recommended_doctor_id?: string | null;
+  recommended_reason?: string | null;
 };
 
 export type ChatResponse = {
@@ -232,8 +277,10 @@ export type FlowState = {
   preferredLanguage?: string;
   location?: Location;
   triage?: TriageRecommendation;
+  insuranceEntryMode?: "has_insurance" | "needs_help";
   insuranceQuery?: string;
   insuranceSummary?: InsuranceSummary;
+  insuranceNetworkUrl?: string;
   insuranceAdvisorProfile?: InsuranceAdvisorProfile;
   insuranceAdvisorProfileSummary?: string[];
   insuranceAdvisorMissingFields?: string[];
@@ -241,6 +288,12 @@ export type FlowState = {
   insuranceAdvisorRecommendations?: InsuranceAdvisorRecommendation[];
   insuranceAdvisorConversation?: InsuranceAdvisorConversationTurn[];
   searchResult?: DoctorSearchResponse;
+  doctorDecisionConversation?: DoctorDecisionConversationTurn[];
+  doctorDecisionSuggestedPrompts?: string[];
+  doctorDecisionRecommendedDoctorId?: string;
+  doctorDecisionRecommendedReason?: string;
+  doctorDecisionSharedBrief?: DoctorDecisionSharedBrief;
+  doctorDecisionDoctorIdsSignature?: string;
   insurancePlanIdOverride?: string;
   insurancePurchaseUrl?: string;
   selectedDoctor?: DoctorProfile;

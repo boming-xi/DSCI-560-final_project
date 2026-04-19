@@ -9,7 +9,16 @@
     "languages": ["English", "Mandarin"],
     "rating": 4.8,
     "review_count": 182,
-    "accepted_insurance": ["usc-aetna-student", "uhc-student-choice", "anthem-blue-hmo"],
+    "accepted_insurance": [
+      "usc-aetna-student",
+      "uhc-student-choice",
+      "anthem-blue-hmo",
+      "USC SHIP / Aetna Student Health",
+      "Aetna Student Health PPO",
+      "TRIO HMO for IFP",
+      "L.A. Care Covered",
+      "MOLINA MARKETPLACE"
+    ],
     "availability_days": 1,
     "telehealth": true,
     "gender": "Female",
@@ -25,7 +34,16 @@
     "languages": ["English", "Korean"],
     "rating": 4.7,
     "review_count": 210,
-    "accepted_insurance": ["usc-aetna-student", "uhc-student-choice", "cigna-open-access", "blue-shield-ppo"],
+    "accepted_insurance": [
+      "usc-aetna-student",
+      "uhc-student-choice",
+      "cigna-open-access",
+      "blue-shield-ppo",
+      "Aetna Student Health PPO",
+      "UnitedHealthcare StudentResources PPO",
+      "Exclusive PPO for IFP",
+      "Ambetter PPO"
+    ],
     "availability_days": 0,
     "telehealth": false,
     "gender": "Male",
@@ -41,7 +59,15 @@
     "languages": ["English", "Spanish"],
     "rating": 4.9,
     "review_count": 248,
-    "accepted_insurance": ["usc-aetna-student", "anthem-blue-hmo", "cigna-open-access"],
+    "accepted_insurance": [
+      "usc-aetna-student",
+      "anthem-blue-hmo",
+      "cigna-open-access",
+      "USC SHIP / Aetna Student Health",
+      "Aetna Student Health PPO",
+      "TRIO HMO for IFP",
+      "Kaiser Permanente California"
+    ],
     "availability_days": 2,
     "telehealth": true,
     "gender": "Female",
@@ -57,7 +83,14 @@
     "languages": ["English", "Korean", "Mandarin"],
     "rating": 4.6,
     "review_count": 133,
-    "accepted_insurance": ["uhc-student-choice", "anthem-blue-hmo", "blue-shield-ppo"],
+    "accepted_insurance": [
+      "uhc-student-choice",
+      "anthem-blue-hmo",
+      "blue-shield-ppo",
+      "UnitedHealthcare StudentResources PPO",
+      "TRIO HMO for IFP",
+      "Exclusive PPO for IFP"
+    ],
     "availability_days": 4,
     "telehealth": true,
     "gender": "Female",
@@ -73,7 +106,14 @@
     "languages": ["English", "Hindi"],
     "rating": 4.5,
     "review_count": 118,
-    "accepted_insurance": ["cigna-open-access", "blue-shield-ppo", "uhc-student-choice"],
+    "accepted_insurance": [
+      "cigna-open-access",
+      "blue-shield-ppo",
+      "uhc-student-choice",
+      "Ambetter PPO",
+      "Exclusive PPO for IFP",
+      "UnitedHealthcare StudentResources PPO"
+    ],
     "availability_days": 5,
     "telehealth": true,
     "gender": "Male",
@@ -89,7 +129,14 @@
     "languages": ["English", "Korean"],
     "rating": 4.8,
     "review_count": 164,
-    "accepted_insurance": ["usc-aetna-student", "cigna-open-access", "blue-shield-ppo"],
+    "accepted_insurance": [
+      "usc-aetna-student",
+      "cigna-open-access",
+      "blue-shield-ppo",
+      "Aetna Student Health PPO",
+      "Exclusive PPO for IFP",
+      "Kaiser Permanente California"
+    ],
     "availability_days": 3,
     "telehealth": false,
     "gender": "Female",
@@ -105,7 +152,14 @@
     "languages": ["English", "Spanish"],
     "rating": 4.7,
     "review_count": 141,
-    "accepted_insurance": ["anthem-blue-hmo", "cigna-open-access", "blue-shield-ppo"],
+    "accepted_insurance": [
+      "anthem-blue-hmo",
+      "cigna-open-access",
+      "blue-shield-ppo",
+      "Ambetter HMO",
+      "Exclusive PPO for IFP",
+      "TRIO HMO for IFP"
+    ],
     "availability_days": 6,
     "telehealth": true,
     "gender": "Male",
@@ -121,11 +175,19 @@
     "languages": ["English"],
     "rating": 4.4,
     "review_count": 96,
-    "accepted_insurance": ["usc-aetna-student", "uhc-student-choice", "cigna-open-access", "blue-shield-ppo"],
+    "accepted_insurance": [
+      "usc-aetna-student",
+      "uhc-student-choice",
+      "cigna-open-access",
+      "blue-shield-ppo",
+      "Aetna Student Health PPO",
+      "UnitedHealthcare StudentResources PPO",
+      "Ambetter HMO",
+      "MOLINA MARKETPLACE"
+    ],
     "availability_days": 0,
     "telehealth": true,
     "gender": "Female",
     "profile_blurb": "Fast access for common illness visits and initial workups."
   }
 ]
-

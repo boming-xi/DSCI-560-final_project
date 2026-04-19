@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Literal
+
 from pydantic import BaseModel, Field
 
 from app.schemas.insurance import InsuranceSummary
@@ -15,6 +17,16 @@ class RankingBreakdown(BaseModel):
     trust_score: float
     total_score: float
     summary: str
+
+
+class InsuranceVerification(BaseModel):
+    status: Literal["verified", "likely", "demo", "uncertain"]
+    label: str
+    reason: str
+    evidence: list[str] = Field(default_factory=list)
+    network_name: str | None = None
+    network_url: str | None = None
+    source: str | None = None
 
 
 class ClinicInfo(BaseModel):
@@ -56,12 +68,14 @@ class DoctorProfile(BaseModel):
     distance_km: float
     estimated_cost: int | None = None
     referral_required: bool = False
+    insurance_verification: InsuranceVerification | None = None
     ranking_breakdown: RankingBreakdown | None = None
 
 
 class DoctorSearchRequest(BaseModel):
     symptom_text: str
     insurance_query: str | None = None
+    insurance_selected_plan_id: str | None = None
     insurance_plan_id_override: str | None = None
     location: Location | None = None
     preferred_language: str | None = None

@@ -277,6 +277,7 @@ def build_marketplace_catalog(source_dir: Path) -> list[dict[str, object]]:
                 "provider": provider,
                 "plan_name": row["PLAN MARKETING NAME"].strip(),
                 "plan_type": plan_type,
+                "network_name": network_data["name"] or None,
                 "metal_level": metal_level,
                 "coverage_channels": ["marketplace"],
                 "service_states": ["CA"],

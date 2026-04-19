@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from app.models.doctor import DoctorRecord
 from app.models.insurance import InsurancePlanRecord
+from app.schemas.doctor import InsuranceVerification
 
 
 def compute_estimated_cost(plan: InsurancePlanRecord | None, doctor: DoctorRecord) -> int | None:
@@ -15,7 +16,19 @@ def compute_estimated_cost(plan: InsurancePlanRecord | None, doctor: DoctorRecor
     return plan.specialist_copay
 
 
-def insurance_fit_score(plan: InsurancePlanRecord | None, doctor: DoctorRecord) -> float:
+def insurance_fit_score(
+    plan: InsurancePlanRecord | None,
+    doctor: DoctorRecord,
+    verification: InsuranceVerification | None = None,
+) -> float:
+    if verification is not None:
+        if verification.status == "verified":
+            return 1.0
+        if verification.status == "likely":
+            return 0.78
+        if verification.status == "demo":
+            return 0.58
+        return 0.12
     if plan is None:
         return 0.45
     return 1.0 if plan.id in doctor.accepted_insurance else 0.05
@@ -30,4 +43,3 @@ def insurance_notes(plan: InsurancePlanRecord | None, matched: bool) -> list[str
     else:
         notes.append("Plan matched, but not every doctor shown is necessarily in-network.")
     return notes
-

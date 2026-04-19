@@ -28,7 +28,12 @@
       "languages": ["English", "Spanish"],
       "rating": 4.7,
       "review_count": 89,
-      "accepted_insurance": ["usc-aetna-student", "cigna-open-access"],
+      "accepted_insurance": [
+        "usc-aetna-student",
+        "cigna-open-access",
+        "Aetna Student Health PPO",
+        "MOLINA MARKETPLACE"
+      ],
       "availability_days": 2,
       "telehealth": true,
       "gender": "Female",

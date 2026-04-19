@@ -20,7 +20,6 @@ export function SymptomForm() {
   const [symptomText, setSymptomText] = useState(
     initialFlow.symptomText ?? "I have had a sore throat and fever for three days."
   );
-  const [durationDays, setDurationDays] = useState(initialFlow.durationDays ?? 3);
   const [preferredLanguage, setPreferredLanguage] = useState(
     initialFlow.preferredLanguage ?? "Mandarin"
   );
@@ -38,13 +37,13 @@ export function SymptomForm() {
     try {
       const triage = await api.triage({
         symptom_text: symptomText,
-        duration_days: durationDays,
+        duration_days: 1,
         location,
       });
 
       patchFlowState({
         symptomText,
-        durationDays,
+        durationDays: undefined,
         preferredLanguage,
         location,
         triage,
@@ -86,15 +85,6 @@ export function SymptomForm() {
       </label>
 
       <div className="form-grid">
-        <label className="field">
-          <span>Duration (days)</span>
-          <input
-            type="number"
-            min={1}
-            value={durationDays}
-            onChange={(event) => setDurationDays(Number(event.target.value))}
-          />
-        </label>
         <label className="field">
           <span>Preferred language</span>
           <select

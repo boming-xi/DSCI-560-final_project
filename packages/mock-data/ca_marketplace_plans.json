@@ -4,6 +4,7 @@
     "provider": "Aetna CVS Health",
     "plan_name": "Minimum Coverage HMO",
     "plan_type": "HMO",
+    "network_name": "HMO_California",
     "metal_level": "Catastrophic",
     "coverage_channels": [
       "marketplace"
@@ -63,6 +64,7 @@
     "provider": "Aetna CVS Health",
     "plan_name": "Bronze 60 HDHP HMO",
     "plan_type": "HMO",
+    "network_name": "HMO_California",
     "metal_level": "Expanded Bronze",
     "coverage_channels": [
       "marketplace"
@@ -121,6 +123,7 @@
     "provider": "Aetna CVS Health",
     "plan_name": "Bronze 60 HMO",
     "plan_type": "HMO",
+    "network_name": "HMO_California",
     "metal_level": "Expanded Bronze",
     "coverage_channels": [
       "marketplace"
@@ -179,6 +182,7 @@
     "provider": "Aetna CVS Health",
     "plan_name": "Gold 80 HMO",
     "plan_type": "HMO",
+    "network_name": "HMO_California",
     "metal_level": "Gold",
     "coverage_channels": [
       "marketplace"
@@ -237,6 +241,7 @@
     "provider": "Aetna CVS Health",
     "plan_name": "Platinum 90 HMO",
     "plan_type": "HMO",
+    "network_name": "HMO_California",
     "metal_level": "Platinum",
     "coverage_channels": [
       "marketplace"
@@ -296,6 +301,7 @@
     "provider": "Aetna CVS Health",
     "plan_name": "Silver 70 HMO",
     "plan_type": "HMO",
+    "network_name": "HMO_California",
     "metal_level": "Silver",
     "coverage_channels": [
       "marketplace"
@@ -354,6 +360,7 @@
     "provider": "Anthem Blue Cross",
     "plan_name": "Minimum Coverage EPO",
     "plan_type": "EPO",
+    "network_name": "Pathway - EPO, Dental Prime, and Advantage Pharmacy Network",
     "metal_level": "Catastrophic",
     "coverage_channels": [
       "marketplace"
@@ -454,6 +461,7 @@
     "provider": "Anthem Blue Cross",
     "plan_name": "Minimum Coverage HMO",
     "plan_type": "HMO",
+    "network_name": "Pathway - HMO, Dental Prime, and Advantage Pharmacy Network",
     "metal_level": "Catastrophic",
     "coverage_channels": [
       "marketplace"
@@ -512,6 +520,7 @@
     "provider": "Anthem Blue Cross",
     "plan_name": "Bronze 60 EPO",
     "plan_type": "EPO",
+    "network_name": "Pathway - EPO, Dental Prime, and Advantage Pharmacy Network",
     "metal_level": "Expanded Bronze",
     "coverage_channels": [
       "marketplace"
@@ -612,6 +621,7 @@
     "provider": "Anthem Blue Cross",
     "plan_name": "Bronze 60 HDHP EPO",
     "plan_type": "EPO",
+    "network_name": "Pathway - EPO, Dental Prime, and Advantage Pharmacy Network",
     "metal_level": "Expanded Bronze",
     "coverage_channels": [
       "marketplace"
@@ -712,6 +722,7 @@
     "provider": "Anthem Blue Cross",
     "plan_name": "Bronze 60 HMO",
     "plan_type": "HMO",
+    "network_name": "Pathway - HMO, Dental Prime, and Advantage Pharmacy Network",
     "metal_level": "Expanded Bronze",
     "coverage_channels": [
       "marketplace"
@@ -770,6 +781,7 @@
     "provider": "Anthem Blue Cross",
     "plan_name": "Gold 80 EPO",
     "plan_type": "EPO",
+    "network_name": "Pathway - EPO, Dental Prime, and Advantage Pharmacy Network",
     "metal_level": "Gold",
     "coverage_channels": [
       "marketplace"
@@ -871,6 +883,7 @@
     "provider": "Anthem Blue Cross",
     "plan_name": "Gold 80 HMO",
     "plan_type": "HMO",
+    "network_name": "Pathway - HMO, Dental Prime, and Advantage Pharmacy Network",
     "metal_level": "Gold",
     "coverage_channels": [
       "marketplace"
@@ -928,6 +941,7 @@
     "provider": "Anthem Blue Cross",
     "plan_name": "Platinum 90 EPO",
     "plan_type": "EPO",
+    "network_name": "Pathway - EPO, Dental Prime, and Advantage Pharmacy Network",
     "metal_level": "Platinum",
     "coverage_channels": [
       "marketplace"
@@ -1029,6 +1043,7 @@
     "provider": "Anthem Blue Cross",
     "plan_name": "Platinum 90 HMO",
     "plan_type": "HMO",
+    "network_name": "Pathway - HMO, Dental Prime, and Advantage Pharmacy Network",
     "metal_level": "Platinum",
     "coverage_channels": [
       "marketplace"
@@ -1087,6 +1102,7 @@
     "provider": "Anthem Blue Cross",
     "plan_name": "Silver 70 EPO",
     "plan_type": "EPO",
+    "network_name": "Pathway - EPO, Dental Prime, and Advantage Pharmacy Network",
     "metal_level": "Silver",
     "coverage_channels": [
       "marketplace"
@@ -1187,6 +1203,7 @@
     "provider": "Anthem Blue Cross",
     "plan_name": "Silver 70 HMO",
     "plan_type": "HMO",
+    "network_name": "Pathway - HMO, Dental Prime, and Advantage Pharmacy Network",
     "metal_level": "Silver",
     "coverage_channels": [
       "marketplace"
@@ -1244,6 +1261,7 @@
     "provider": "Balance by CCHP",
     "plan_name": "Minimum Coverage HMO",
     "plan_type": "HMO",
+    "network_name": "Medical Network",
     "metal_level": "Catastrophic",
     "coverage_channels": [
       "marketplace"
@@ -1294,6 +1312,7 @@
     "provider": "Balance by CCHP",
     "plan_name": "Minimum Coverage HMO",
     "plan_type": "HMO",
+    "network_name": "Medical Network",
     "metal_level": "Catastrophic",
     "coverage_channels": [
       "marketplace"
@@ -1344,6 +1363,7 @@
     "provider": "Balance by CCHP",
     "plan_name": "Bronze 60 HDHP HMO",
     "plan_type": "HMO",
+    "network_name": "Medical Network",
     "metal_level": "Expanded Bronze",
     "coverage_channels": [
       "marketplace"
@@ -1394,6 +1414,7 @@
     "provider": "Balance by CCHP",
     "plan_name": "Bronze 60 HDHP HMO",
     "plan_type": "HMO",
+    "network_name": "Medical Network",
     "metal_level": "Expanded Bronze",
     "coverage_channels": [
       "marketplace"
@@ -1444,6 +1465,7 @@
     "provider": "Balance by CCHP",
     "plan_name": "Bronze 60 HMO",
     "plan_type": "HMO",
+    "network_name": "Medical Network",
     "metal_level": "Expanded Bronze",
     "coverage_channels": [
       "marketplace"
@@ -1494,6 +1516,7 @@
     "provider": "Balance by CCHP",
     "plan_name": "Bronze 60 HMO",
     "plan_type": "HMO",
+    "network_name": "Medical Network",
     "metal_level": "Expanded Bronze",
     "coverage_channels": [
       "marketplace"
@@ -1544,6 +1567,7 @@
     "provider": "Balance by CCHP",
     "plan_name": "Gold 80 HMO",
     "plan_type": "HMO",
+    "network_name": "Medical Network",
     "metal_level": "Gold",
     "coverage_channels": [
       "marketplace"
@@ -1595,6 +1619,7 @@
     "provider": "Balance by CCHP",
     "plan_name": "Gold 80 HMO",
     "plan_type": "HMO",
+    "network_name": "Medical Network",
     "metal_level": "Gold",
     "coverage_channels": [
       "marketplace"
@@ -1646,6 +1671,7 @@
     "provider": "Balance by CCHP",
     "plan_name": "Platinum 90 HMO",
     "plan_type": "HMO",
+    "network_name": "Medical Network",
     "metal_level": "Platinum",
     "coverage_channels": [
       "marketplace"
@@ -1697,6 +1723,7 @@
     "provider": "Balance by CCHP",
     "plan_name": "Platinum 90 HMO",
     "plan_type": "HMO",
+    "network_name": "Medical Network",
     "metal_level": "Platinum",
     "coverage_channels": [
       "marketplace"
@@ -1748,6 +1775,7 @@
     "provider": "Balance by CCHP",
     "plan_name": "Silver 70 HMO",
     "plan_type": "HMO",
+    "network_name": "Medical Network",
     "metal_level": "Silver",
     "coverage_channels": [
       "marketplace"
@@ -1798,6 +1826,7 @@
     "provider": "Balance by CCHP",
     "plan_name": "Silver 70 HMO",
     "plan_type": "HMO",
+    "network_name": "Medical Network",
     "metal_level": "Silver",
     "coverage_channels": [
       "marketplace"
@@ -1848,6 +1877,7 @@
     "provider": "Blue Shield of California",
     "plan_name": "Minimum Coverage PPO",
     "plan_type": "PPO",
+    "network_name": "Exclusive PPO for IFP",
     "metal_level": "Catastrophic",
     "coverage_channels": [
       "marketplace"
@@ -1896,6 +1926,7 @@
     "provider": "Blue Shield of California",
     "plan_name": "Bronze 60 HDHP PPO",
     "plan_type": "PPO",
+    "network_name": "Exclusive PPO for IFP",
     "metal_level": "Expanded Bronze",
     "coverage_channels": [
       "marketplace"
@@ -1944,6 +1975,7 @@
     "provider": "Blue Shield of California",
     "plan_name": "Bronze 60 PPO",
     "plan_type": "PPO",
+    "network_name": "Exclusive PPO for IFP",
     "metal_level": "Expanded Bronze",
     "coverage_channels": [
       "marketplace"
@@ -1992,6 +2024,7 @@
     "provider": "Blue Shield of California",
     "plan_name": "Gold 80 PPO",
     "plan_type": "PPO",
+    "network_name": "Exclusive PPO for IFP",
     "metal_level": "Gold",
     "coverage_channels": [
       "marketplace"
@@ -2041,6 +2074,7 @@
     "provider": "Blue Shield of California",
     "plan_name": "Gold 80 Trio HMO",
     "plan_type": "HMO",
+    "network_name": "TRIO HMO for IFP",
     "metal_level": "Gold",
     "coverage_channels": [
       "marketplace"
@@ -2102,6 +2136,7 @@
     "provider": "Blue Shield of California",
     "plan_name": "Gold 80 Trio HMO",
     "plan_type": "HMO",
+    "network_name": "TRIO HMO for IFP",
     "metal_level": "Gold",
     "coverage_channels": [
       "marketplace"
@@ -2199,6 +2234,7 @@
     "provider": "Blue Shield of California",
     "plan_name": "Gold 80 Trio HMO",
     "plan_type": "HMO",
+    "network_name": "TRIO HMO for IFP",
     "metal_level": "Gold",
     "coverage_channels": [
       "marketplace"
@@ -2411,6 +2447,7 @@
     "provider": "Blue Shield of California",
     "plan_name": "Gold 80 Trio HMO",
     "plan_type": "HMO",
+    "network_name": "TRIO HMO for IFP",
     "metal_level": "Gold",
     "coverage_channels": [
       "marketplace"
@@ -2461,6 +2498,7 @@
     "provider": "Blue Shield of California",
     "plan_name": "Gold 80 Trio HMO",
     "plan_type": "HMO",
+    "network_name": "TRIO HMO for IFP",
     "metal_level": "Gold",
     "coverage_channels": [
       "marketplace"
@@ -2512,6 +2550,7 @@
     "provider": "Blue Shield of California",
     "plan_name": "Gold 80 Trio HMO",
     "plan_type": "HMO",
+    "network_name": "TRIO HMO for IFP",
     "metal_level": "Gold",
     "coverage_channels": [
       "marketplace"
@@ -2563,6 +2602,7 @@
     "provider": "Blue Shield of California",
     "plan_name": "Gold 80 Trio HMO",
     "plan_type": "HMO",
+    "network_name": "TRIO HMO for IFP",
     "metal_level": "Gold",
     "coverage_channels": [
       "marketplace"
@@ -2614,6 +2654,7 @@
     "provider": "Blue Shield of California",
     "plan_name": "Gold 80 Trio HMO",
     "plan_type": "HMO",
+    "network_name": "TRIO HMO for IFP",
     "metal_level": "Gold",
     "coverage_channels": [
       "marketplace"
@@ -2665,6 +2706,7 @@
     "provider": "Blue Shield of California",
     "plan_name": "Gold 80 Trio HMO",
     "plan_type": "HMO",
+    "network_name": "TRIO HMO for IFP",
     "metal_level": "Gold",
     "coverage_channels": [
       "marketplace"
@@ -2745,6 +2787,7 @@
     "provider": "Blue Shield of California",
     "plan_name": "Gold 80 Trio HMO",
     "plan_type": "HMO",
+    "network_name": "TRIO HMO for IFP",
     "metal_level": "Gold",
     "coverage_channels": [
       "marketplace"
@@ -2853,6 +2896,7 @@
     "provider": "Blue Shield of California",
     "plan_name": "Gold 80 Trio HMO",
     "plan_type": "HMO",
+    "network_name": "TRIO HMO for IFP",
     "metal_level": "Gold",
     "coverage_channels": [
       "marketplace"
@@ -2912,6 +2956,7 @@
     "provider": "Blue Shield of California",
     "plan_name": "Gold 80 Trio HMO",
     "plan_type": "HMO",
+    "network_name": "TRIO HMO for IFP",
     "metal_level": "Gold",
     "coverage_channels": [
       "marketplace"
@@ -3074,6 +3119,7 @@
     "provider": "Blue Shield of California",
     "plan_name": "Gold 80 Trio HMO",
     "plan_type": "HMO",
+    "network_name": "TRIO HMO for IFP",
     "metal_level": "Gold",
     "coverage_channels": [
       "marketplace"
@@ -3179,6 +3225,7 @@
     "provider": "Blue Shield of California",
     "plan_name": "Gold 80 Trio HMO",
     "plan_type": "HMO",
+    "network_name": "TRIO HMO for IFP",
     "metal_level": "Gold",
     "coverage_channels": [
       "marketplace"
@@ -3430,6 +3477,7 @@
     "provider": "Blue Shield of California",
     "plan_name": "Gold 80 Trio HMO",
     "plan_type": "HMO",
+    "network_name": "TRIO HMO for IFP",
     "metal_level": "Gold",
     "coverage_channels": [
       "marketplace"
@@ -3750,6 +3798,7 @@
     "provider": "Blue Shield of California",
     "plan_name": "Gold 80 Trio HMO",
     "plan_type": "HMO",
+    "network_name": "TRIO HMO for IFP",
     "metal_level": "Gold",
     "coverage_channels": [
       "marketplace"
@@ -3985,6 +4034,7 @@
     "provider": "Blue Shield of California",
     "plan_name": "Gold 80 Trio HMO",
     "plan_type": "HMO",
+    "network_name": "TRIO HMO for IFP",
     "metal_level": "Gold",
     "coverage_channels": [
       "marketplace"
@@ -4035,6 +4085,7 @@
     "provider": "Blue Shield of California",
     "plan_name": "Gold 80 Trio HMO",
     "plan_type": "HMO",
+    "network_name": "TRIO HMO for IFP",
     "metal_level": "Gold",
     "coverage_channels": [
       "marketplace"
@@ -4262,6 +4313,7 @@
     "provider": "Blue Shield of California",
     "plan_name": "Platinum 90 PPO",
     "plan_type": "PPO",
+    "network_name": "Exclusive PPO for IFP",
     "metal_level": "Platinum",
     "coverage_channels": [
       "marketplace"
@@ -4311,6 +4363,7 @@
     "provider": "Blue Shield of California",
     "plan_name": "Platinum 90 Trio HMO",
     "plan_type": "HMO",
+    "network_name": "TRIO HMO for IFP",
     "metal_level": "Platinum",
     "coverage_channels": [
       "marketplace"
@@ -4372,6 +4425,7 @@
     "provider": "Blue Shield of California",
     "plan_name": "Platinum 90 Trio HMO",
     "plan_type": "HMO",
+    "network_name": "TRIO HMO for IFP",
     "metal_level": "Platinum",
     "coverage_channels": [
       "marketplace"
@@ -4469,6 +4523,7 @@
     "provider": "Blue Shield of California",
     "plan_name": "Platinum 90 Trio HMO",
     "plan_type": "HMO",
+    "network_name": "TRIO HMO for IFP",
     "metal_level": "Platinum",
     "coverage_channels": [
       "marketplace"
@@ -4682,6 +4737,7 @@
     "provider": "Blue Shield of California",
     "plan_name": "Platinum 90 Trio HMO",
     "plan_type": "HMO",
+    "network_name": "TRIO HMO for IFP",
     "metal_level": "Platinum",
     "coverage_channels": [
       "marketplace"
@@ -4733,6 +4789,7 @@
     "provider": "Blue Shield of California",
     "plan_name": "Platinum 90 Trio HMO",
     "plan_type": "HMO",
+    "network_name": "TRIO HMO for IFP",
     "metal_level": "Platinum",
     "coverage_channels": [
       "marketplace"
@@ -4784,6 +4841,7 @@
     "provider": "Blue Shield of California",
     "plan_name": "Platinum 90 Trio HMO",
     "plan_type": "HMO",
+    "network_name": "TRIO HMO for IFP",
     "metal_level": "Platinum",
     "coverage_channels": [
       "marketplace"
@@ -4835,6 +4893,7 @@
     "provider": "Blue Shield of California",
     "plan_name": "Platinum 90 Trio HMO",
     "plan_type": "HMO",
+    "network_name": "TRIO HMO for IFP",
     "metal_level": "Platinum",
     "coverage_channels": [
       "marketplace"
@@ -4886,6 +4945,7 @@
     "provider": "Blue Shield of California",
     "plan_name": "Platinum 90 Trio HMO",
     "plan_type": "HMO",
+    "network_name": "TRIO HMO for IFP",
     "metal_level": "Platinum",
     "coverage_channels": [
       "marketplace"
@@ -4937,6 +4997,7 @@
     "provider": "Blue Shield of California",
     "plan_name": "Platinum 90 Trio HMO",
     "plan_type": "HMO",
+    "network_name": "TRIO HMO for IFP",
     "metal_level": "Platinum",
     "coverage_channels": [
       "marketplace"
@@ -5017,6 +5078,7 @@
     "provider": "Blue Shield of California",
     "plan_name": "Platinum 90 Trio HMO",
     "plan_type": "HMO",
+    "network_name": "TRIO HMO for IFP",
     "metal_level": "Platinum",
     "coverage_channels": [
       "marketplace"
@@ -5125,6 +5187,7 @@
     "provider": "Blue Shield of California",
     "plan_name": "Platinum 90 Trio HMO",
     "plan_type": "HMO",
+    "network_name": "TRIO HMO for IFP",
     "metal_level": "Platinum",
     "coverage_channels": [
       "marketplace"
@@ -5184,6 +5247,7 @@
     "provider": "Blue Shield of California",
     "plan_name": "Platinum 90 Trio HMO",
     "plan_type": "HMO",
+    "network_name": "TRIO HMO for IFP",
     "metal_level": "Platinum",
     "coverage_channels": [
       "marketplace"
@@ -5346,6 +5410,7 @@
     "provider": "Blue Shield of California",
     "plan_name": "Platinum 90 Trio HMO",
     "plan_type": "HMO",
+    "network_name": "TRIO HMO for IFP",
     "metal_level": "Platinum",
     "coverage_channels": [
       "marketplace"
@@ -5452,6 +5517,7 @@
     "provider": "Blue Shield of California",
     "plan_name": "Platinum 90 Trio HMO",
     "plan_type": "HMO",
+    "network_name": "TRIO HMO for IFP",
     "metal_level": "Platinum",
     "coverage_channels": [
       "marketplace"
@@ -5703,6 +5769,7 @@
     "provider": "Blue Shield of California",
     "plan_name": "Platinum 90 Trio HMO",
     "plan_type": "HMO",
+    "network_name": "TRIO HMO for IFP",
     "metal_level": "Platinum",
     "coverage_channels": [
       "marketplace"
@@ -6023,6 +6090,7 @@
     "provider": "Blue Shield of California",
     "plan_name": "Platinum 90 Trio HMO",
     "plan_type": "HMO",
+    "network_name": "TRIO HMO for IFP",
     "metal_level": "Platinum",
     "coverage_channels": [
       "marketplace"
@@ -6258,6 +6326,7 @@
     "provider": "Blue Shield of California",
     "plan_name": "Platinum 90 Trio HMO",
     "plan_type": "HMO",
+    "network_name": "TRIO HMO for IFP",
     "metal_level": "Platinum",
     "coverage_channels": [
       "marketplace"
@@ -6308,6 +6377,7 @@
     "provider": "Blue Shield of California",
     "plan_name": "Platinum 90 Trio HMO",
     "plan_type": "HMO",
+    "network_name": "TRIO HMO for IFP",
     "metal_level": "Platinum",
     "coverage_channels": [
       "marketplace"
@@ -6535,6 +6605,7 @@
     "provider": "Blue Shield of California",
     "plan_name": "Silver 70 PPO",
     "plan_type": "PPO",
+    "network_name": "Exclusive PPO for IFP",
     "metal_level": "Silver",
     "coverage_channels": [
       "marketplace"
@@ -6584,6 +6655,7 @@
     "provider": "Blue Shield of California",
     "plan_name": "Silver 70 Trio HMO",
     "plan_type": "HMO",
+    "network_name": "TRIO HMO for IFP",
     "metal_level": "Silver",
     "coverage_channels": [
       "marketplace"
@@ -6645,6 +6717,7 @@
     "provider": "Blue Shield of California",
     "plan_name": "Silver 70 Trio HMO",
     "plan_type": "HMO",
+    "network_name": "TRIO HMO for IFP",
     "metal_level": "Silver",
     "coverage_channels": [
       "marketplace"
@@ -6741,6 +6814,7 @@
     "provider": "Blue Shield of California",
     "plan_name": "Silver 70 Trio HMO",
     "plan_type": "HMO",
+    "network_name": "TRIO HMO for IFP",
     "metal_level": "Silver",
     "coverage_channels": [
       "marketplace"
@@ -6953,6 +7027,7 @@
     "provider": "Blue Shield of California",
     "plan_name": "Silver 70 Trio HMO",
     "plan_type": "HMO",
+    "network_name": "TRIO HMO for IFP",
     "metal_level": "Silver",
     "coverage_channels": [
       "marketplace"
@@ -7003,6 +7078,7 @@
     "provider": "Blue Shield of California",
     "plan_name": "Silver 70 Trio HMO",
     "plan_type": "HMO",
+    "network_name": "TRIO HMO for IFP",
     "metal_level": "Silver",
     "coverage_channels": [
       "marketplace"
@@ -7053,6 +7129,7 @@
     "provider": "Blue Shield of California",
     "plan_name": "Silver 70 Trio HMO",
     "plan_type": "HMO",
+    "network_name": "TRIO HMO for IFP",
     "metal_level": "Silver",
     "coverage_channels": [
       "marketplace"
@@ -7103,6 +7180,7 @@
     "provider": "Blue Shield of California",
     "plan_name": "Silver 70 Trio HMO",
     "plan_type": "HMO",
+    "network_name": "TRIO HMO for IFP",
     "metal_level": "Silver",
     "coverage_channels": [
       "marketplace"
@@ -7154,6 +7232,7 @@
     "provider": "Blue Shield of California",
     "plan_name": "Silver 70 Trio HMO",
     "plan_type": "HMO",
+    "network_name": "TRIO HMO for IFP",
     "metal_level": "Silver",
     "coverage_channels": [
       "marketplace"
@@ -7204,6 +7283,7 @@
     "provider": "Blue Shield of California",
     "plan_name": "Silver 70 Trio HMO",
     "plan_type": "HMO",
+    "network_name": "TRIO HMO for IFP",
     "metal_level": "Silver",
     "coverage_channels": [
       "marketplace"
@@ -7283,6 +7363,7 @@
     "provider": "Blue Shield of California",
     "plan_name": "Silver 70 Trio HMO",
     "plan_type": "HMO",
+    "network_name": "TRIO HMO for IFP",
     "metal_level": "Silver",
     "coverage_channels": [
       "marketplace"
@@ -7391,6 +7472,7 @@
     "provider": "Blue Shield of California",
     "plan_name": "Silver 70 Trio HMO",
     "plan_type": "HMO",
+    "network_name": "TRIO HMO for IFP",
     "metal_level": "Silver",
     "coverage_channels": [
       "marketplace"
@@ -7449,6 +7531,7 @@
     "provider": "Blue Shield of California",
     "plan_name": "Silver 70 Trio HMO",
     "plan_type": "HMO",
+    "network_name": "TRIO HMO for IFP",
     "metal_level": "Silver",
     "coverage_channels": [
       "marketplace"
@@ -7611,6 +7694,7 @@
     "provider": "Blue Shield of California",
     "plan_name": "Silver 70 Trio HMO",
     "plan_type": "HMO",
+    "network_name": "TRIO HMO for IFP",
     "metal_level": "Silver",
     "coverage_channels": [
       "marketplace"
@@ -7716,6 +7800,7 @@
     "provider": "Blue Shield of California",
     "plan_name": "Silver 70 Trio HMO",
     "plan_type": "HMO",
+    "network_name": "TRIO HMO for IFP",
     "metal_level": "Silver",
     "coverage_channels": [
       "marketplace"
@@ -7967,6 +8052,7 @@
     "provider": "Blue Shield of California",
     "plan_name": "Silver 70 Trio HMO",
     "plan_type": "HMO",
+    "network_name": "TRIO HMO for IFP",
     "metal_level": "Silver",
     "coverage_channels": [
       "marketplace"
@@ -8287,6 +8373,7 @@
     "provider": "Blue Shield of California",
     "plan_name": "Silver 70 Trio HMO",
     "plan_type": "HMO",
+    "network_name": "TRIO HMO for IFP",
     "metal_level": "Silver",
     "coverage_channels": [
       "marketplace"
@@ -8522,6 +8609,7 @@
     "provider": "Blue Shield of California",
     "plan_name": "Silver 70 Trio HMO",
     "plan_type": "HMO",
+    "network_name": "TRIO HMO for IFP",
     "metal_level": "Silver",
     "coverage_channels": [
       "marketplace"
@@ -8572,6 +8660,7 @@
     "provider": "Blue Shield of California",
     "plan_name": "Silver 70 Trio HMO",
     "plan_type": "HMO",
+    "network_name": "TRIO HMO for IFP",
     "metal_level": "Silver",
     "coverage_channels": [
       "marketplace"
@@ -8799,6 +8888,7 @@
     "provider": "Health Net",
     "plan_name": "Minimum Coverage Ambetter HMO",
     "plan_type": "HMO",
+    "network_name": "Ambetter HMO",
     "metal_level": "Catastrophic",
     "coverage_channels": [
       "marketplace"
@@ -8913,6 +9003,7 @@
     "provider": "Health Net",
     "plan_name": "Minimum Coverage Ambetter HMO",
     "plan_type": "HMO",
+    "network_name": "Ambetter HMO",
     "metal_level": "Catastrophic",
     "coverage_channels": [
       "marketplace"
@@ -8964,6 +9055,7 @@
     "provider": "Health Net",
     "plan_name": "Minimum Coverage Ambetter PPO",
     "plan_type": "PPO",
+    "network_name": "Ambetter PPO",
     "metal_level": "Catastrophic",
     "coverage_channels": [
       "marketplace"
@@ -9040,6 +9132,7 @@
     "provider": "Health Net",
     "plan_name": "Minimum Coverage Ambetter PPO",
     "plan_type": "PPO",
+    "network_name": "Ambetter PPO",
     "metal_level": "Catastrophic",
     "coverage_channels": [
       "marketplace"
@@ -9314,6 +9407,7 @@
     "provider": "Health Net",
     "plan_name": "Minimum Coverage Ambetter PPO",
     "plan_type": "PPO",
+    "network_name": "Ambetter PPO",
     "metal_level": "Catastrophic",
     "coverage_channels": [
       "marketplace"
@@ -9640,6 +9734,7 @@
     "provider": "Health Net",
     "plan_name": "Minimum Coverage Ambetter PPO",
     "plan_type": "PPO",
+    "network_name": "Ambetter PPO",
     "metal_level": "Catastrophic",
     "coverage_channels": [
       "marketplace"
@@ -9893,6 +9988,7 @@
     "provider": "Health Net",
     "plan_name": "Minimum Coverage Ambetter PPO",
     "plan_type": "PPO",
+    "network_name": "Ambetter PPO",
     "metal_level": "Catastrophic",
     "coverage_channels": [
       "marketplace"
@@ -9944,6 +10040,7 @@
     "provider": "Health Net",
     "plan_name": "Minimum Coverage Ambetter PPO",
     "plan_type": "PPO",
+    "network_name": "Ambetter PPO",
     "metal_level": "Catastrophic",
     "coverage_channels": [
       "marketplace"
@@ -9995,6 +10092,7 @@
     "provider": "Health Net",
     "plan_name": "Bronze 60 Ambetter HMO",
     "plan_type": "HMO",
+    "network_name": "Ambetter HMO",
     "metal_level": "Expanded Bronze",
     "coverage_channels": [
       "marketplace"
@@ -10109,6 +10207,7 @@
     "provider": "Health Net",
     "plan_name": "Bronze 60 Ambetter HMO",
     "plan_type": "HMO",
+    "network_name": "Ambetter HMO",
     "metal_level": "Expanded Bronze",
     "coverage_channels": [
       "marketplace"
@@ -10160,6 +10259,7 @@
     "provider": "Health Net",
     "plan_name": "Bronze 60 Ambetter PPO",
     "plan_type": "PPO",
+    "network_name": "Ambetter PPO",
     "metal_level": "Expanded Bronze",
     "coverage_channels": [
       "marketplace"
@@ -10235,6 +10335,7 @@
     "provider": "Health Net",
     "plan_name": "Bronze 60 Ambetter PPO",
     "plan_type": "PPO",
+    "network_name": "Ambetter PPO",
     "metal_level": "Expanded Bronze",
     "coverage_channels": [
       "marketplace"
@@ -10509,6 +10610,7 @@
     "provider": "Health Net",
     "plan_name": "Bronze 60 Ambetter PPO",
     "plan_type": "PPO",
+    "network_name": "Ambetter PPO",
     "metal_level": "Expanded Bronze",
     "coverage_channels": [
       "marketplace"
@@ -10834,6 +10936,7 @@
     "provider": "Health Net",
     "plan_name": "Bronze 60 Ambetter PPO",
     "plan_type": "PPO",
+    "network_name": "Ambetter PPO",
     "metal_level": "Expanded Bronze",
     "coverage_channels": [
       "marketplace"
@@ -11087,6 +11190,7 @@
     "provider": "Health Net",
     "plan_name": "Bronze 60 Ambetter PPO",
     "plan_type": "PPO",
+    "network_name": "Ambetter PPO",
     "metal_level": "Expanded Bronze",
     "coverage_channels": [
       "marketplace"
@@ -11137,6 +11241,7 @@
     "provider": "Health Net",
     "plan_name": "Bronze 60 Ambetter PPO",
     "plan_type": "PPO",
+    "network_name": "Ambetter PPO",
     "metal_level": "Expanded Bronze",
     "coverage_channels": [
       "marketplace"
@@ -11187,6 +11292,7 @@
     "provider": "Health Net",
     "plan_name": "Bronze 60 HDHP Ambetter PPO",
     "plan_type": "PPO",
+    "network_name": "Ambetter PPO",
     "metal_level": "Expanded Bronze",
     "coverage_channels": [
       "marketplace"
@@ -11262,6 +11368,7 @@
     "provider": "Health Net",
     "plan_name": "Bronze 60 HDHP Ambetter PPO",
     "plan_type": "PPO",
+    "network_name": "Ambetter PPO",
     "metal_level": "Expanded Bronze",
     "coverage_channels": [
       "marketplace"
@@ -11536,6 +11643,7 @@
     "provider": "Health Net",
     "plan_name": "Bronze 60 HDHP Ambetter PPO",
     "plan_type": "PPO",
+    "network_name": "Ambetter PPO",
     "metal_level": "Expanded Bronze",
     "coverage_channels": [
       "marketplace"
@@ -11861,6 +11969,7 @@
     "provider": "Health Net",
     "plan_name": "Bronze 60 HDHP Ambetter PPO",
     "plan_type": "PPO",
+    "network_name": "Ambetter PPO",
     "metal_level": "Expanded Bronze",
     "coverage_channels": [
       "marketplace"
@@ -12114,6 +12223,7 @@
     "provider": "Health Net",
     "plan_name": "Bronze 60 HDHP Ambetter PPO",
     "plan_type": "PPO",
+    "network_name": "Ambetter PPO",
     "metal_level": "Expanded Bronze",
     "coverage_channels": [
       "marketplace"
@@ -12164,6 +12274,7 @@
     "provider": "Health Net",
     "plan_name": "Bronze 60 HDHP Ambetter PPO",
     "plan_type": "PPO",
+    "network_name": "Ambetter PPO",
     "metal_level": "Expanded Bronze",
     "coverage_channels": [
       "marketplace"
@@ -12214,6 +12325,7 @@
     "provider": "Health Net",
     "plan_name": "Gold 80 Ambetter HMO",
     "plan_type": "HMO",
+    "network_name": "Ambetter HMO",
     "metal_level": "Gold",
     "coverage_channels": [
       "marketplace"
@@ -12487,6 +12599,7 @@
     "provider": "Health Net",
     "plan_name": "Gold 80 Ambetter HMO",
     "plan_type": "HMO",
+    "network_name": "Ambetter HMO",
     "metal_level": "Gold",
     "coverage_channels": [
       "marketplace"
@@ -12812,6 +12925,7 @@
     "provider": "Health Net",
     "plan_name": "Gold 80 Ambetter HMO",
     "plan_type": "HMO",
+    "network_name": "Ambetter HMO",
     "metal_level": "Gold",
     "coverage_channels": [
       "marketplace"
@@ -13064,6 +13178,7 @@
     "provider": "Health Net",
     "plan_name": "Gold 80 Ambetter HMO",
     "plan_type": "HMO",
+    "network_name": "Ambetter HMO",
     "metal_level": "Gold",
     "coverage_channels": [
       "marketplace"
@@ -13114,6 +13229,7 @@
     "provider": "Health Net",
     "plan_name": "Gold 80 Ambetter HMO",
     "plan_type": "HMO",
+    "network_name": "Ambetter HMO",
     "metal_level": "Gold",
     "coverage_channels": [
       "marketplace"
@@ -13164,6 +13280,7 @@
     "provider": "Health Net",
     "plan_name": "Gold 80 Ambetter HMO",
     "plan_type": "HMO",
+    "network_name": "Ambetter HMO",
     "metal_level": "Gold",
     "coverage_channels": [
       "marketplace"
@@ -13277,6 +13394,7 @@
     "provider": "Health Net",
     "plan_name": "Gold 80 Ambetter HMO",
     "plan_type": "HMO",
+    "network_name": "Ambetter HMO",
     "metal_level": "Gold",
     "coverage_channels": [
       "marketplace"
@@ -13327,6 +13445,7 @@
     "provider": "Health Net",
     "plan_name": "Gold 80 Ambetter PPO",
     "plan_type": "PPO",
+    "network_name": "Ambetter PPO",
     "metal_level": "Gold",
     "coverage_channels": [
       "marketplace"
@@ -13403,6 +13522,7 @@
     "provider": "Health Net",
     "plan_name": "Gold 80 Ambetter PPO",
     "plan_type": "PPO",
+    "network_name": "Ambetter PPO",
     "metal_level": "Gold",
     "coverage_channels": [
       "marketplace"
@@ -13677,6 +13797,7 @@
     "provider": "Health Net",
     "plan_name": "Gold 80 Ambetter PPO",
     "plan_type": "PPO",
+    "network_name": "Ambetter PPO",
     "metal_level": "Gold",
     "coverage_channels": [
       "marketplace"
@@ -14003,6 +14124,7 @@
     "provider": "Health Net",
     "plan_name": "Gold 80 Ambetter PPO",
     "plan_type": "PPO",
+    "network_name": "Ambetter PPO",
     "metal_level": "Gold",
     "coverage_channels": [
       "marketplace"
@@ -14256,6 +14378,7 @@
     "provider": "Health Net",
     "plan_name": "Gold 80 Ambetter PPO",
     "plan_type": "PPO",
+    "network_name": "Ambetter PPO",
     "metal_level": "Gold",
     "coverage_channels": [
       "marketplace"
@@ -14307,6 +14430,7 @@
     "provider": "Health Net",
     "plan_name": "Gold 80 Ambetter PPO",
     "plan_type": "PPO",
+    "network_name": "Ambetter PPO",
     "metal_level": "Gold",
     "coverage_channels": [
       "marketplace"
@@ -14358,6 +14482,7 @@
     "provider": "Health Net",
     "plan_name": "Platinum 90 Ambetter HMO",
     "plan_type": "HMO",
+    "network_name": "Ambetter HMO",
     "metal_level": "Platinum",
     "coverage_channels": [
       "marketplace"
@@ -14631,6 +14756,7 @@
     "provider": "Health Net",
     "plan_name": "Platinum 90 Ambetter HMO",
     "plan_type": "HMO",
+    "network_name": "Ambetter HMO",
     "metal_level": "Platinum",
     "coverage_channels": [
       "marketplace"
@@ -14956,6 +15082,7 @@
     "provider": "Health Net",
     "plan_name": "Platinum 90 Ambetter HMO",
     "plan_type": "HMO",
+    "network_name": "Ambetter HMO",
     "metal_level": "Platinum",
     "coverage_channels": [
       "marketplace"
@@ -15208,6 +15335,7 @@
     "provider": "Health Net",
     "plan_name": "Platinum 90 Ambetter HMO",
     "plan_type": "HMO",
+    "network_name": "Ambetter HMO",
     "metal_level": "Platinum",
     "coverage_channels": [
       "marketplace"
@@ -15258,6 +15386,7 @@
     "provider": "Health Net",
     "plan_name": "Platinum 90 Ambetter HMO",
     "plan_type": "HMO",
+    "network_name": "Ambetter HMO",
     "metal_level": "Platinum",
     "coverage_channels": [
       "marketplace"
@@ -15308,6 +15437,7 @@
     "provider": "Health Net",
     "plan_name": "Platinum 90 Ambetter HMO",
     "plan_type": "HMO",
+    "network_name": "Ambetter HMO",
     "metal_level": "Platinum",
     "coverage_channels": [
       "marketplace"
@@ -15421,6 +15551,7 @@
     "provider": "Health Net",
     "plan_name": "Platinum 90 Ambetter HMO",
     "plan_type": "HMO",
+    "network_name": "Ambetter HMO",
     "metal_level": "Platinum",
     "coverage_channels": [
       "marketplace"
@@ -15471,6 +15602,7 @@
     "provider": "Health Net",
     "plan_name": "Platinum 90 Ambetter PPO",
     "plan_type": "PPO",
+    "network_name": "Ambetter PPO",
     "metal_level": "Platinum",
     "coverage_channels": [
       "marketplace"
@@ -15547,6 +15679,7 @@
     "provider": "Health Net",
     "plan_name": "Platinum 90 Ambetter PPO",
     "plan_type": "PPO",
+    "network_name": "Ambetter PPO",
     "metal_level": "Platinum",
     "coverage_channels": [
       "marketplace"
@@ -15821,6 +15954,7 @@
     "provider": "Health Net",
     "plan_name": "Platinum 90 Ambetter PPO",
     "plan_type": "PPO",
+    "network_name": "Ambetter PPO",
     "metal_level": "Platinum",
     "coverage_channels": [
       "marketplace"
@@ -16147,6 +16281,7 @@
     "provider": "Health Net",
     "plan_name": "Platinum 90 Ambetter PPO",
     "plan_type": "PPO",
+    "network_name": "Ambetter PPO",
     "metal_level": "Platinum",
     "coverage_channels": [
       "marketplace"
@@ -16400,6 +16535,7 @@
     "provider": "Health Net",
     "plan_name": "Platinum 90 Ambetter PPO",
     "plan_type": "PPO",
+    "network_name": "Ambetter PPO",
     "metal_level": "Platinum",
     "coverage_channels": [
       "marketplace"
@@ -16451,6 +16587,7 @@
     "provider": "Health Net",
     "plan_name": "Platinum 90 Ambetter PPO",
     "plan_type": "PPO",
+    "network_name": "Ambetter PPO",
     "metal_level": "Platinum",
     "coverage_channels": [
       "marketplace"
@@ -16502,6 +16639,7 @@
     "provider": "Health Net",
     "plan_name": "Silver 70 Ambetter HMO",
     "plan_type": "HMO",
+    "network_name": "Ambetter HMO",
     "metal_level": "Silver",
     "coverage_channels": [
       "marketplace"
@@ -16776,6 +16914,7 @@
     "provider": "Health Net",
     "plan_name": "Silver 70 Ambetter HMO",
     "plan_type": "HMO",
+    "network_name": "Ambetter HMO",
     "metal_level": "Silver",
     "coverage_channels": [
       "marketplace"
@@ -17101,6 +17240,7 @@
     "provider": "Health Net",
     "plan_name": "Silver 70 Ambetter HMO",
     "plan_type": "HMO",
+    "network_name": "Ambetter HMO",
     "metal_level": "Silver",
     "coverage_channels": [
       "marketplace"
@@ -17354,6 +17494,7 @@
     "provider": "Health Net",
     "plan_name": "Silver 70 Ambetter HMO",
     "plan_type": "HMO",
+    "network_name": "Ambetter HMO",
     "metal_level": "Silver",
     "coverage_channels": [
       "marketplace"
@@ -17404,6 +17545,7 @@
     "provider": "Health Net",
     "plan_name": "Silver 70 Ambetter HMO",
     "plan_type": "HMO",
+    "network_name": "Ambetter HMO",
     "metal_level": "Silver",
     "coverage_channels": [
       "marketplace"
@@ -17454,6 +17596,7 @@
     "provider": "Health Net",
     "plan_name": "Silver 70 Ambetter HMO",
     "plan_type": "HMO",
+    "network_name": "Ambetter HMO",
     "metal_level": "Silver",
     "coverage_channels": [
       "marketplace"
@@ -17567,6 +17710,7 @@
     "provider": "Health Net",
     "plan_name": "Silver 70 Ambetter HMO",
     "plan_type": "HMO",
+    "network_name": "Ambetter HMO",
     "metal_level": "Silver",
     "coverage_channels": [
       "marketplace"
@@ -17617,6 +17761,7 @@
     "provider": "Health Net",
     "plan_name": "Silver 70 Ambetter PPO",
     "plan_type": "PPO",
+    "network_name": "Ambetter PPO",
     "metal_level": "Silver",
     "coverage_channels": [
       "marketplace"
@@ -17693,6 +17838,7 @@
     "provider": "Health Net",
     "plan_name": "Silver 70 Ambetter PPO",
     "plan_type": "PPO",
+    "network_name": "Ambetter PPO",
     "metal_level": "Silver",
     "coverage_channels": [
       "marketplace"
@@ -17967,6 +18113,7 @@
     "provider": "Health Net",
     "plan_name": "Silver 70 Ambetter PPO",
     "plan_type": "PPO",
+    "network_name": "Ambetter PPO",
     "metal_level": "Silver",
     "coverage_channels": [
       "marketplace"
@@ -18293,6 +18440,7 @@
     "provider": "Health Net",
     "plan_name": "Silver 70 Ambetter PPO",
     "plan_type": "PPO",
+    "network_name": "Ambetter PPO",
     "metal_level": "Silver",
     "coverage_channels": [
       "marketplace"
@@ -18546,6 +18694,7 @@
     "provider": "Health Net",
     "plan_name": "Silver 70 Ambetter PPO",
     "plan_type": "PPO",
+    "network_name": "Ambetter PPO",
     "metal_level": "Silver",
     "coverage_channels": [
       "marketplace"
@@ -18597,6 +18746,7 @@
     "provider": "Health Net",
     "plan_name": "Silver 70 Ambetter PPO",
     "plan_type": "PPO",
+    "network_name": "Ambetter PPO",
     "metal_level": "Silver",
     "coverage_channels": [
       "marketplace"
@@ -18648,6 +18798,7 @@
     "provider": "IEHP",
     "plan_name": "Catastrophic",
     "plan_type": "HMO",
+    "network_name": "IEHP Covered",
     "metal_level": "Catastrophic",
     "coverage_channels": [
       "marketplace"
@@ -18700,6 +18851,7 @@
     "provider": "IEHP",
     "plan_name": "Bronze 60 HMO",
     "plan_type": "HMO",
+    "network_name": "IEHP Covered",
     "metal_level": "Expanded Bronze",
     "coverage_channels": [
       "marketplace"
@@ -18752,6 +18904,7 @@
     "provider": "IEHP",
     "plan_name": "Gold 80 HMO",
     "plan_type": "HMO",
+    "network_name": "IEHP Covered",
     "metal_level": "Gold",
     "coverage_channels": [
       "marketplace"
@@ -18803,6 +18956,7 @@
     "provider": "IEHP",
     "plan_name": "Platinum 90 HMO",
     "plan_type": "HMO",
+    "network_name": "IEHP Covered",
     "metal_level": "Platinum",
     "coverage_channels": [
       "marketplace"
@@ -18854,6 +19008,7 @@
     "provider": "IEHP",
     "plan_name": "Silver 70 HMO",
     "plan_type": "HMO",
+    "network_name": "IEHP Covered",
     "metal_level": "Silver",
     "coverage_channels": [
       "marketplace"
@@ -18906,6 +19061,7 @@
     "provider": "Kaiser Permanente",
     "plan_name": "Minimum Coverage HMO",
     "plan_type": "HMO",
+    "network_name": "Kaiser Permanente California",
     "metal_level": "Catastrophic",
     "coverage_channels": [
       "marketplace"
@@ -20304,6 +20460,7 @@
     "provider": "Kaiser Permanente",
     "plan_name": "Bronze 60 HDHP HMO",
     "plan_type": "HMO",
+    "network_name": "Kaiser Permanente California",
     "metal_level": "Expanded Bronze",
     "coverage_channels": [
       "marketplace"
@@ -21701,6 +21858,7 @@
     "provider": "Kaiser Permanente",
     "plan_name": "Bronze 60 HMO",
     "plan_type": "HMO",
+    "network_name": "Kaiser Permanente California",
     "metal_level": "Expanded Bronze",
     "coverage_channels": [
       "marketplace"
@@ -23098,6 +23256,7 @@
     "provider": "Kaiser Permanente",
     "plan_name": "Gold 80 HMO",
     "plan_type": "HMO",
+    "network_name": "Kaiser Permanente California",
     "metal_level": "Gold",
     "coverage_channels": [
       "marketplace"
@@ -24495,6 +24654,7 @@
     "provider": "Kaiser Permanente",
     "plan_name": "Gold 80 HMO Coinsurance",
     "plan_type": "HMO",
+    "network_name": "Kaiser Permanente California",
     "metal_level": "Gold",
     "coverage_channels": [
       "marketplace"
@@ -25892,6 +26052,7 @@
     "provider": "Kaiser Permanente",
     "plan_name": "Platinum 90 HMO",
     "plan_type": "HMO",
+    "network_name": "Kaiser Permanente California",
     "metal_level": "Platinum",
     "coverage_channels": [
       "marketplace"
@@ -27289,6 +27450,7 @@
     "provider": "Kaiser Permanente",
     "plan_name": "Silver 70 HMO",
     "plan_type": "HMO",
+    "network_name": "Kaiser Permanente California",
     "metal_level": "Silver",
     "coverage_channels": [
       "marketplace"
@@ -28686,6 +28848,7 @@
     "provider": "L.A. Care",
     "plan_name": "Minimum Coverage HMO",
     "plan_type": "HMO",
+    "network_name": "L.A. Care Covered",
     "metal_level": "Catastrophic",
     "coverage_channels": [
       "marketplace"
@@ -29231,6 +29394,7 @@
     "provider": "L.A. Care",
     "plan_name": "Bronze 60 HMO",
     "plan_type": "HMO",
+    "network_name": "L.A. Care Covered",
     "metal_level": "Expanded Bronze",
     "coverage_channels": [
       "marketplace"
@@ -29776,6 +29940,7 @@
     "provider": "L.A. Care",
     "plan_name": "Gold 80 HMO",
     "plan_type": "HMO",
+    "network_name": "L.A. Care Covered",
     "metal_level": "Gold",
     "coverage_channels": [
       "marketplace"
@@ -30321,6 +30486,7 @@
     "provider": "L.A. Care",
     "plan_name": "Platinum 90 HMO",
     "plan_type": "HMO",
+    "network_name": "L.A. Care Covered",
     "metal_level": "Platinum",
     "coverage_channels": [
       "marketplace"
@@ -30865,6 +31031,7 @@
     "provider": "L.A. Care",
     "plan_name": "Silver 70 HMO",
     "plan_type": "HMO",
+    "network_name": "L.A. Care Covered",
     "metal_level": "Silver",
     "coverage_channels": [
       "marketplace"
@@ -31410,6 +31577,7 @@
     "provider": "Molina Healthcare",
     "plan_name": "Minimum Coverage HMO",
     "plan_type": "HMO",
+    "network_name": "MOLINA MARKETPLACE",
     "metal_level": "Catastrophic",
     "coverage_channels": [
       "marketplace"
@@ -32089,6 +32257,7 @@
     "provider": "Molina Healthcare",
     "plan_name": "Bronze 60 HMO",
     "plan_type": "HMO",
+    "network_name": "MOLINA MARKETPLACE",
     "metal_level": "Expanded Bronze",
     "coverage_channels": [
       "marketplace"
@@ -32768,6 +32937,7 @@
     "provider": "Molina Healthcare",
     "plan_name": "Gold 80 HMO",
     "plan_type": "HMO",
+    "network_name": "MOLINA MARKETPLACE",
     "metal_level": "Gold",
     "coverage_channels": [
       "marketplace"
@@ -33447,6 +33617,7 @@
     "provider": "Molina Healthcare",
     "plan_name": "Platinum 90 HMO",
     "plan_type": "HMO",
+    "network_name": "MOLINA MARKETPLACE",
     "metal_level": "Platinum",
     "coverage_channels": [
       "marketplace"
@@ -34126,6 +34297,7 @@
     "provider": "Molina Healthcare",
     "plan_name": "Silver 70 HMO",
     "plan_type": "HMO",
+    "network_name": "MOLINA MARKETPLACE",
     "metal_level": "Silver",
     "coverage_channels": [
       "marketplace"
@@ -34806,6 +34978,7 @@
     "provider": "Sharp Health Plan",
     "plan_name": "Minimum Coverage Performance HMO",
     "plan_type": "HMO",
+    "network_name": "Performance",
     "metal_level": "Catastrophic",
     "coverage_channels": [
       "marketplace"
@@ -35035,6 +35208,7 @@
     "provider": "Sharp Health Plan",
     "plan_name": "Bronze 60 HDHP Premier HMO",
     "plan_type": "HMO",
+    "network_name": "Premier",
     "metal_level": "Expanded Bronze",
     "coverage_channels": [
       "marketplace"
@@ -35220,6 +35394,7 @@
     "provider": "Sharp Health Plan",
     "plan_name": "Bronze 60 Performance HMO",
     "plan_type": "HMO",
+    "network_name": "Performance",
     "metal_level": "Expanded Bronze",
     "coverage_channels": [
       "marketplace"
@@ -35449,6 +35624,7 @@
     "provider": "Sharp Health Plan",
     "plan_name": "Gold 80 Performance HMO",
     "plan_type": "HMO",
+    "network_name": "Performance",
     "metal_level": "Gold",
     "coverage_channels": [
       "marketplace"
@@ -35677,6 +35853,7 @@
     "provider": "Sharp Health Plan",
     "plan_name": "Gold 80 Premier HMO",
     "plan_type": "HMO",
+    "network_name": "Premier",
     "metal_level": "Gold",
     "coverage_channels": [
       "marketplace"
@@ -35862,6 +36039,7 @@
     "provider": "Sharp Health Plan",
     "plan_name": "Platinum 90 Performance HMO",
     "plan_type": "HMO",
+    "network_name": "Performance",
     "metal_level": "Platinum",
     "coverage_channels": [
       "marketplace"
@@ -36090,6 +36268,7 @@
     "provider": "Sharp Health Plan",
     "plan_name": "Platinum 90 Premier HMO",
     "plan_type": "HMO",
+    "network_name": "Premier",
     "metal_level": "Platinum",
     "coverage_channels": [
       "marketplace"
@@ -36275,6 +36454,7 @@
     "provider": "Sharp Health Plan",
     "plan_name": "Silver 70 Performance HMO",
     "plan_type": "HMO",
+    "network_name": "Performance",
     "metal_level": "Silver",
     "coverage_channels": [
       "marketplace"
@@ -36503,6 +36683,7 @@
     "provider": "Sharp Health Plan",
     "plan_name": "Silver 70 Premier HMO",
     "plan_type": "HMO",
+    "network_name": "Premier",
     "metal_level": "Silver",
     "coverage_channels": [
       "marketplace"
@@ -36688,6 +36869,7 @@
     "provider": "Valley Health Plan",
     "plan_name": "Minimum Coverage HMO",
     "plan_type": "HMO",
+    "network_name": "Narrow",
     "metal_level": "Catastrophic",
     "coverage_channels": [
       "marketplace"
@@ -36739,6 +36921,7 @@
     "provider": "Valley Health Plan",
     "plan_name": "Bronze 60 HMO",
     "plan_type": "HMO",
+    "network_name": "Narrow",
     "metal_level": "Expanded Bronze",
     "coverage_channels": [
       "marketplace"
@@ -36790,6 +36973,7 @@
     "provider": "Valley Health Plan",
     "plan_name": "Gold 80 HMO",
     "plan_type": "HMO",
+    "network_name": "Narrow",
     "metal_level": "Gold",
     "coverage_channels": [
       "marketplace"
@@ -36840,6 +37024,7 @@
     "provider": "Valley Health Plan",
     "plan_name": "Platinum 90 HMO",
     "plan_type": "HMO",
+    "network_name": "Narrow",
     "metal_level": "Platinum",
     "coverage_channels": [
       "marketplace"
@@ -36891,6 +37076,7 @@
     "provider": "Valley Health Plan",
     "plan_name": "Silver 70 HMO",
     "plan_type": "HMO",
+    "network_name": "Narrow",
     "metal_level": "Silver",
     "coverage_channels": [
       "marketplace"
@@ -36941,6 +37127,7 @@
     "provider": "Western Health Advantage",
     "plan_name": "Minimum Coverage HMO",
     "plan_type": "HMO",
+    "network_name": "WHA Network",
     "metal_level": "Catastrophic",
     "coverage_channels": [
       "marketplace"
@@ -37039,6 +37226,7 @@
     "provider": "Western Health Advantage",
     "plan_name": "Minimum Coverage HMO",
     "plan_type": "HMO",
+    "network_name": "WHA Network",
     "metal_level": "Catastrophic",
     "coverage_channels": [
       "marketplace"
@@ -37137,6 +37325,7 @@
     "provider": "Western Health Advantage",
     "plan_name": "Bronze 60 HMO",
     "plan_type": "HMO",
+    "network_name": "WHA Network",
     "metal_level": "Expanded Bronze",
     "coverage_channels": [
       "marketplace"
@@ -37234,6 +37423,7 @@
     "provider": "Western Health Advantage",
     "plan_name": "Bronze 60 HMO",
     "plan_type": "HMO",
+    "network_name": "WHA Network",
     "metal_level": "Expanded Bronze",
     "coverage_channels": [
       "marketplace"
@@ -37331,6 +37521,7 @@
     "provider": "Western Health Advantage",
     "plan_name": "Gold 80 HMO",
     "plan_type": "HMO",
+    "network_name": "WHA Network",
     "metal_level": "Gold",
     "coverage_channels": [
       "marketplace"
@@ -37428,6 +37619,7 @@
     "provider": "Western Health Advantage",
     "plan_name": "Gold 80 HMO",
     "plan_type": "HMO",
+    "network_name": "WHA Network",
     "metal_level": "Gold",
     "coverage_channels": [
       "marketplace"
@@ -37525,6 +37717,7 @@
     "provider": "Western Health Advantage",
     "plan_name": "Platinum 90 HMO",
     "plan_type": "HMO",
+    "network_name": "WHA Network",
     "metal_level": "Platinum",
     "coverage_channels": [
       "marketplace"
@@ -37622,6 +37815,7 @@
     "provider": "Western Health Advantage",
     "plan_name": "Platinum 90 HMO",
     "plan_type": "HMO",
+    "network_name": "WHA Network",
     "metal_level": "Platinum",
     "coverage_channels": [
       "marketplace"
@@ -37719,6 +37913,7 @@
     "provider": "Western Health Advantage",
     "plan_name": "Silver 70 HMO",
     "plan_type": "HMO",
+    "network_name": "WHA Network",
     "metal_level": "Silver",
     "coverage_channels": [
       "marketplace"
@@ -37816,6 +38011,7 @@
     "provider": "Western Health Advantage",
     "plan_name": "Silver 70 HMO",
     "plan_type": "HMO",
+    "network_name": "WHA Network",
     "metal_level": "Silver",
     "coverage_channels": [
       "marketplace"

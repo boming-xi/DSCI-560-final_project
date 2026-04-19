@@ -1,13 +1,19 @@
 import type { FlowState } from "@/lib/types";
+import { getAuthSession } from "@/lib/auth";
 
 const FLOW_STORAGE_KEY = "ai-healthcare-assistant-flow";
+
+function getScopedFlowStorageKey(): string {
+  const session = getAuthSession();
+  return session?.user?.id ? `${FLOW_STORAGE_KEY}:${session.user.id}` : FLOW_STORAGE_KEY;
+}
 
 export function getFlowState(): FlowState {
   if (typeof window === "undefined") {
     return {};
   }
 
-  const raw = window.sessionStorage.getItem(FLOW_STORAGE_KEY);
+  const raw = window.sessionStorage.getItem(getScopedFlowStorageKey());
   if (!raw) {
     return {};
   }
@@ -24,7 +30,7 @@ export function setFlowState(next: FlowState): void {
     return;
   }
 
-  window.sessionStorage.setItem(FLOW_STORAGE_KEY, JSON.stringify(next));
+  window.sessionStorage.setItem(getScopedFlowStorageKey(), JSON.stringify(next));
 }
 
 export function patchFlowState(patch: Partial<FlowState>): FlowState {
@@ -32,4 +38,3 @@ export function patchFlowState(patch: Partial<FlowState>): FlowState {
   setFlowState(next);
   return next;
 }
-

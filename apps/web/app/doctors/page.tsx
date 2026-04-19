@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
+import { DoctorDecisionChat } from "@/components/DoctorDecisionChat";
 import { DoctorCard } from "@/components/DoctorCard";
 import { RankingExplanation } from "@/components/RankingExplanation";
 import { api } from "@/lib/api";
@@ -17,6 +18,9 @@ export default function DoctorsPage() {
   const [result, setResult] = useState<DoctorSearchResponse | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
+  const [recommendedDoctorId, setRecommendedDoctorId] = useState(
+    flow.doctorDecisionRecommendedDoctorId ?? "",
+  );
 
   useEffect(() => {
     async function loadDoctors() {
@@ -34,15 +38,17 @@ export default function DoctorsPage() {
         const searchResult = await api.searchDoctors({
           symptom_text: flow.symptomText,
           insurance_query: flow.insuranceQuery || undefined,
+          insurance_selected_plan_id: flow.insuranceSummary?.plan_id || undefined,
           insurance_plan_id_override: flow.insurancePlanIdOverride || undefined,
           location: flow.location,
           preferred_language: flow.preferredLanguage,
-          duration_days: flow.durationDays ?? 1,
+          duration_days: 1,
           top_k: 5,
         });
 
         patchFlowState({ searchResult });
         setResult(searchResult);
+        setRecommendedDoctorId("");
       } catch (searchError) {
         setError(
           searchError instanceof Error
@@ -132,15 +138,32 @@ export default function DoctorsPage() {
                   result.insurance_summary?.notes?.[0] ??
                   "Browsing without insurance filter."}
               </p>
+              {flow.insuranceNetworkUrl ? (
+                <p>
+                  <a href={flow.insuranceNetworkUrl} rel="noreferrer" target="_blank">
+                    Open official network directory
+                  </a>
+                </p>
+              ) : null}
             </article>
           </section>
 
           {result.doctors[0] ? <RankingExplanation doctor={result.doctors[0]} /> : null}
 
+          <DoctorDecisionChat
+            doctors={result.doctors}
+            insuranceQuery={flow.insuranceQuery}
+            onAcceptRecommendation={handleBookDoctor}
+            onRecommendationChange={(doctorId) => setRecommendedDoctorId(doctorId ?? "")}
+            preferredLanguage={flow.preferredLanguage}
+            symptomText={flow.symptomText}
+          />
+
           <section className="doctor-list">
             {result.doctors.map((doctor) => (
               <DoctorCard
                 doctor={doctor}
+                highlighted={doctor.id === recommendedDoctorId}
                 key={doctor.id}
                 onBook={() => handleBookDoctor(doctor.id)}
                 onView={() => handleViewDoctor(doctor.id)}

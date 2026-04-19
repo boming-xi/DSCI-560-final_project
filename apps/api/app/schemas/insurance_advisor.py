@@ -40,6 +40,7 @@ class InsuranceAdvisorPlanRecord(BaseModel):
     provider: str | None = None
     plan_name: str | None = None
     plan_type: str | None = None
+    network_name: str | None = None
     metal_level: str | None = None
     coverage_channels: list[CoverageChannel] = Field(default_factory=list)
     service_states: list[str] = Field(default_factory=list)
@@ -74,6 +75,7 @@ class InsuranceAdvisorRecommendation(BaseModel):
     provider: str
     plan_name: str
     plan_type: str
+    network_name: str | None = None
     metal_level: str | None = None
     insurance_query: str
     fit_score: float

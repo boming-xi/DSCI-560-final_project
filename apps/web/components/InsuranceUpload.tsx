@@ -63,10 +63,12 @@ export function InsuranceUpload() {
       });
 
       patchFlowState({
+        insuranceEntryMode: "has_insurance",
         insuranceQuery,
         insuranceSummary,
         insurancePlanIdOverride: undefined,
         insurancePurchaseUrl: undefined,
+        insuranceNetworkUrl: undefined,
         searchResult: undefined,
         selectedDoctor: undefined,
         booking: undefined,
@@ -85,10 +87,12 @@ export function InsuranceUpload() {
 
   function skipInsurance() {
     patchFlowState({
+      insuranceEntryMode: "has_insurance",
       insuranceQuery: "",
       insuranceSummary: undefined,
       insurancePlanIdOverride: undefined,
       insurancePurchaseUrl: undefined,
+      insuranceNetworkUrl: undefined,
       searchResult: undefined,
       selectedDoctor: undefined,
       booking: undefined,
@@ -100,10 +104,10 @@ export function InsuranceUpload() {
     <form className="panel form-panel" onSubmit={handleSubmit}>
       <div className="panel-heading">
         <span className="eyebrow">Step 2</span>
-        <h2>Add insurance details</h2>
+        <h2>Use your existing insurance</h2>
         <p>
-          Paste plan text, upload a text extract from an insurance card, or skip
-          this step and browse with softer matching.
+          Paste plan text or upload an insurance card, screenshot, or PDF. We
+          will parse the plan first, then carry it into doctor matching.
         </p>
       </div>
 

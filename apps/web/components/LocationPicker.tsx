@@ -30,14 +30,10 @@ function normalizeCoordinate(value: number): number {
   return Number(value.toFixed(6));
 }
 
-function formatCoordinate(value: number): string {
-  return value.toFixed(4);
-}
-
 function getBrowserLocationError(error: GeolocationPositionError): string {
   switch (error.code) {
     case error.PERMISSION_DENIED:
-      return "Location permission was denied. You can still click the map or enter coordinates.";
+      return "Location permission was denied. You can still click the map to choose where to search.";
     case error.POSITION_UNAVAILABLE:
       return "Your device could not determine a location just now. Try again or place the pin manually.";
     case error.TIMEOUT:
@@ -75,9 +71,9 @@ export function LocationPicker({
   function requestCurrentLocation() {
     if (typeof navigator === "undefined" || !navigator.geolocation) {
       setError(
-        "This browser does not support automatic location. Please use the map or enter coordinates.",
+        "This browser does not support automatic location. Please use the map to choose your search area.",
       );
-      setHelperText("Pick a point on the map or edit the coordinates below.");
+      setHelperText("Pick a point on the map to continue.");
       return;
     }
 
@@ -99,7 +95,7 @@ export function LocationPicker({
       (positionError) => {
         setIsLocating(false);
         setError(getBrowserLocationError(positionError));
-        setHelperText("Click the map or edit the coordinates below to continue.");
+        setHelperText("Click the map to continue.");
       },
       {
         enableHighAccuracy: true,
@@ -141,55 +137,9 @@ export function LocationPicker({
       <LeafletLocationMap location={value} onChange={setNextLocation} />
 
       <p className="location-status">
-        Searching near{" "}
-        <strong>
-          {formatCoordinate(value.latitude)}, {formatCoordinate(value.longitude)}
-        </strong>
-        . Click the map or drag the pin to update it.
+        Search area is set from your current pin. Click the map or drag the pin
+        to update it.
       </p>
-
-      <div className="form-grid location-grid">
-        <label className="field">
-          <span>Latitude</span>
-          <input
-            inputMode="decimal"
-            step="0.0001"
-            type="number"
-            value={value.latitude}
-            onChange={(event) => {
-              const nextLatitude = Number(event.target.value);
-              if (!Number.isFinite(nextLatitude)) {
-                return;
-              }
-
-              setNextLocation({
-                ...value,
-                latitude: nextLatitude,
-              });
-            }}
-          />
-        </label>
-        <label className="field">
-          <span>Longitude</span>
-          <input
-            inputMode="decimal"
-            step="0.0001"
-            type="number"
-            value={value.longitude}
-            onChange={(event) => {
-              const nextLongitude = Number(event.target.value);
-              if (!Number.isFinite(nextLongitude)) {
-                return;
-              }
-
-              setNextLocation({
-                ...value,
-                longitude: nextLongitude,
-              });
-            }}
-          />
-        </label>
-      </div>
 
       {error ? <p className="error-text">{error}</p> : null}
       {!error ? <p className="location-helper-text">{helperText}</p> : null}

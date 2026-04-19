@@ -5,6 +5,8 @@ import type {
   BookingSlotsResponse,
   ChatResponse,
   ChatTurn,
+  DoctorDecisionConversationTurn,
+  DoctorDecisionResponse,
   DoctorProfile,
   DoctorSearchResponse,
   DocumentExtractResponse,
@@ -121,6 +123,7 @@ export const api = {
   searchDoctors: (payload: {
     symptom_text: string;
     insurance_query?: string;
+    insurance_selected_plan_id?: string;
     insurance_plan_id_override?: string;
     location: Location;
     preferred_language?: string;
@@ -131,6 +134,23 @@ export const api = {
       method: "POST",
       body: JSON.stringify(payload),
     }),
+
+  sendDoctorDecisionMessage: (payload: {
+    message: string;
+    conversation: DoctorDecisionConversationTurn[];
+    doctors: DoctorProfile[];
+    symptom_text?: string;
+    insurance_query?: string;
+    preferred_language?: string;
+  }) =>
+    request<DoctorDecisionResponse>(
+      "/doctors/advisor/message",
+      {
+        method: "POST",
+        body: JSON.stringify(payload),
+      },
+      { authRequired: true },
+    ),
 
   getDoctor: (doctorId: string) =>
     request<DoctorProfile>(`/doctors/${doctorId}`, { method: "GET" }),

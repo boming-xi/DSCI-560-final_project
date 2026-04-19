@@ -8,6 +8,7 @@ from app.schemas.doctor import DoctorProfile, DoctorSearchRequest, DoctorSearchR
 from app.schemas.insurance import InsuranceSummary
 from app.schemas.symptom import SymptomTriageRequest
 from app.services.insurance_service import InsuranceService
+from app.services.insurance_network_service import InsuranceNetworkService
 from app.services.ranking_service import RankingService
 from app.services.triage_service import TriageService
 from app.utils.validators import coalesce_location
@@ -20,12 +21,14 @@ class DoctorSearchService:
         insurance_repo: InsuranceRepository,
         triage_service: TriageService,
         insurance_service: InsuranceService,
+        insurance_network_service: InsuranceNetworkService,
         ranking_service: RankingService,
     ) -> None:
         self.doctor_repo = doctor_repo
         self.insurance_repo = insurance_repo
         self.triage_service = triage_service
         self.insurance_service = insurance_service
+        self.insurance_network_service = insurance_network_service
         self.ranking_service = ranking_service
 
     def search(self, request: DoctorSearchRequest) -> DoctorSearchResponse:
@@ -36,17 +39,21 @@ class DoctorSearchService:
                 location=request.location,
             )
         )
-        insurance_summary = (
-            self.insurance_service.summarize_plan_id(
-                request.insurance_plan_id_override,
-                raw_query=request.insurance_query,
-                match_confidence=0.95,
-            )
-            if request.insurance_plan_id_override
-            else self.insurance_service.summarize_query(request.insurance_query)
+        plan_context, insurance_summary = self.insurance_network_service.resolve_plan_context(
+            selected_plan_id=request.insurance_selected_plan_id,
+            doctor_search_plan_id=request.insurance_plan_id_override,
+            insurance_query=request.insurance_query,
         )
+        legacy_plan_ids = {plan.id for plan in self.insurance_repo.list_plans()}
         plan = self.insurance_service.get_plan(
-            insurance_summary.plan_id if insurance_summary and insurance_summary.matched else None
+            request.insurance_plan_id_override
+            or (
+                insurance_summary.plan_id
+                if insurance_summary
+                and insurance_summary.matched
+                and insurance_summary.plan_id in legacy_plan_ids
+                else None
+            )
         )
         location = coalesce_location(request.location)
 
@@ -55,30 +62,44 @@ class DoctorSearchService:
             clinic = self.doctor_repo.get_clinic(doctor.clinic_id)
             if clinic is None:
                 continue
+            insurance_verification = self.insurance_network_service.build_verification(
+                doctor,
+                clinic,
+                plan_context,
+            )
             profile = self.ranking_service.build_profile(
                 doctor=doctor,
                 clinic=clinic,
                 triage=triage,
                 location=location,
                 plan=plan,
+                insurance_verification=insurance_verification,
                 preferred_language=request.preferred_language,
             )
             candidate_profiles.append(profile)
 
-        in_network_first = sorted(
+        ranked_profiles = sorted(
             candidate_profiles,
             key=lambda profile: (
-                1 if insurance_summary and insurance_summary.plan_id in profile.accepted_insurance else 0,
+                1
+                if profile.insurance_verification
+                and profile.insurance_verification.status == "verified"
+                else 0,
                 profile.ranking_breakdown.total_score if profile.ranking_breakdown else 0,
             ),
             reverse=True,
         )
 
-        explanation = self._build_explanation(triage, insurance_summary, request.preferred_language)
+        explanation = self._build_explanation(
+            triage,
+            insurance_summary,
+            request.preferred_language,
+            ranked_profiles,
+        )
         return DoctorSearchResponse(
             triage=triage,
             insurance_summary=insurance_summary,
-            doctors=in_network_first[: request.top_k],
+            doctors=ranked_profiles[: request.top_k],
             explanation=explanation,
         )
 
@@ -98,6 +119,7 @@ class DoctorSearchService:
             triage=fallback_triage,
             location=(clinic.latitude, clinic.longitude),
             plan=None,
+            insurance_verification=None,
             preferred_language=None,
         )
 
@@ -106,6 +128,7 @@ class DoctorSearchService:
         triage: object,
         insurance_summary: InsuranceSummary | None,
         preferred_language: str | None,
+        ranked_profiles: list[DoctorProfile],
     ) -> list[str]:
         notes = [
             f"Triage suggests starting with {getattr(triage, 'care_type')} care.",
@@ -114,6 +137,22 @@ class DoctorSearchService:
         if insurance_summary and insurance_summary.matched:
             notes.append(
                 f"Matched insurance plan: {insurance_summary.provider} {insurance_summary.plan_name}."
+            )
+        if ranked_profiles and any(profile.insurance_verification for profile in ranked_profiles):
+            verified_count = sum(
+                1
+                for profile in ranked_profiles
+                if profile.insurance_verification
+                and profile.insurance_verification.status == "verified"
+            )
+            likely_count = sum(
+                1
+                for profile in ranked_profiles
+                if profile.insurance_verification
+                and profile.insurance_verification.status == "likely"
+            )
+            notes.append(
+                f"Insurance verification used stored carrier and network aliases: {verified_count} verified matches, {likely_count} carrier-level matches."
             )
         if preferred_language:
             notes.append(f"Language preference boosted doctors who speak {preferred_language}.")
