@@ -87,7 +87,7 @@ class DoctorSearchRequest(BaseModel):
     location: Location | None = None
     preferred_language: str | None = None
     duration_days: int | None = 1
-    top_k: int = 5
+    top_k: int = 10
 
 
 class DoctorSearchResponse(BaseModel):

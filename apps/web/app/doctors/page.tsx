@@ -107,10 +107,10 @@ export default function DoctorsPage() {
     <main className="page-shell">
       <section className="results-header panel">
         <span className="eyebrow">Step 3</span>
-        <h1>Ranked doctor and clinic recommendations</h1>
+        <h1>Top 5 doctor and clinic recommendations</h1>
         <p>
-          The list below balances specialty match, insurance, distance,
-          availability, language, and trust signals.
+          The shortlist below keeps the five strongest overall matches based on
+          specialty fit, insurance, distance, availability, language, and trust signals.
         </p>
       </section>
 

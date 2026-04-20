@@ -93,3 +93,18 @@ def test_real_provider_booking_returns_official_external_link() -> None:
     assert payload["slots"] == []
     assert payload["external_booking_url"] == "https://www.uclahealth.org/providers/ryan-aronin"
     assert payload["booking_system_name"] == "UCLA Health online scheduling"
+
+
+def test_keck_provider_booking_returns_official_external_link() -> None:
+    headers = _demo_auth_headers()
+    response = client.get("/api/v1/booking/slots/keck-caitlin-mcauley", headers=headers)
+
+    assert response.status_code == 200
+    payload = response.json()
+    assert payload["source"] == "official_external_link"
+    assert payload["slots"] == []
+    assert (
+        payload["external_booking_url"]
+        == "https://www.keckmedicine.org/provider/caitlin-helen-mcauley/"
+    )
+    assert payload["booking_system_name"] == "Keck Medicine of USC scheduling"

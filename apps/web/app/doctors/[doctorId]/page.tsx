@@ -26,6 +26,10 @@ function findCachedDoctor(doctorId: string): DoctorProfile | null {
   ) ?? null;
 }
 
+function hasPublicRating(doctor: DoctorProfile) {
+  return doctor.rating > 0 && doctor.review_count > 0;
+}
+
 export default function DoctorDetailPage() {
   const params = useParams<{ doctorId: string }>();
   const router = useRouter();
@@ -123,8 +127,14 @@ export default function DoctorDetailPage() {
             <div className="badge-row">
               <span className="badge">{doctor.specialty}</span>
               <span className="badge">{doctor.years_experience} yrs experience</span>
-              <span className="badge">{doctor.rating} rating</span>
-              <span className="badge">{doctor.review_count} reviews</span>
+              {hasPublicRating(doctor) ? (
+                <>
+                  <span className="badge">{doctor.rating} rating</span>
+                  <span className="badge">{doctor.review_count} reviews</span>
+                </>
+              ) : (
+                <span className="badge">Public rating not listed</span>
+              )}
               <span className="badge">{formatAvailabilityLabel(doctor)}</span>
               <span className="badge">{doctor.distance_km} km away</span>
               {doctor.provider_system ? <span className="badge">{doctor.provider_system}</span> : null}

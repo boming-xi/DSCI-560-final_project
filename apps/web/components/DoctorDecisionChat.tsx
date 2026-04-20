@@ -130,7 +130,7 @@ export function DoctorDecisionChat({
       const nextSharedBrief = response.shared_brief ?? null;
 
       setConversation(mergedConversation);
-      setSuggestedPrompts(response.suggested_prompts);
+      setSuggestedPrompts([]);
       setRecommendedDoctorId(nextRecommendedDoctorId);
       setRecommendedReason(nextRecommendedReason);
       setSharedBrief(nextSharedBrief);
@@ -138,7 +138,7 @@ export function DoctorDecisionChat({
 
       persistDecisionState({
         nextConversation: mergedConversation,
-        nextSuggestedPrompts: response.suggested_prompts,
+        nextSuggestedPrompts: [],
         nextRecommendedDoctorId,
         nextRecommendedReason,
         nextSharedBrief,
@@ -323,22 +323,6 @@ export function DoctorDecisionChat({
           {isSending ? "Comparing..." : "Ask the decision group"}
         </button>
       </form>
-
-      {suggestedPrompts.length ? (
-        <div className="suggested-prompts-grid">
-          {suggestedPrompts.map((prompt) => (
-            <button
-              className="chip-button"
-              key={prompt}
-              onClick={() => setMessage(prompt)}
-              type="button"
-            >
-              {prompt}
-            </button>
-          ))}
-        </div>
-      ) : null}
-
       {error ? <p className="error-text">{error}</p> : null}
     </section>
   );

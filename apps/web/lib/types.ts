@@ -75,6 +75,8 @@ export type InsuranceAdvisorRecommendation = {
   source_url?: string | null;
   network_url?: string | null;
   insurance_summary: InsuranceSummary;
+  available_plan_count: number;
+  more_plans: InsuranceAdvisorRecommendation[];
 };
 
 export type InsuranceVerification = {

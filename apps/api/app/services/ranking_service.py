@@ -146,6 +146,8 @@ class RankingService:
         return 1.0 if any(language.lower() == normalized for language in doctor.languages) else 0.3
 
     def _trust_score(self, rating: float, review_count: int) -> float:
+        if rating <= 0 or review_count <= 0:
+            return 0.62
         rating_component = rating / 5
         review_component = min(review_count, 250) / 250
         return (rating_component * 0.7) + (review_component * 0.3)

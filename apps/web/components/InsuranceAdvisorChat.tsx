@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useMemo, useRef, useState } from "react";
+import { FormEvent, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 
 import { ChatMessageContent } from "@/components/ChatMessageContent";
@@ -53,10 +53,39 @@ function formatCurrency(value?: number | null) {
   }).format(value);
 }
 
+function normalizeRecommendation(
+  recommendation: Partial<InsuranceAdvisorRecommendation>,
+): InsuranceAdvisorRecommendation {
+  const nestedPlans = Array.isArray(recommendation.more_plans)
+    ? recommendation.more_plans.map((item) => normalizeRecommendation(item))
+    : [];
+
+  return {
+    ...(recommendation as InsuranceAdvisorRecommendation),
+    available_plan_count:
+      typeof recommendation.available_plan_count === "number"
+        ? recommendation.available_plan_count
+        : Math.max(1, nestedPlans.length + 1),
+    more_plans: nestedPlans,
+  };
+}
+
+function normalizeRecommendations(
+  recommendations?: InsuranceAdvisorRecommendation[],
+): InsuranceAdvisorRecommendation[] {
+  if (!Array.isArray(recommendations)) {
+    return [];
+  }
+  return recommendations.map((item) => normalizeRecommendation(item));
+}
+
 export function InsuranceAdvisorChat() {
   const router = useRouter();
-  const recommendationsRef = useRef<HTMLDivElement | null>(null);
   const initialFlow = useMemo(() => getFlowState(), []);
+  const initialRecommendations = useMemo(
+    () => normalizeRecommendations(initialFlow.insuranceAdvisorRecommendations),
+    [initialFlow],
+  );
   const [conversation, setConversation] = useState<InsuranceAdvisorConversationTurn[]>(
     initialFlow.insuranceAdvisorConversation?.length
       ? initialFlow.insuranceAdvisorConversation
@@ -72,7 +101,7 @@ export function InsuranceAdvisorChat() {
     initialFlow.insuranceAdvisorMissingFields ?? [],
   );
   const [recommendations, setRecommendations] = useState<InsuranceAdvisorRecommendation[]>(
-    initialFlow.insuranceAdvisorRecommendations ?? [],
+    initialRecommendations,
   );
   const [readinessLabel, setReadinessLabel] = useState<
     "intake" | "narrowing" | "recommended"
@@ -80,11 +109,11 @@ export function InsuranceAdvisorChat() {
   const [disclaimer, setDisclaimer] = useState(
     "This is a planning tool, not official enrollment advice.",
   );
-  const [suggestedPrompts, setSuggestedPrompts] = useState<string[]>([]);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const [isSending, setIsSending] = useState(false);
   const [showAdvisorHint, setShowAdvisorHint] = useState(true);
+  const [expandedProviders, setExpandedProviders] = useState<Record<string, boolean>>({});
 
   function persistAdvisorState(next: {
     nextConversation: InsuranceAdvisorConversationTurn[];
@@ -137,14 +166,14 @@ export function InsuranceAdvisorChat() {
         }),
       );
       const mergedConversation = [...optimisticConversation, ...assistantTurns];
+      const normalizedRecommendations = normalizeRecommendations(response.recommendations);
 
       setConversation(mergedConversation);
       setProfile(response.profile);
       setProfileSummary(response.profile_summary);
       setMissingFields(response.missing_fields);
-      setRecommendations(response.recommendations);
+      setRecommendations(normalizedRecommendations);
       setReadinessLabel(response.readiness_label);
-      setSuggestedPrompts(response.suggested_prompts);
       setDisclaimer(response.disclaimer);
 
       persistAdvisorState({
@@ -152,7 +181,7 @@ export function InsuranceAdvisorChat() {
         nextProfile: response.profile,
         nextProfileSummary: response.profile_summary,
         nextMissingFields: response.missing_fields,
-        nextRecommendations: response.recommendations,
+        nextRecommendations: normalizedRecommendations,
         nextReadinessLabel: response.readiness_label,
       });
     } catch (submissionError) {
@@ -188,12 +217,11 @@ export function InsuranceAdvisorChat() {
     router.push("/doctors");
   }
 
-  function scrollRecommendations(direction: "left" | "right") {
-    if (!recommendationsRef.current) {
-      return;
-    }
-    const offset = direction === "left" ? -380 : 380;
-    recommendationsRef.current.scrollBy({ left: offset, behavior: "smooth" });
+  function toggleProviderPlans(recommendation: InsuranceAdvisorRecommendation) {
+    setExpandedProviders((current) => ({
+      ...current,
+      [recommendation.plan_id]: !current[recommendation.plan_id],
+    }));
   }
 
   return (
@@ -237,25 +265,10 @@ export function InsuranceAdvisorChat() {
         </button>
       </form>
 
-      {suggestedPrompts.length ? (
-        <div className="suggested-prompts-grid">
-          {suggestedPrompts.map((prompt) => (
-            <button
-              className="chip-button"
-              key={prompt}
-              onClick={() => setMessage(prompt)}
-              type="button"
-            >
-              {prompt}
-            </button>
-          ))}
-        </div>
-      ) : null}
-
       {error ? <p className="error-text">{error}</p> : null}
 
-      <div className="insurance-advisor-grid">
-        <section className="insurance-advisor-summary-card">
+      <div className="insurance-advisor-stack">
+        <section className="insurance-advisor-summary-card insurance-advisor-profile-card">
           <div className="detail-section-heading">
             <h3>Current profile</h3>
             <span className="meta-pill">{readinessLabel}</span>
@@ -288,56 +301,42 @@ export function InsuranceAdvisorChat() {
           <p className="insurance-advisor-disclaimer">{disclaimer}</p>
         </section>
 
-        <section className="insurance-advisor-summary-card">
+        <section className="insurance-advisor-summary-card insurance-advisor-recommendations-card">
           <div className="detail-section-heading">
-            <h3>Recommended plans</h3>
+            <h3>Recommended insurance brands</h3>
             {recommendations.length ? (
-              <span className="meta-pill">{recommendations.length} ready</span>
+              <span className="meta-pill">{recommendations.length} carriers ready</span>
             ) : null}
           </div>
           {recommendations.length ? (
             <>
-              <div className="insurance-advisor-carousel-controls">
-                <button
-                  aria-label="Scroll left through recommended plans"
-                  className="button button-secondary insurance-carousel-button"
-                  onClick={() => scrollRecommendations("left")}
-                  type="button"
-                >
-                  ←
-                </button>
-                <p className="muted-copy insurance-carousel-copy">
-                  Swipe or use the arrows to compare plans side by side.
-                </p>
-                <button
-                  aria-label="Scroll right through recommended plans"
-                  className="button button-secondary insurance-carousel-button"
-                  onClick={() => scrollRecommendations("right")}
-                  type="button"
-                >
-                  →
-                </button>
-              </div>
-
-              <div className="insurance-advisor-recommendation-list" ref={recommendationsRef}>
+              <div className="insurance-advisor-recommendation-list">
                 {recommendations.map((recommendation) => (
                   <article className="advisor-recommendation-card" key={recommendation.plan_id}>
                     <div className="advisor-recommendation-header">
                       <div>
-                        <h4>
-                          {recommendation.provider} {recommendation.plan_name}
-                        </h4>
+                        <h4>{recommendation.provider}</h4>
                         <p className="muted-copy advisor-plan-subtitle">
+                          Best-fit starting plan: {recommendation.plan_name}
                           {recommendation.metal_level
-                            ? `${recommendation.metal_level} · ${recommendation.plan_type}`
-                            : recommendation.plan_type}
+                            ? ` · ${recommendation.metal_level}`
+                            : ""}
+                          {recommendation.plan_type ? ` · ${recommendation.plan_type}` : ""}
                         </p>
                         <p>{recommendation.advisor_blurb}</p>
                       </div>
+                    </div>
+
+                    <div className="advisor-recommendation-fit-row">
                       <div className="advisor-recommendation-score">
                         <strong>{recommendation.fit_score}</strong>
                         <span>{confidenceLabelText(recommendation.confidence_label)}</span>
                       </div>
+                      <span className="meta-pill">
+                        {recommendation.available_plan_count}{" "}
+                        {recommendation.available_plan_count === 1 ? "plan" : "plans"} in this
+                        carrier shortlist
+                      </span>
                     </div>
 
                     <div className="document-meta-row advisor-metric-grid">
@@ -365,7 +364,7 @@ export function InsuranceAdvisorChat() {
                       ) : null}
                     </div>
 
-                    <h5>Why it fits</h5>
+                    <h5>Why this brand is a strong starting point</h5>
                     <ul className="detail-list">
                       {recommendation.reasons.map((reason) => (
                         <li key={reason}>{reason}</li>
@@ -379,13 +378,86 @@ export function InsuranceAdvisorChat() {
                       ))}
                     </ul>
 
+                    {recommendation.more_plans?.length ? (
+                      <div className="advisor-more-plans">
+                        <button
+                          className="button button-secondary"
+                          onClick={() => toggleProviderPlans(recommendation)}
+                          type="button"
+                        >
+                          {expandedProviders[recommendation.plan_id]
+                            ? `Hide ${recommendation.provider} plan options`
+                            : `View more plans from ${recommendation.provider}`}
+                        </button>
+
+                        {expandedProviders[recommendation.plan_id] ? (
+                          <div className="advisor-more-plans-list">
+                            {recommendation.more_plans.map((planOption) => (
+                              <article className="advisor-more-plan-card" key={planOption.plan_id}>
+                                <div className="advisor-more-plan-header">
+                                  <div>
+                                    <h6>{planOption.plan_name}</h6>
+                                    <p className="muted-copy">
+                                      {planOption.metal_level
+                                        ? `${planOption.metal_level} · ${planOption.plan_type}`
+                                        : planOption.plan_type}
+                                    </p>
+                                  </div>
+                                  <div className="advisor-more-plan-score">
+                                    <strong>{planOption.fit_score}</strong>
+                                    <span>{confidenceLabelText(planOption.confidence_label)}</span>
+                                  </div>
+                                </div>
+                                <div className="document-meta-row advisor-metric-grid">
+                                  <span className="meta-pill">
+                                    premium {formatCurrency(planOption.monthly_premium_amount)}
+                                  </span>
+                                  <span className="meta-pill">
+                                    deductible {formatCurrency(planOption.deductible_amount)}
+                                  </span>
+                                  <span className="meta-pill">
+                                    OOP max {formatCurrency(planOption.out_of_pocket_max_amount)}
+                                  </span>
+                                  {planOption.network_name ? (
+                                    <span className="meta-pill">{planOption.network_name}</span>
+                                  ) : null}
+                                </div>
+                                <p className="muted-copy advisor-more-plan-copy">
+                                  {planOption.advisor_blurb}
+                                </p>
+                                <div className="advisor-card-actions">
+                                  <button
+                                    className="button button-secondary"
+                                    onClick={() => applyRecommendation(planOption)}
+                                    type="button"
+                                  >
+                                    Use this plan instead
+                                  </button>
+                                  {planOption.source_url ? (
+                                    <a
+                                      className="button button-secondary"
+                                      href={planOption.source_url}
+                                      rel="noreferrer"
+                                      target="_blank"
+                                    >
+                                      Plan details
+                                    </a>
+                                  ) : null}
+                                </div>
+                              </article>
+                            ))}
+                          </div>
+                        ) : null}
+                      </div>
+                    ) : null}
+
                     <div className="advisor-card-actions">
                       <button
                         className="button button-primary"
                         onClick={() => applyRecommendation(recommendation)}
                         type="button"
                       >
-                        Use this plan for doctor search
+                        Use best-fit plan for doctor search
                       </button>
                       {recommendation.purchase_url ? (
                         <a

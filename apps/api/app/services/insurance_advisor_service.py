@@ -3,9 +3,13 @@ from __future__ import annotations
 import json
 import re
 from functools import cached_property
+from itertools import groupby
 
 from app.ai.llm_client import LLMClient
-from app.ai.prompt_templates import INSURANCE_ADVISOR_SYSTEM_PROMPT
+from app.ai.prompt_templates import (
+    INSURANCE_ADVISOR_EXPLANATION_PROMPT,
+    INSURANCE_ADVISOR_SYSTEM_PROMPT,
+)
 from app.repositories.insurance_repo import InsuranceRepository
 from app.schemas.insurance import InsuranceSummary
 from app.schemas.insurance_advisor import (
@@ -430,7 +434,7 @@ class InsuranceAdvisorService:
         if populated_fields < 3:
             return []
 
-        recommendations: list[InsuranceAdvisorRecommendation] = []
+        scored_plans: list[InsuranceAdvisorRecommendation] = []
         for plan_metadata in self._candidate_catalog(profile):
             score_payload = self._score_plan(plan_metadata, profile)
             if score_payload is None:
@@ -442,42 +446,104 @@ class InsuranceAdvisorService:
             elif score >= 4.0:
                 confidence_label = "good"
 
-            provider = plan_metadata.provider or "Unknown provider"
-            plan_name = plan_metadata.plan_name or plan_metadata.plan_id
-            plan_type = plan_metadata.plan_type or "Unknown"
-            recommendations.append(
-                InsuranceAdvisorRecommendation(
-                    plan_id=plan_metadata.plan_id,
-                    doctor_search_plan_id=plan_metadata.doctor_search_plan_id or plan_metadata.plan_id,
-                    provider=provider,
-                    plan_name=plan_name,
-                    plan_type=plan_type,
-                    network_name=plan_metadata.network_name,
-                    metal_level=plan_metadata.metal_level,
-                    insurance_query=f"{provider} {plan_name}".strip(),
-                    fit_score=round(score, 2),
+            scored_plans.append(
+                self._build_recommendation(
+                    plan_metadata=plan_metadata,
+                    profile=profile,
+                    score=score,
                     confidence_label=confidence_label,
-                    monthly_premium_band=plan_metadata.monthly_premium_band,
-                    monthly_premium_amount=premium_amount,
-                    deductible_band=plan_metadata.deductible_band,
-                    deductible_amount=plan_metadata.deductible_amount,
-                    out_of_pocket_max_amount=plan_metadata.out_of_pocket_max_amount,
-                    network_flexibility=plan_metadata.network_flexibility,
-                    quality_rating=plan_metadata.quality_rating,
-                    advisor_blurb=plan_metadata.advisor_blurb,
-                    reasons=reasons[:4],
-                    tradeoffs=plan_metadata.tradeoffs,
-                    ideal_for=plan_metadata.ideal_for,
-                    purchase_url=plan_metadata.purchase_url,
-                    purchase_cta_label=plan_metadata.purchase_cta_label,
-                    source_url=plan_metadata.source_url,
-                    network_url=plan_metadata.network_url,
-                    insurance_summary=self._insurance_summary_for_record(plan_metadata, premium_amount),
+                    premium_amount=premium_amount,
+                    reasons=reasons,
                 )
             )
 
-        recommendations.sort(key=lambda item: item.fit_score, reverse=True)
-        return recommendations[:3]
+        scored_plans.sort(
+            key=lambda item: (
+                item.provider.lower(),
+                -item.fit_score,
+                item.monthly_premium_amount if item.monthly_premium_amount is not None else 10_000,
+            )
+        )
+
+        grouped_recommendations: list[InsuranceAdvisorRecommendation] = []
+        for _, provider_group in groupby(scored_plans, key=lambda item: item.provider.lower()):
+            provider_plans = sorted(
+                list(provider_group),
+                key=lambda item: (
+                    -item.fit_score,
+                    item.monthly_premium_amount if item.monthly_premium_amount is not None else 10_000,
+                ),
+            )
+            lead = provider_plans[0]
+            alternates = provider_plans[1:4]
+            grouped_recommendations.append(
+                lead.model_copy(
+                    update={
+                        "available_plan_count": len(provider_plans),
+                        "more_plans": alternates,
+                    }
+                )
+            )
+
+        grouped_recommendations.sort(key=lambda item: item.fit_score, reverse=True)
+        return [
+            self._rewrite_recommendation_copy_with_llm(
+                recommendation=item,
+                profile=profile,
+            )
+            for item in grouped_recommendations[:3]
+        ]
+
+    def _build_recommendation(
+        self,
+        *,
+        plan_metadata: InsuranceAdvisorPlanRecord,
+        profile: InsuranceAdvisorProfile,
+        score: float,
+        confidence_label: str,
+        premium_amount: float | None,
+        reasons: list[str],
+    ) -> InsuranceAdvisorRecommendation:
+        provider = plan_metadata.provider or "Unknown provider"
+        plan_name = plan_metadata.plan_name or plan_metadata.plan_id
+        plan_type = plan_metadata.plan_type or "Unknown"
+        return InsuranceAdvisorRecommendation(
+            plan_id=plan_metadata.plan_id,
+            doctor_search_plan_id=plan_metadata.doctor_search_plan_id or plan_metadata.plan_id,
+            provider=provider,
+            plan_name=plan_name,
+            plan_type=plan_type,
+            network_name=plan_metadata.network_name,
+            metal_level=plan_metadata.metal_level,
+            insurance_query=f"{provider} {plan_name}".strip(),
+            fit_score=round(score, 2),
+            confidence_label=confidence_label,
+            monthly_premium_band=plan_metadata.monthly_premium_band,
+            monthly_premium_amount=premium_amount,
+            deductible_band=plan_metadata.deductible_band,
+            deductible_amount=plan_metadata.deductible_amount,
+            out_of_pocket_max_amount=plan_metadata.out_of_pocket_max_amount,
+            network_flexibility=plan_metadata.network_flexibility,
+            quality_rating=plan_metadata.quality_rating,
+            advisor_blurb=plan_metadata.advisor_blurb,
+            reasons=self._personalized_reasons(
+                plan_metadata=plan_metadata,
+                profile=profile,
+                premium_amount=premium_amount,
+                reasons=reasons,
+            ),
+            tradeoffs=self._personalized_tradeoffs(
+                plan_metadata=plan_metadata,
+                profile=profile,
+                premium_amount=premium_amount,
+            ),
+            ideal_for=plan_metadata.ideal_for,
+            purchase_url=plan_metadata.purchase_url,
+            purchase_cta_label=plan_metadata.purchase_cta_label,
+            source_url=plan_metadata.source_url,
+            network_url=plan_metadata.network_url,
+            insurance_summary=self._insurance_summary_for_record(plan_metadata, premium_amount),
+        )
 
     def _candidate_catalog(self, profile: InsuranceAdvisorProfile) -> list[InsuranceAdvisorPlanRecord]:
         if profile.state not in {None, "CA"}:
@@ -500,7 +566,7 @@ class InsuranceAdvisorService:
 
         score = 1.0
         premium_amount = self._estimated_monthly_premium(plan_metadata, profile.age)
-        reasons = [plan_metadata.advisor_blurb]
+        reasons: list[str] = []
 
         if profile.coverage_channel:
             if profile.coverage_channel in plan_metadata.coverage_channels:
@@ -575,6 +641,254 @@ class InsuranceAdvisorService:
             score += 0.1
 
         return score, reasons, premium_amount
+
+    def _personalized_reasons(
+        self,
+        *,
+        plan_metadata: InsuranceAdvisorPlanRecord,
+        profile: InsuranceAdvisorProfile,
+        premium_amount: float | None,
+        reasons: list[str],
+    ) -> list[str]:
+        provider = plan_metadata.provider or "This carrier"
+        personalized: list[str] = []
+
+        if profile.zip_code and plan_metadata.supported_zip_codes and profile.zip_code in plan_metadata.supported_zip_codes:
+            personalized.append(f"{provider} files this option for ZIP {profile.zip_code}, so it matches your location filter.")
+
+        if premium_amount is not None and profile.monthly_budget:
+            if profile.monthly_budget == "low" and premium_amount <= 360:
+                personalized.append(
+                    f"Its estimated premium of about ${premium_amount:.0f} stays closer to the lower monthly budget you described."
+                )
+            elif profile.monthly_budget == "medium" and premium_amount <= 450:
+                personalized.append(
+                    f"Its estimated premium of about ${premium_amount:.0f} sits in the budget range you described."
+                )
+            elif profile.monthly_budget == "high":
+                personalized.append(
+                    f"It spends more on monthly premium up front, which fits what you said about prioritizing smoother access over the cheapest option."
+                )
+
+        if profile.referrals_ok is False and not plan_metadata.referral_required_for_specialists:
+            personalized.append(
+                "It keeps specialist access more direct, which matches your preference to avoid referral friction."
+            )
+        elif profile.referrals_ok and plan_metadata.referral_required_for_specialists:
+            personalized.append(
+                "You said referral-based coordination is acceptable, so this structure can still work for you."
+            )
+
+        if profile.care_usage == "low" and plan_metadata.monthly_premium_band == "low":
+            personalized.append(
+                "Its lighter premium structure better matches a year where you expect only lighter care use."
+            )
+        elif profile.care_usage == "high" and plan_metadata.deductible_band != "high":
+            personalized.append(
+                "Its cost-sharing structure is safer for a year where you expect more regular visits."
+            )
+
+        if profile.has_prescriptions:
+            if plan_metadata.prescription_support == "strong":
+                personalized.append(
+                    "Its stronger prescription support is a better starting point given that you mentioned ongoing medications."
+                )
+            else:
+                personalized.append(
+                    "It still stays in the shortlist even with prescription needs, though the drug formulary would need a closer check."
+                )
+
+        if profile.keep_existing_doctors and plan_metadata.network_flexibility == "high":
+            personalized.append(
+                "Its more flexible network gives you better odds of keeping doctor choice open."
+            )
+
+        if plan_metadata.quality_rating and plan_metadata.quality_rating >= 5:
+            personalized.append(
+                "Covered California quality ratings are strong here, which makes this carrier a safer starting point."
+            )
+
+        personalized.extend(reasons)
+        return self._dedupe_messages(personalized, limit=4)
+
+    def _personalized_tradeoffs(
+        self,
+        *,
+        plan_metadata: InsuranceAdvisorPlanRecord,
+        profile: InsuranceAdvisorProfile,
+        premium_amount: float | None,
+    ) -> list[str]:
+        tradeoffs: list[str] = []
+
+        if plan_metadata.deductible_band == "high":
+            if profile.care_usage == "high" or profile.has_prescriptions:
+                tradeoffs.append(
+                    "Because you expect ongoing care or prescriptions, the high deductible could make early visits feel expensive."
+                )
+            else:
+                tradeoffs.append(
+                    "The lower-premium structure still comes with a high deductible, so out-of-pocket costs can stay high before coverage really kicks in."
+                )
+
+        if premium_amount is not None and profile.monthly_budget:
+            if profile.monthly_budget == "low" and premium_amount > 360:
+                tradeoffs.append(
+                    f"The estimated premium of about ${premium_amount:.0f} may stretch the lower monthly budget you described."
+                )
+            elif profile.monthly_budget == "medium" and premium_amount > 450:
+                tradeoffs.append(
+                    f"The estimated premium of about ${premium_amount:.0f} sits above the middle budget range you described."
+                )
+
+        if profile.referrals_ok is False and plan_metadata.referral_required_for_specialists:
+            tradeoffs.append(
+                "This plan uses referral-based specialist access, which cuts against your preference for a more direct path."
+            )
+
+        if profile.keep_existing_doctors and plan_metadata.network_flexibility == "low":
+            tradeoffs.append(
+                "Because you care about doctor choice, the narrower network means you would want to verify preferred clinicians carefully."
+            )
+
+        if profile.has_prescriptions and plan_metadata.prescription_support != "strong":
+            tradeoffs.append(
+                "Since you mentioned prescriptions, you would still want to verify the formulary and pharmacy rules before enrolling."
+            )
+
+        if (
+            plan_metadata.out_of_pocket_max_amount is not None
+            and plan_metadata.out_of_pocket_max_amount >= 8500
+        ):
+            tradeoffs.append(
+                "Its worst-case annual out-of-pocket exposure still stays fairly high if your care needs grow."
+            )
+
+        tradeoffs.extend(plan_metadata.tradeoffs)
+        return self._dedupe_messages(tradeoffs, limit=4)
+
+    def _dedupe_messages(self, messages: list[str], *, limit: int) -> list[str]:
+        deduped: list[str] = []
+        seen: set[str] = set()
+        for message in messages:
+            normalized = normalize_text(message)
+            if not normalized or normalized in seen:
+                continue
+            deduped.append(message)
+            seen.add(normalized)
+            if len(deduped) >= limit:
+                break
+        return deduped
+
+    def _rewrite_recommendation_copy_with_llm(
+        self,
+        *,
+        recommendation: InsuranceAdvisorRecommendation,
+        profile: InsuranceAdvisorProfile,
+    ) -> InsuranceAdvisorRecommendation:
+        fallback_reasons = recommendation.reasons
+        fallback_tradeoffs = recommendation.tradeoffs
+
+        try:
+            response_text = self.llm_client.complete(
+                system_prompt=INSURANCE_ADVISOR_EXPLANATION_PROMPT,
+                user_prompt=self._insurance_explanation_prompt(
+                    recommendation=recommendation,
+                    profile=profile,
+                    fallback_reasons=fallback_reasons,
+                    fallback_tradeoffs=fallback_tradeoffs,
+                ),
+            )
+            parsed = self._parse_explanation_json(response_text)
+            if not parsed:
+                return recommendation
+
+            reasons = self._dedupe_messages(parsed.get("reasons", []), limit=4)
+            tradeoffs = self._dedupe_messages(parsed.get("tradeoffs", []), limit=4)
+            if not reasons:
+                reasons = fallback_reasons
+            if not tradeoffs:
+                tradeoffs = fallback_tradeoffs
+
+            return recommendation.model_copy(
+                update={
+                    "reasons": reasons,
+                    "tradeoffs": tradeoffs,
+                }
+            )
+        except Exception:
+            return recommendation
+
+    def _insurance_explanation_prompt(
+        self,
+        *,
+        recommendation: InsuranceAdvisorRecommendation,
+        profile: InsuranceAdvisorProfile,
+        fallback_reasons: list[str],
+        fallback_tradeoffs: list[str],
+    ) -> str:
+        context = {
+            "user_profile": profile.model_dump(),
+            "recommendation": {
+                "provider": recommendation.provider,
+                "plan_name": recommendation.plan_name,
+                "plan_type": recommendation.plan_type,
+                "metal_level": recommendation.metal_level,
+                "network_name": recommendation.network_name,
+                "fit_score": recommendation.fit_score,
+                "confidence_label": recommendation.confidence_label,
+                "monthly_premium_amount": recommendation.monthly_premium_amount,
+                "deductible_amount": recommendation.deductible_amount,
+                "out_of_pocket_max_amount": recommendation.out_of_pocket_max_amount,
+                "network_flexibility": recommendation.network_flexibility,
+                "quality_rating": recommendation.quality_rating,
+                "advisor_blurb": recommendation.advisor_blurb,
+                "available_plan_count": recommendation.available_plan_count,
+            },
+            "fallback_reasons": fallback_reasons,
+            "fallback_tradeoffs": fallback_tradeoffs,
+        }
+        return (
+            "Rewrite the following brand-level insurance explanation to sound more natural and personalized.\n"
+            "Keep the meaning grounded in the structured data. Focus on why this carrier is a good starting point for this user, "
+            "using the lead plan only as supporting evidence.\n\n"
+            f"{json.dumps(context, indent=2)}"
+        )
+
+    def _parse_explanation_json(self, response_text: str) -> dict[str, list[str]] | None:
+        try:
+            return self._validate_explanation_payload(json.loads(response_text))
+        except Exception:
+            pass
+
+        json_match = re.search(r"\{.*\}", response_text, re.DOTALL)
+        if not json_match:
+            return None
+
+        try:
+            return self._validate_explanation_payload(json.loads(json_match.group(0)))
+        except Exception:
+            return None
+
+    def _validate_explanation_payload(
+        self,
+        payload: object,
+    ) -> dict[str, list[str]] | None:
+        if not isinstance(payload, dict):
+            return None
+
+        reasons = payload.get("reasons")
+        tradeoffs = payload.get("tradeoffs")
+        if not isinstance(reasons, list) or not isinstance(tradeoffs, list):
+            return None
+
+        clean_reasons = [item.strip() for item in reasons if isinstance(item, str) and item.strip()]
+        clean_tradeoffs = [
+            item.strip() for item in tradeoffs if isinstance(item, str) and item.strip()
+        ]
+        return {
+            "reasons": clean_reasons,
+            "tradeoffs": clean_tradeoffs,
+        }
 
     def _budget_score(
         self,
@@ -739,8 +1053,8 @@ class InsuranceAdvisorService:
     ) -> str:
         if not recommendations:
             return (
-                "I am not ranking plans yet because the intake is still thin. "
-                "Once I have your coverage path, ZIP code, budget, and likely care usage, I can produce a more defensible top 3."
+                "I am not ranking carriers yet because the intake is still thin. "
+                "Once I have your coverage path, ZIP code, budget, and likely care usage, I can produce a more defensible cross-carrier shortlist."
             )
 
         top = recommendations[0]
@@ -752,17 +1066,17 @@ class InsuranceAdvisorService:
         )
         if readiness_label == "recommended":
             comparison_tail = (
-                f" If you want a backup with a slightly different tradeoff, also look at {second.provider} {second.plan_name}."
+                f" If you want a backup with a slightly different tradeoff, also look at {second.provider}."
                 if second
                 else ""
             )
             return (
-                f"My current best fit is {top.provider} {top.plan_name} because it lines up with the preferences you shared on cost, access, and care usage."
+                f"My current best fit is {top.provider}, with {top.plan_name} as its best starting plan, because it lines up with the preferences you shared on cost, access, and care usage."
                 f"{premium_copy}{comparison_tail}"
             )
 
         return (
-            f"I have a preliminary shortlist led by {top.provider} {top.plan_name}. "
+            f"I have a preliminary shortlist led by {top.provider}, with {top.plan_name} as the strongest first plan to inspect. "
             "I can tighten the ranking once you confirm the last few preferences."
         )
 

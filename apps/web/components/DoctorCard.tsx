@@ -17,6 +17,8 @@ export function DoctorCard({
   onBook,
   onView,
 }: DoctorCardProps) {
+  const hasPublicRating = doctor.rating > 0 && doctor.review_count > 0;
+
   return (
     <article className={`panel doctor-card ${highlighted ? "recommended-card" : ""}`}>
       <div className="doctor-card-top">
@@ -35,7 +37,9 @@ export function DoctorCard({
       <div className="badge-row">
         <span className="badge">{doctor.years_experience} yrs experience</span>
         <span className="badge">{doctor.distance_km} km away</span>
-        <span className="badge">{doctor.rating} rating</span>
+        <span className="badge">
+          {hasPublicRating ? `${doctor.rating} rating` : "Official provider profile"}
+        </span>
         <span className="badge">{doctor.next_opening_label}</span>
         <span className="badge">
           {doctor.availability_days === 0

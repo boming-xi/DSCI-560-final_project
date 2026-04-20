@@ -37,6 +37,9 @@ def test_insurance_advisor_recommends_official_marketplace_plan_for_usc_area_pro
     assert payload["profile"]["coverage_channel"] == "student"
     assert payload["readiness_label"] == "recommended"
     assert payload["recommendations"]
+    assert len({item["provider"] for item in payload["recommendations"]}) == len(
+        payload["recommendations"]
+    )
     assert payload["recommendations"][0]["plan_id"] != "usc-aetna-student"
     assert payload["recommendations"][0]["provider"] in {
         "Blue Shield of California",
@@ -47,6 +50,17 @@ def test_insurance_advisor_recommends_official_marketplace_plan_for_usc_area_pro
     }
     assert payload["recommendations"][0]["purchase_url"]
     assert payload["recommendations"][0]["purchase_url"] == "https://www.coveredca.com/"
+    assert payload["recommendations"][0]["available_plan_count"] >= 1
+    assert payload["recommendations"][0]["reasons"]
+    assert not any(
+        "california shoppers" in reason.lower()
+        for reason in payload["recommendations"][0]["reasons"]
+    )
+    assert any(
+        keyword in " ".join(payload["recommendations"][0]["reasons"]).lower()
+        for keyword in ["budget", "specialist", "prescription", "zip 90007", "doctor choice"]
+    )
+    assert payload["recommendations"][0]["tradeoffs"]
 
 
 def test_insurance_advisor_uses_real_marketplace_catalog_for_budget_case() -> None:
@@ -66,6 +80,9 @@ def test_insurance_advisor_uses_real_marketplace_catalog_for_budget_case() -> No
     payload = response.json()
     assert payload["profile"]["coverage_channel"] == "marketplace"
     assert payload["recommendations"]
+    assert len({item["provider"] for item in payload["recommendations"]}) == len(
+        payload["recommendations"]
+    )
     top = payload["recommendations"][0]
     assert top["provider"] in {
         "Health Net",
@@ -78,6 +95,8 @@ def test_insurance_advisor_uses_real_marketplace_catalog_for_budget_case() -> No
     assert top["source_url"]
     assert top["plan_id"]
     assert top["monthly_premium_amount"] is not None
+    assert "more_plans" in top
+    assert not any("california shoppers" in reason.lower() for reason in top["reasons"])
 
 
 def test_doctor_search_accepts_plan_override_for_marketplace_recommendations() -> None:

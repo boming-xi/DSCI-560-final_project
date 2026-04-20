@@ -1260,22 +1260,37 @@ h4 {
   overflow-y: auto;
 }
 
-.insurance-advisor-grid,
+.insurance-advisor-stack,
 .suggested-prompts-grid {
   display: grid;
   gap: 14px;
 }
 
-.insurance-advisor-grid {
-  grid-template-columns: minmax(300px, 0.85fr) minmax(0, 1.15fr);
+.insurance-advisor-stack {
+  grid-template-columns: 1fr;
+  gap: 18px;
 }
 
 .insurance-advisor-summary-card,
 .advisor-recommendation-card {
-  padding: 18px;
+  padding: 22px;
   border-radius: var(--radius-lg);
   border: 1px solid rgba(88, 63, 32, 0.1);
   background: rgba(255, 255, 255, 0.72);
+  box-shadow:
+    0 18px 36px rgba(28, 28, 24, 0.04),
+    inset 0 1px 0 rgba(255, 255, 255, 0.82);
+}
+
+.insurance-advisor-profile-card {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.insurance-advisor-recommendations-card {
+  display: flex;
+  flex-direction: column;
 }
 
 .advisor-recommendation-header,
@@ -1286,11 +1301,18 @@ h4 {
   gap: 14px;
 }
 
+.advisor-recommendation-fit-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
 .advisor-recommendation-score {
   display: flex;
-  min-width: 88px;
   flex-direction: column;
-  align-items: flex-end;
+  align-items: flex-start;
   gap: 4px;
   color: var(--primary-strong);
 }
@@ -1310,37 +1332,21 @@ h4 {
   margin-top: 14px;
 }
 
-.insurance-advisor-carousel-controls {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 14px;
-}
-
-.insurance-carousel-button {
-  min-width: 48px;
-  min-height: 48px;
-  padding: 0;
-}
-
-.insurance-carousel-copy,
 .advisor-plan-subtitle {
   margin: 0;
 }
 
 .insurance-advisor-recommendation-list {
-  display: flex;
-  gap: 16px;
-  overflow-x: auto;
-  padding: 4px 4px 10px;
-  scroll-snap-type: x mandatory;
-  scrollbar-width: thin;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 18px;
+  margin-top: 10px;
 }
 
 .advisor-recommendation-card {
-  min-width: min(380px, 82vw);
-  max-width: 380px;
-  scroll-snap-align: start;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
 }
 
 .advisor-card-actions {
@@ -1694,6 +1700,105 @@ h4 {
   text-transform: uppercase;
 }
 
+.insurance-plan-review {
+  margin-top: 24px;
+  background: rgba(255, 255, 255, 0.72);
+}
+
+.insurance-plan-review-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  margin-top: 18px;
+}
+
+.insurance-plan-review-item {
+  padding: 20px;
+  border-radius: var(--radius-md);
+  background: rgba(247, 243, 237, 0.9);
+}
+
+.insurance-plan-review-item strong {
+  display: block;
+  margin-bottom: 8px;
+}
+
+.advisor-more-plans {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.advisor-more-plans-list {
+  display: grid;
+  gap: 12px;
+}
+
+.advisor-more-plan-card {
+  padding: 16px;
+  border-radius: 1.2rem;
+  background: rgba(247, 243, 237, 0.95);
+}
+
+.advisor-more-plan-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.advisor-more-plan-header h6 {
+  margin: 0 0 6px;
+  font-size: 1rem;
+  font-family: var(--font-display, "Noto Serif"), "Iowan Old Style", "Georgia", serif;
+}
+
+.advisor-more-plan-score {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+  color: var(--primary-strong);
+}
+
+.advisor-more-plan-copy {
+  margin: 12px 0 0;
+}
+
+.care-passport-card {
+  margin-top: 28px;
+}
+
+.care-passport-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 20px;
+}
+
+.care-passport-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  margin-top: 22px;
+}
+
+.care-passport-item {
+  padding: 22px;
+  border-radius: var(--radius-md);
+  background: rgba(255, 255, 255, 0.72);
+}
+
+.care-passport-item h3 {
+  margin: 8px 0 10px;
+  font-size: 1.2rem;
+}
+
+.care-passport-item p {
+  margin: 0;
+  color: var(--muted);
+}
+
 @media (max-width: 980px) {
   .hero,
   .insurance-layout,
@@ -1706,7 +1811,7 @@ h4 {
   .step-grid,
   .hero-card-grid,
   .doctor-meta-grid,
-  .insurance-advisor-grid,
+  .insurance-advisor-stack,
   .value-grid,
   .carrier-showcase,
   .sanctuary-hero,
@@ -1714,7 +1819,9 @@ h4 {
   .sanctuary-step-row,
   .sanctuary-metric-row,
   .doctor-decision-role-grid,
-  .doctor-decision-brief-grid {
+  .doctor-decision-brief-grid,
+  .insurance-plan-review-grid,
+  .care-passport-grid {
     grid-template-columns: 1fr;
   }
 
@@ -1736,14 +1843,6 @@ h4 {
 
   .doctor-detail-actions {
     justify-content: flex-start;
-  }
-
-  .insurance-advisor-carousel-controls {
-    flex-wrap: wrap;
-  }
-
-  .advisor-recommendation-card {
-    min-width: min(320px, 88vw);
   }
 
   .insurance-entry-grid {
@@ -1770,6 +1869,10 @@ h4 {
 
   .assistant-preview-card {
     max-width: 100%;
+  }
+
+  .care-passport-header {
+    flex-direction: column;
   }
 }
 

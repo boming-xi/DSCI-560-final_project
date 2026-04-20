@@ -96,6 +96,8 @@ class InsuranceAdvisorRecommendation(BaseModel):
     source_url: str | None = None
     network_url: str | None = None
     insurance_summary: InsuranceSummary
+    available_plan_count: int = 1
+    more_plans: list["InsuranceAdvisorRecommendation"] = Field(default_factory=list)
 
 
 class InsuranceAdvisorMessageRequest(BaseModel):
@@ -113,3 +115,6 @@ class InsuranceAdvisorMessageResponse(BaseModel):
     recommendations: list[InsuranceAdvisorRecommendation] = Field(default_factory=list)
     suggested_prompts: list[str] = Field(default_factory=list)
     disclaimer: str
+
+
+InsuranceAdvisorRecommendation.model_rebuild()
