@@ -12,6 +12,8 @@ import type {
 } from "@/lib/types";
 
 const defaultQuestion = "Help me choose the best doctor from the current shortlist.";
+const doctorDecisionPromptHint =
+  "Ask what should matter most in the final choice, like insurance certainty, communication style, distance, or appointment speed.";
 
 const roleCards = [
   {
@@ -68,9 +70,10 @@ export function DoctorDecisionChat({
   const [sharedBrief, setSharedBrief] = useState<DoctorDecisionSharedBrief | null>(
     useStoredConversation ? initialFlow.doctorDecisionSharedBrief ?? null : null,
   );
-  const [message, setMessage] = useState(defaultQuestion);
+  const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const [isSending, setIsSending] = useState(false);
+  const [showPromptHint, setShowPromptHint] = useState(true);
   const hasBootstrapped = useRef(false);
 
   function persistDecisionState(next: {
@@ -147,7 +150,7 @@ export function DoctorDecisionChat({
       setError(
         requestError instanceof Error
           ? requestError.message
-          : "Unable to compare the doctor shortlist right now.",
+          : "We could not review the shortlist together just yet.",
       );
     } finally {
       setIsSending(false);
@@ -312,7 +315,9 @@ export function DoctorDecisionChat({
           rows={4}
           value={message}
           onChange={(event) => setMessage(event.target.value)}
-          placeholder="Ask the room what should matter most: fit, coverage certainty, communication style, distance, or speed."
+          onFocus={() => setShowPromptHint(false)}
+          onBlur={() => setShowPromptHint(!message.trim())}
+          placeholder={showPromptHint ? doctorDecisionPromptHint : ""}
         />
         <button className="button button-primary" disabled={isSending} type="submit">
           {isSending ? "Comparing..." : "Ask the decision group"}

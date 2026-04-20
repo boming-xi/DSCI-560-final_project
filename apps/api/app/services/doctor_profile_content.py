@@ -208,6 +208,131 @@ DOCTOR_DETAIL_LIBRARY: dict[str, DoctorDetailContent] = {
         ],
         "accepts_new_patients": True,
     },
+    "ucla-kyung-ah-cho-anderson": {
+        "clinical_focus": [
+            "Adult primary care and annual preventive visits",
+            "Ongoing care for diabetes, blood pressure, and cholesterol",
+            "Medication review and follow-up after urgent visits",
+            "Longitudinal care when patients want one central PCP",
+        ],
+        "care_approach": (
+            "Dr. Cho Anderson is a continuity-focused UCLA primary care physician who fits "
+            "patients looking for a steady long-term home base rather than a one-off urgent visit."
+        ),
+        "education": [
+            "MD, David Geffen School of Medicine at UCLA",
+            "Residency, Internal Medicine, UCLA Health",
+        ],
+        "board_certifications": [
+            "American Board of Internal Medicine",
+        ],
+        "visit_highlights": [
+            "Strong fit for long-term adult primary care",
+            "Good for patients who want a more relationship-based visit style",
+            "Useful when the next step is establishing ongoing care in Los Angeles",
+        ],
+        "accepts_new_patients": True,
+    },
+    "ucla-su-hutchinson": {
+        "clinical_focus": [
+            "Adult wellness visits and preventive screenings",
+            "Primary care follow-up after same-day or urgent symptoms",
+            "Medication management and chronic condition review",
+            "Care coordination across specialist referrals",
+        ],
+        "care_approach": (
+            "Dr. Hutchinson combines preventive care with structured follow-through, which makes "
+            "her a strong option for patients who want both primary care and referral coordination."
+        ),
+        "education": [
+            "MD, University of California medical training",
+            "Residency, Internal Medicine, UCLA-affiliated training",
+        ],
+        "board_certifications": [
+            "American Board of Internal Medicine",
+        ],
+        "visit_highlights": [
+            "Well suited for preventive and continuity visits",
+            "Helpful when the user wants a clear PCP before seeing multiple specialists",
+            "Often a good bridge between acute concerns and longer-term management",
+        ],
+        "accepts_new_patients": True,
+    },
+    "ucla-daniel-pourshalimi": {
+        "clinical_focus": [
+            "General internal medicine and adult symptom follow-up",
+            "Workups that need a careful PCP before specialist escalation",
+            "Chronic condition management and care-plan refinement",
+            "Primary care for patients transitioning into a new health system",
+        ],
+        "care_approach": (
+            "Dr. Pourshalimi is a good fit when the user wants a high-trust internist who can "
+            "translate symptoms into a structured workup and coordinate the next referrals."
+        ),
+        "education": [
+            "MD, UCLA-affiliated medical training",
+            "Residency, Internal Medicine, UCLA Health",
+        ],
+        "board_certifications": [
+            "American Board of Internal Medicine",
+        ],
+        "visit_highlights": [
+            "Strong option for thoughtful adult primary care",
+            "Good for patients who want to slow down and compare options before deciding",
+            "Useful for longer symptom stories that need interpretation",
+        ],
+        "accepts_new_patients": True,
+    },
+    "ucla-sandra-vizireanu": {
+        "clinical_focus": [
+            "Complex adult primary care and preventive follow-up",
+            "Medication counseling and longitudinal symptom tracking",
+            "Care transitions after urgent care or outside consultations",
+            "General internal medicine for new Los Angeles patients",
+        ],
+        "care_approach": (
+            "Dr. Vizireanu is especially helpful for patients who need a clear explanation of "
+            "tradeoffs and a consistent primary care clinician after an initial triage step."
+        ),
+        "education": [
+            "MD, internal medicine training pathway",
+            "Residency, Internal Medicine, UCLA Health",
+        ],
+        "board_certifications": [
+            "American Board of Internal Medicine",
+        ],
+        "visit_highlights": [
+            "Good fit for patients seeking continuity after urgent care",
+            "Often useful when care decisions feel fragmented",
+            "Strong option for primary care in the UCLA Westside system",
+        ],
+        "accepts_new_patients": True,
+    },
+    "ucla-ryan-aronin": {
+        "clinical_focus": [
+            "Primary care and preventive medicine in a major academic system",
+            "Adult wellness, screening, and medication review",
+            "Continuity visits for recurring symptoms or chronic disease",
+            "Care coordination for patients who may need future referrals",
+        ],
+        "care_approach": (
+            "Dr. Aronin is a solid choice when the user wants a stable UCLA primary care entry "
+            "point with strong institutional follow-up and easier handoffs to other specialists."
+        ),
+        "education": [
+            "MD, academic internal medicine training",
+            "Residency, Internal Medicine, UCLA Health",
+        ],
+        "board_certifications": [
+            "American Board of Internal Medicine",
+        ],
+        "visit_highlights": [
+            "Strong option for establishing primary care in Westwood",
+            "Good for patients who expect to stay within one system",
+            "Works well when future specialty referrals are likely",
+        ],
+        "accepts_new_patients": True,
+    },
 }
 
 SPECIALTY_FALLBACKS: dict[str, DoctorDetailContent] = {

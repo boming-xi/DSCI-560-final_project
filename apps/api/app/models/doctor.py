@@ -34,4 +34,10 @@ class DoctorRecord(BaseModel):
     telehealth: bool
     gender: str
     profile_blurb: str
-
+    provider_system: str | None = None
+    official_profile_url: str | None = None
+    official_booking_url: str | None = None
+    official_booking_label: str | None = None
+    booking_system_name: str | None = None
+    booking_note: str | None = None
+    pilot_region: str | None = None

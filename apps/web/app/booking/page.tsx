@@ -1,62 +1,54 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useEffect, useMemo } from "react";
 
-import { BookingModal } from "@/components/BookingModal";
-import { api } from "@/lib/api";
 import { getFlowState, patchFlowState } from "@/lib/flow";
 import { useProtectedRoute } from "@/lib/useProtectedRoute";
-import type { BookingConfirmation, DoctorProfile, TimeSlot } from "@/lib/types";
 
 export default function BookingPage() {
   const { isCheckingAuth, session } = useProtectedRoute();
-  const [doctor, setDoctor] = useState<DoctorProfile | null>(null);
-  const [slots, setSlots] = useState<TimeSlot[]>([]);
-  const [slotSource, setSlotSource] = useState<"external_sync" | "demo_fallback" | string>(
-    "demo_fallback"
-  );
-  const [confirmation, setConfirmation] = useState<BookingConfirmation | null>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState("");
+  const flow = getFlowState();
+  const doctor = flow.selectedDoctor ?? flow.searchResult?.doctors[0] ?? null;
+  const officialBookingUrl = doctor?.official_booking_url ?? null;
+  const officialProfileUrl = doctor?.official_profile_url ?? null;
 
   useEffect(() => {
-    async function loadBookingContext() {
-      if (isCheckingAuth || !session) {
-        return;
-      }
-      const flow = getFlowState();
-      const selectedDoctor = flow.selectedDoctor ?? flow.searchResult?.doctors[0] ?? null;
-      if (!selectedDoctor) {
-        setError("Choose a doctor from the recommendation page first.");
-        setIsLoading(false);
-        return;
-      }
-
-      try {
-        const slotsResponse = await api.getBookingSlots(selectedDoctor.id);
-        setDoctor(selectedDoctor);
-        setSlots(slotsResponse.slots);
-        setSlotSource(slotsResponse.source);
-        setConfirmation(flow.booking ?? null);
-        patchFlowState({ selectedDoctor });
-      } catch (loadError) {
-        setError(
-          loadError instanceof Error ? loadError.message : "Unable to load booking slots."
-        );
-      } finally {
-        setIsLoading(false);
-      }
+    if (!doctor) {
+      return;
     }
 
-    void loadBookingContext();
-  }, [isCheckingAuth, session]);
+    patchFlowState({ selectedDoctor: doctor });
+  }, [doctor]);
+
+  useEffect(() => {
+    if (!officialBookingUrl) {
+      return;
+    }
+
+    const redirectHandle = window.setTimeout(() => {
+      window.location.assign(officialBookingUrl);
+    }, 1200);
+
+    return () => window.clearTimeout(redirectHandle);
+  }, [officialBookingUrl]);
+
+  const handoffSummary = useMemo(() => {
+    if (!doctor) {
+      return null;
+    }
+
+    return [
+      doctor.provider_system ? `${doctor.provider_system} booking handoff` : "Third-party booking handoff",
+      doctor.insurance_verification?.label ?? "Coverage should be rechecked on the provider site",
+      doctor.booking_system_name ?? "Official scheduling page",
+    ];
+  }, [doctor]);
 
   if (isCheckingAuth) {
     return (
       <main className="page-shell">
-        <div className="panel">Checking your account before opening booking...</div>
+        <div className="panel">Preparing your booking handoff...</div>
       </main>
     );
   }
@@ -69,15 +61,15 @@ export default function BookingPage() {
     <main className="page-shell">
       <section className="results-header panel">
         <span className="eyebrow">Step 4</span>
-        <h1>Booking support</h1>
-        <p>Review appointment context and confirm the next available slot.</p>
+        <h1>Third-party booking handoff</h1>
+        <p>
+          This project does not complete appointments inside the site. We recommend the doctor,
+          then hand you off to the provider&apos;s official booking page.
+        </p>
       </section>
 
-      {isLoading ? <div className="panel">Loading booking options...</div> : null}
-      {error ? <div className="panel error-panel">{error}</div> : null}
-
       {doctor ? (
-        <section className="panel booking-layout">
+        <section className="panel booking-layout booking-handoff-layout">
           <div>
             <span className="eyebrow">{doctor.specialty}</span>
             <h2>{doctor.name}</h2>
@@ -85,75 +77,79 @@ export default function BookingPage() {
             <p>{doctor.clinic.address}</p>
             <div className="badge-row">
               <span className="badge">{doctor.distance_km} km away</span>
-              <span className="badge">
-                {doctor.telehealth ? "Telehealth available" : "In-person only"}
-              </span>
-              <span className="badge">{doctor.languages.join(", ")}</span>
+              <span className="badge">{doctor.next_opening_label}</span>
+              {doctor.provider_system ? <span className="badge">{doctor.provider_system}</span> : null}
+              {doctor.pilot_region ? <span className="badge">{doctor.pilot_region}</span> : null}
+            </div>
+            <div className="info-box booking-handoff-box">
+              <strong>What happens on this page</strong>
+              <ul className="detail-list">
+                <li>We preserve the recommended doctor and insurance context.</li>
+                <li>You finish appointment booking on the provider&apos;s own website.</li>
+                <li>This project does not create a confirmation number or hold a time slot.</li>
+              </ul>
             </div>
           </div>
 
-          <div className="booking-side-card">
-            <h3>Available slots</h3>
+          <div className="booking-side-card booking-handoff-card">
+            <h3>
+              {officialBookingUrl
+                ? "Redirecting to official booking"
+                : "Official booking link unavailable"}
+            </h3>
             <p className="subtle-copy">
-              {slotSource === "external_sync"
-                ? "Using synced scheduling data from the external slot feed."
-                : "Using demo fallback availability."}
+              {officialBookingUrl
+                ? `We are sending you to ${doctor.provider_system ?? "the provider"} to finish scheduling. If the redirect does not happen, use the button below.`
+                : "This clinician does not currently have a live public scheduling link attached to the recommendation flow."}
             </p>
-            <ul className="slot-list">
-              {slots.length ? (
-                slots.map((slot) => (
-                  <li key={slot.start}>
-                    {slot.label}
-                    {slot.appointment_mode ? ` · ${slot.appointment_mode}` : ""}
-                  </li>
-                ))
-              ) : (
-                <li>No appointment times are currently available.</li>
-              )}
-            </ul>
+
+            {handoffSummary ? (
+              <div className="badge-row compact-badge-row">
+                {handoffSummary.map((item) => (
+                  <span className="badge" key={item}>
+                    {item}
+                  </span>
+                ))}
+              </div>
+            ) : null}
+
             <div className="form-actions">
-              <button
-                className="button button-primary"
-                disabled={slots.length === 0}
-                onClick={() => setIsModalOpen(true)}
-                type="button"
-              >
-                {slots.length === 0 ? "No slots available" : "Open booking form"}
-              </button>
+              {officialBookingUrl ? (
+                <a
+                  className="button button-primary"
+                  href={officialBookingUrl}
+                >
+                  {doctor.official_booking_label ?? "Open official booking"}
+                </a>
+              ) : null}
+
+              {officialProfileUrl ? (
+                <a
+                  className="button button-secondary"
+                  href={officialProfileUrl}
+                >
+                  View official provider profile
+                </a>
+              ) : null}
+
               <Link className="button button-secondary" href="/doctors">
                 Back to doctors
               </Link>
             </div>
+
+            {!officialBookingUrl ? (
+              <div className="notice-box">
+                Official booking handoff is currently available for clinicians connected to the
+                live LA provider pilot, including UCLA Health.
+              </div>
+            ) : null}
           </div>
         </section>
-      ) : null}
-
-      {confirmation ? (
-        <section className="panel confirmation-card">
-          <span className="eyebrow">Confirmation</span>
-          <h2>{confirmation.confirmation_id}</h2>
-          <p>
-            Appointment requested with {confirmation.doctor_name} at{" "}
-            {confirmation.clinic_name}.
-          </p>
-          <p>{new Date(confirmation.slot).toLocaleString()}</p>
-          <ul className="detail-list">
-            {confirmation.next_steps.map((step) => (
-              <li key={step}>{step}</li>
-            ))}
-          </ul>
+      ) : (
+        <section className="panel error-panel">
+          Return to recommendations and choose a doctor before opening booking handoff.
         </section>
-      ) : null}
-
-      {doctor ? (
-        <BookingModal
-          doctor={doctor}
-          slots={slots}
-          isOpen={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
-          onBooked={(nextConfirmation) => setConfirmation(nextConfirmation)}
-        />
-      ) : null}
+      )}
     </main>
   );
 }

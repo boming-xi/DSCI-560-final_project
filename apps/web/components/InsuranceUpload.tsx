@@ -1,23 +1,38 @@
 "use client";
 
-import { ChangeEvent, FormEvent, useMemo, useState } from "react";
+import { ChangeEvent, FormEvent, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 
 import { api } from "@/lib/api";
 import { getFlowState, patchFlowState } from "@/lib/flow";
 import type { DocumentExtractResponse } from "@/lib/types";
 
+const LEGACY_INSURANCE_EXAMPLE = "USC Aetna student PPO";
+const INSURANCE_QUERY_HINT =
+  "Paste the carrier, plan name, or the key text you see on your insurance card or marketplace plan.";
+
 export function InsuranceUpload() {
   const router = useRouter();
   const initialFlow = useMemo(() => getFlowState(), []);
+  const sanitizedInitialInsuranceQuery =
+    initialFlow.insuranceQuery === LEGACY_INSURANCE_EXAMPLE
+      ? ""
+      : (initialFlow.insuranceQuery ?? "");
   const [insuranceQuery, setInsuranceQuery] = useState(
-    initialFlow.insuranceQuery ?? "USC Aetna student PPO"
+    sanitizedInitialInsuranceQuery
   );
   const [uploadedText, setUploadedText] = useState("");
   const [uploadedDocument, setUploadedDocument] = useState<DocumentExtractResponse | null>(null);
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isExtracting, setIsExtracting] = useState(false);
+  const [showQueryHint, setShowQueryHint] = useState(true);
+
+  useEffect(() => {
+    if (initialFlow.insuranceQuery === LEGACY_INSURANCE_EXAMPLE) {
+      patchFlowState({ insuranceQuery: undefined });
+    }
+  }, [initialFlow.insuranceQuery]);
 
   async function handleFileChange(event: ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0];
@@ -35,7 +50,7 @@ export function InsuranceUpload() {
       });
       setUploadedDocument(extracted);
       setUploadedText(extracted.extracted_text.slice(0, 6000));
-      if (!insuranceQuery || insuranceQuery === "USC Aetna student PPO") {
+      if (!insuranceQuery || insuranceQuery === LEGACY_INSURANCE_EXAMPLE) {
         setInsuranceQuery(extracted.extracted_text.slice(0, 160));
       }
     } catch (uploadError) {
@@ -44,7 +59,7 @@ export function InsuranceUpload() {
       setError(
         uploadError instanceof Error
           ? uploadError.message
-          : "Unable to read that insurance file right now.",
+          : "We could not read that insurance file just yet.",
       );
     } finally {
       setIsExtracting(false);
@@ -71,14 +86,13 @@ export function InsuranceUpload() {
         insuranceNetworkUrl: undefined,
         searchResult: undefined,
         selectedDoctor: undefined,
-        booking: undefined,
       });
       router.push("/doctors");
     } catch (submissionError) {
       setError(
         submissionError instanceof Error
           ? submissionError.message
-          : "Unable to parse insurance right now."
+          : "We could not review that plan just yet."
       );
     } finally {
       setIsLoading(false);
@@ -95,7 +109,6 @@ export function InsuranceUpload() {
       insuranceNetworkUrl: undefined,
       searchResult: undefined,
       selectedDoctor: undefined,
-      booking: undefined,
     });
     router.push("/doctors");
   }
@@ -116,8 +129,10 @@ export function InsuranceUpload() {
         <textarea
           value={insuranceQuery}
           onChange={(event) => setInsuranceQuery(event.target.value)}
+          onFocus={() => setShowQueryHint(false)}
+          onBlur={() => setShowQueryHint(!insuranceQuery.trim())}
           rows={5}
-          placeholder="Aetna USC Student Health PPO"
+          placeholder={showQueryHint ? INSURANCE_QUERY_HINT : ""}
         />
       </label>
 
@@ -130,7 +145,7 @@ export function InsuranceUpload() {
         />
       </label>
 
-      {isExtracting ? <p className="upload-status-copy">Extracting text from file...</p> : null}
+      {isExtracting ? <p className="upload-status-copy">Reading your insurance document...</p> : null}
 
       {uploadedDocument ? (
         <div className="info-box">
@@ -152,10 +167,10 @@ export function InsuranceUpload() {
 
       <div className="form-actions">
         <button className="button button-primary" type="submit" disabled={isLoading}>
-          {isLoading ? "Matching plan..." : "Find doctors"}
+          {isLoading ? "Reviewing plan details..." : "Match plan and continue"}
         </button>
         <button className="button button-secondary" type="button" onClick={skipInsurance}>
-          Continue without insurance
+          Continue without plan verification
         </button>
       </div>
     </form>

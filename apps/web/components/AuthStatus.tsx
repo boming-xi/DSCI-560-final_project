@@ -61,7 +61,7 @@ export function AuthStatus() {
   }, []);
 
   if (!isReady) {
-    return <div className="auth-shell auth-loading">Checking account...</div>;
+    return <div className="auth-shell auth-loading">Restoring your session...</div>;
   }
 
   if (!session) {
@@ -96,4 +96,3 @@ export function AuthStatus() {
     </div>
   );
 }
-

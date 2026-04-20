@@ -81,3 +81,15 @@ def test_booking_rejects_invalid_or_already_booked_slots() -> None:
         headers=headers,
     )
     assert duplicate_booking.status_code == 409
+
+
+def test_real_provider_booking_returns_official_external_link() -> None:
+    headers = _demo_auth_headers()
+    response = client.get("/api/v1/booking/slots/ucla-ryan-aronin", headers=headers)
+
+    assert response.status_code == 200
+    payload = response.json()
+    assert payload["source"] == "official_external_link"
+    assert payload["slots"] == []
+    assert payload["external_booking_url"] == "https://www.uclahealth.org/providers/ryan-aronin"
+    assert payload["booking_system_name"] == "UCLA Health online scheduling"

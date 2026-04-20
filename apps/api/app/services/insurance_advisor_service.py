@@ -6,7 +6,6 @@ from functools import cached_property
 
 from app.ai.llm_client import LLMClient
 from app.ai.prompt_templates import INSURANCE_ADVISOR_SYSTEM_PROMPT
-from app.models.insurance import InsurancePlanRecord
 from app.repositories.insurance_repo import InsuranceRepository
 from app.schemas.insurance import InsuranceSummary
 from app.schemas.insurance_advisor import (
@@ -33,16 +32,9 @@ class InsuranceAdvisorService:
         self.insurance_repo = insurance_repo
         self.insurance_service = insurance_service
         self.llm_client = llm_client
-        self.legacy_catalog_path = insurance_repo.settings.mock_data_dir / "insurance_advisor_catalog.json"
         self.ca_marketplace_catalog_path = (
             insurance_repo.settings.mock_data_dir / "ca_marketplace_plans.json"
         )
-
-    @cached_property
-    def legacy_advisor_catalog(self) -> dict[str, InsuranceAdvisorPlanRecord]:
-        payload = json.loads(self.legacy_catalog_path.read_text())
-        catalog = [InsuranceAdvisorPlanRecord.model_validate(item) for item in payload]
-        return {item.plan_id: item for item in catalog}
 
     @cached_property
     def ca_marketplace_catalog(self) -> list[InsuranceAdvisorPlanRecord]:
@@ -488,27 +480,11 @@ class InsuranceAdvisorService:
         return recommendations[:3]
 
     def _candidate_catalog(self, profile: InsuranceAdvisorProfile) -> list[InsuranceAdvisorPlanRecord]:
-        if profile.coverage_channel == "student":
-            return [
-                record
-                for record in self.legacy_advisor_catalog.values()
-                if "student" in record.coverage_channels
-            ]
-        if profile.coverage_channel == "marketplace":
-            if self.ca_marketplace_catalog and (profile.state in {None, "CA"}):
-                return self.ca_marketplace_catalog
-            return [
-                record
-                for record in self.legacy_advisor_catalog.values()
-                if "marketplace" in record.coverage_channels
-            ]
-        if profile.coverage_channel == "employer":
-            return [
-                record
-                for record in self.legacy_advisor_catalog.values()
-                if "employer" in record.coverage_channels
-            ]
-        return list(self.legacy_advisor_catalog.values()) + self.ca_marketplace_catalog
+        if profile.state not in {None, "CA"}:
+            return []
+        if profile.coverage_channel in {"employer"}:
+            return []
+        return self.ca_marketplace_catalog
 
     def _score_plan(
         self,
@@ -673,10 +649,8 @@ class InsuranceAdvisorService:
         provider = plan_metadata.provider or "Unknown provider"
         plan_name = plan_metadata.plan_name or plan_metadata.plan_id
         plan_type = plan_metadata.plan_type or "Unknown"
-        legacy_plan = self._legacy_plan_for_record(plan_metadata)
-
         notes = [
-            "Shortlisted by the insurance advisor based on your coverage path, ZIP code, budget, and care usage.",
+            "Shortlisted from the official California marketplace plan catalog using your ZIP code, budget, and care-usage preferences.",
             "Confirm subsidy amounts, exact doctor network participation, and final enrollment details on the official plan page.",
         ]
         if premium_amount is not None:
@@ -691,20 +665,13 @@ class InsuranceAdvisorService:
             referral_required_for_specialists=bool(
                 plan_metadata.referral_required_for_specialists
             ),
-            primary_care_copay=legacy_plan.primary_care_copay if legacy_plan else None,
-            specialist_copay=legacy_plan.specialist_copay if legacy_plan else None,
-            urgent_care_copay=legacy_plan.urgent_care_copay if legacy_plan else None,
+            primary_care_copay=None,
+            specialist_copay=None,
+            urgent_care_copay=None,
             notes=notes,
             match_confidence=0.92,
             normalized_query=normalize_text(f"{provider} {plan_name}"),
         )
-
-    def _legacy_plan_for_record(
-        self,
-        plan_metadata: InsuranceAdvisorPlanRecord,
-    ) -> InsurancePlanRecord | None:
-        override_id = plan_metadata.doctor_search_plan_id or plan_metadata.plan_id
-        return self.insurance_service.get_plan(override_id)
 
     def _navigator_message(
         self,
@@ -752,12 +719,12 @@ class InsuranceAdvisorService:
         profile: InsuranceAdvisorProfile,
         missing_fields: list[str],
     ) -> str:
-        if profile.coverage_channel == "student":
-            base = "Right now I would compare student-plan options first, then only fall back to marketplace choices if flexibility or cost pushes us there."
-        elif profile.coverage_channel == "marketplace":
+        if profile.coverage_channel == "marketplace":
             base = "This looks most like a marketplace comparison, and for California I can now ground the shortlist in Covered California plan data."
         elif profile.coverage_channel == "employer":
-            base = "This sounds more like an employer-plan comparison, but I can still help translate tradeoffs and think about network fit."
+            base = "Right now this advisor is restricted to California marketplace plans, so I cannot return an official shortlist for employer coverage."
+        elif profile.coverage_channel == "student":
+            base = "Right now this advisor stays inside official California marketplace data, so I cannot rank school-only plans unless they appear in that official marketplace catalog."
         else:
             base = "I still need a little more intake detail before I can confidently choose the right coverage path."
 
@@ -811,8 +778,6 @@ class InsuranceAdvisorService:
                 "I want the cheapest option that still feels safe for a few visits a year.",
                 "Which of these is safest if I may need regular prescriptions?",
             ]
-            if profile.coverage_channel == "student":
-                prompts.insert(0, "Compare the top student plan against the best marketplace fallback.")
             if profile.coverage_channel == "marketplace":
                 prompts.insert(0, "Show me the best PPO-style option even if the premium is higher.")
             return prompts[:3]

@@ -6,6 +6,7 @@ import { useEffect, useMemo, useState } from "react";
 
 import { RankingExplanation } from "@/components/RankingExplanation";
 import { api } from "@/lib/api";
+import { beginDoctorBooking } from "@/lib/doctor-booking";
 import { getFlowState, patchFlowState } from "@/lib/flow";
 import { useProtectedRoute } from "@/lib/useProtectedRoute";
 import type { DoctorProfile } from "@/lib/types";
@@ -58,7 +59,7 @@ export default function DoctorDetailPage() {
         setError(
           loadError instanceof Error
             ? loadError.message
-            : "Unable to load this doctor profile.",
+            : "We could not load this clinician profile just yet.",
         );
       } finally {
         setIsLoading(false);
@@ -72,14 +73,15 @@ export default function DoctorDetailPage() {
     if (!doctor) {
       return;
     }
-    patchFlowState({ selectedDoctor: doctor });
-    router.push("/booking");
+    beginDoctorBooking(doctor, {
+      onInternalBooking: () => router.push("/booking"),
+    });
   }
 
   if (isCheckingAuth) {
     return (
       <main className="page-shell">
-        <div className="panel">Checking your account before opening doctor details...</div>
+        <div className="panel">Preparing clinician details...</div>
       </main>
     );
   }
@@ -98,7 +100,7 @@ export default function DoctorDetailPage() {
             <p>
               {doctor
                 ? `${doctor.specialty} at ${doctor.clinic.name}`
-                : "Loading clinician details and recommendation context."}
+                : "Gathering clinician details and recommendation context."}
             </p>
           </div>
           <div className="doctor-detail-actions">
@@ -111,7 +113,7 @@ export default function DoctorDetailPage() {
               onClick={handleBook}
               type="button"
             >
-              Book this doctor
+              {doctor?.official_booking_label ?? "Book this doctor"}
             </button>
           </div>
         </div>
@@ -125,13 +127,15 @@ export default function DoctorDetailPage() {
               <span className="badge">{doctor.review_count} reviews</span>
               <span className="badge">{formatAvailabilityLabel(doctor)}</span>
               <span className="badge">{doctor.distance_km} km away</span>
+              {doctor.provider_system ? <span className="badge">{doctor.provider_system}</span> : null}
+              {doctor.pilot_region ? <span className="badge">{doctor.pilot_region}</span> : null}
             </div>
             <p className="doctor-detail-intro">{doctor.profile_blurb}</p>
           </>
         ) : null}
       </section>
 
-      {isLoading ? <div className="panel">Loading full doctor profile...</div> : null}
+      {isLoading ? <div className="panel">Loading full clinician profile...</div> : null}
       {error ? <div className="panel error-panel">{error}</div> : null}
 
       {doctor ? (
@@ -144,10 +148,13 @@ export default function DoctorDetailPage() {
             </article>
             <article className="panel summary-card">
               <span className="eyebrow">Access</span>
-              <h2>{doctor.next_opening_label}</h2>
+              <h2>{doctor.official_booking_url ? "Official booking available" : doctor.next_opening_label}</h2>
               <p>
-                {doctor.appointment_modes.join(", ")} with{" "}
-                {doctor.clinic.open_weekends ? "weekend clinic support" : "weekday clinic scheduling"}.
+                {doctor.official_booking_url
+                  ? `${doctor.provider_system ?? "Provider"} booking can continue on the official scheduling page.`
+                  : `${doctor.appointment_modes.join(", ")} with ${
+                      doctor.clinic.open_weekends ? "weekend clinic support" : "weekday clinic scheduling"
+                    }.`}
               </p>
             </article>
           </section>
@@ -263,12 +270,44 @@ export default function DoctorDetailPage() {
                     <li>{doctor.next_opening_label} next opening</li>
                     <li>{doctor.estimated_cost ? `$${doctor.estimated_cost} estimated copay` : "Estimated cost depends on plan"}</li>
                     <li>{doctor.referral_required ? "Specialist referral may be required" : "Referral usually not required"}</li>
+                    {doctor.booking_system_name ? <li>{doctor.booking_system_name}</li> : null}
+                    {doctor.booking_note ? <li>{doctor.booking_note}</li> : null}
                   </ul>
                 </div>
               </div>
+              {doctor.official_profile_url || doctor.official_booking_url ? (
+                <div className="info-box">
+                  <strong>
+                    {doctor.provider_system ?? "Official provider"} booking path
+                  </strong>
+                  <p>
+                    {doctor.official_booking_url
+                      ? "This doctor has a live public provider page, so the primary booking action can continue on the official system."
+                      : "Profile details are available on the provider's official public page."}
+                  </p>
+                  <div className="form-actions">
+                    {doctor.official_booking_url ? (
+                      <a
+                        className="button button-primary"
+                        href={doctor.official_booking_url}
+                      >
+                        {doctor.official_booking_label ?? "Open official booking"}
+                      </a>
+                    ) : null}
+                    {doctor.official_profile_url ? (
+                      <a
+                        className="button button-secondary"
+                        href={doctor.official_profile_url}
+                      >
+                        View official profile
+                      </a>
+                    ) : null}
+                  </div>
+                </div>
+              ) : null}
               <div className="form-actions">
                 <button className="button button-primary" onClick={handleBook} type="button">
-                  Continue to booking
+                  {doctor.official_booking_label ?? "Continue to booking"}
                 </button>
               </div>
             </article>

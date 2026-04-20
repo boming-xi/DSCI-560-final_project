@@ -30,6 +30,8 @@ class RankingService:
         availability_score = self._availability_score(doctor.availability_days)
         language_score = self._language_score(doctor, preferred_language)
         trust_score = self._trust_score(doctor.rating, doctor.review_count)
+        if doctor.official_booking_url:
+            trust_score = min(1.0, trust_score + 0.08)
 
         raw_scores = {
             "specialty": specialty_score,
@@ -104,6 +106,13 @@ class RankingService:
             referral_required=requires_referral(plan, doctor.specialty),
             insurance_verification=insurance_verification,
             ranking_breakdown=ranking_breakdown,
+            provider_system=doctor.provider_system,
+            official_profile_url=doctor.official_profile_url,
+            official_booking_url=doctor.official_booking_url,
+            official_booking_label=doctor.official_booking_label,
+            booking_system_name=doctor.booking_system_name,
+            booking_note=doctor.booking_note,
+            pilot_region=doctor.pilot_region,
         )
 
     def _specialty_score(self, doctor: DoctorRecord, triage: TriageRecommendation) -> float:
@@ -167,6 +176,4 @@ class RankingService:
             return "verified network match"
         if insurance_verification.status == "likely":
             return "carrier-level match"
-        if insurance_verification.status == "demo":
-            return "demo compatibility only"
-        return "network uncertain"
+        return "official confirmation pending"

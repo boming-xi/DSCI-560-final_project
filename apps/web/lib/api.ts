@@ -1,16 +1,12 @@
 import type {
   AuthResponse,
   AuthenticatedUser,
-  BookingConfirmation,
-  BookingSlotsResponse,
-  ChatResponse,
   ChatTurn,
   DoctorDecisionConversationTurn,
   DoctorDecisionResponse,
   DoctorProfile,
   DoctorSearchResponse,
   DocumentExtractResponse,
-  DocumentExplainResponse,
   InsuranceAdvisorProfile,
   InsuranceAdvisorResponse,
   InsuranceSummary,
@@ -154,50 +150,6 @@ export const api = {
 
   getDoctor: (doctorId: string) =>
     request<DoctorProfile>(`/doctors/${doctorId}`, { method: "GET" }),
-
-  getBookingSlots: (doctorId: string) =>
-    request<BookingSlotsResponse>(
-      `/booking/slots/${doctorId}`,
-      { method: "GET" },
-      { authRequired: true },
-    ),
-
-  createBooking: (payload: {
-    doctor_id: string;
-    patient_name: string;
-    email: string;
-    preferred_slot: string;
-    insurance_plan_id?: string;
-    symptom_text?: string;
-    notes?: string;
-  }) =>
-    request<BookingConfirmation>("/booking/appointments", {
-      method: "POST",
-      body: JSON.stringify(payload),
-    }, { authRequired: true }),
-
-  sendChat: (payload: {
-    message: string;
-    conversation: ChatTurn[];
-    symptom_text?: string;
-    insurance_query?: string;
-  }) =>
-    request<ChatResponse>("/chat/message", {
-      method: "POST",
-      body: JSON.stringify(payload),
-    }, { authRequired: true }),
-
-  explainDocument: (payload: {
-    title?: string;
-    content?: string;
-    document_type?: string;
-    document_id?: string;
-    focus_question?: string;
-  }) =>
-    request<DocumentExplainResponse>("/documents/explain", {
-      method: "POST",
-      body: JSON.stringify(payload),
-    }, { authRequired: true }),
 
   extractDocument: (payload: {
     file: File;

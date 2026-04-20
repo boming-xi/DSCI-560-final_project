@@ -10,9 +10,8 @@ def test_doctor_decision_group_chat_returns_recommendation() -> None:
         "/api/v1/doctors/search",
         json={
             "symptom_text": "I need help finding a primary care doctor for a sore throat and fever",
-            "insurance_query": "USC Aetna student PPO",
-            "insurance_selected_plan_id": "usc-aetna-student",
-            "insurance_plan_id_override": "usc-aetna-student",
+            "insurance_query": "Blue Shield of California Gold 80 Trio HMO",
+            "insurance_selected_plan_id": "70285CA8040016",
             "preferred_language": "Mandarin",
             "location": {"latitude": 34.0224, "longitude": -118.2851},
             "duration_days": 1,
@@ -33,7 +32,7 @@ def test_doctor_decision_group_chat_returns_recommendation() -> None:
             "conversation": [],
             "doctors": doctors,
             "symptom_text": "I need help finding a primary care doctor for a sore throat and fever",
-            "insurance_query": "USC Aetna student PPO",
+            "insurance_query": "Blue Shield of California Gold 80 Trio HMO",
             "preferred_language": "Mandarin",
         },
     )
@@ -53,9 +52,8 @@ def test_doctor_decision_uses_priorities_from_previous_user_turns() -> None:
         "/api/v1/doctors/search",
         json={
             "symptom_text": "I need a primary care doctor for a sore throat and fever",
-            "insurance_query": "USC Aetna student PPO",
-            "insurance_selected_plan_id": "usc-aetna-student",
-            "insurance_plan_id_override": "usc-aetna-student",
+            "insurance_query": "Blue Shield of California Gold 80 Trio HMO",
+            "insurance_selected_plan_id": "70285CA8040016",
             "preferred_language": "Mandarin",
             "location": {"latitude": 34.0224, "longitude": -118.2851},
             "duration_days": 1,
@@ -81,7 +79,7 @@ def test_doctor_decision_uses_priorities_from_previous_user_turns() -> None:
             ],
             "doctors": doctors,
             "symptom_text": "I need a primary care doctor for a sore throat and fever",
-            "insurance_query": "USC Aetna student PPO",
+            "insurance_query": "Blue Shield of California Gold 80 Trio HMO",
             "preferred_language": "Mandarin",
         },
     )

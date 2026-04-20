@@ -29,7 +29,7 @@ export default function InsurancePage() {
   if (isCheckingAuth) {
     return (
       <main className="page-shell">
-        <div className="panel">Checking your account before opening insurance...</div>
+        <div className="panel">Preparing your insurance step...</div>
       </main>
     );
   }
@@ -113,8 +113,8 @@ export default function InsurancePage() {
         <section className="panel notice-box">
           <strong>Step 2 opens after you choose a path.</strong>
           <p>
-            Pick whether you already have insurance or need help choosing one,
-            and we will keep the rest of the flow focused on that path.
+            Choose whether you already have a plan or want advisor guidance,
+            and we will keep the next step focused on that route.
           </p>
         </section>
       )}

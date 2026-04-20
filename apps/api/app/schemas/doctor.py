@@ -20,7 +20,7 @@ class RankingBreakdown(BaseModel):
 
 
 class InsuranceVerification(BaseModel):
-    status: Literal["verified", "likely", "demo", "uncertain"]
+    status: Literal["verified", "likely", "uncertain"]
     label: str
     reason: str
     evidence: list[str] = Field(default_factory=list)
@@ -70,6 +70,13 @@ class DoctorProfile(BaseModel):
     referral_required: bool = False
     insurance_verification: InsuranceVerification | None = None
     ranking_breakdown: RankingBreakdown | None = None
+    provider_system: str | None = None
+    official_profile_url: str | None = None
+    official_booking_url: str | None = None
+    official_booking_label: str | None = None
+    booking_system_name: str | None = None
+    booking_note: str | None = None
+    pilot_region: str | None = None
 
 
 class DoctorSearchRequest(BaseModel):

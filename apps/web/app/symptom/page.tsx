@@ -9,7 +9,7 @@ export default function SymptomPage() {
   if (isCheckingAuth) {
     return (
       <main className="page-shell">
-        <div className="panel">Checking your account before opening symptoms...</div>
+        <div className="panel">Preparing your symptom intake...</div>
       </main>
     );
   }

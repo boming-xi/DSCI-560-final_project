@@ -728,6 +728,154 @@ h4 {
   gap: 14px;
 }
 
+.ranking-comparison-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.ranking-compare-grid,
+.ranking-matrix {
+  display: grid;
+  gap: 16px;
+}
+
+.ranking-compare-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.ranking-compare-card {
+  padding: 20px;
+  border-radius: var(--radius-lg);
+  background: rgba(255, 255, 255, 0.74);
+  box-shadow:
+    0 18px 32px rgba(28, 28, 24, 0.04),
+    inset 0 1px 0 rgba(255, 255, 255, 0.82);
+}
+
+.ranking-compare-card-leading {
+  background:
+    linear-gradient(180deg, rgba(13, 107, 102, 0.08), rgba(255, 255, 255, 0.76)),
+    rgba(255, 255, 255, 0.74);
+}
+
+.ranking-compare-card-top {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.ranking-rank-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 56px;
+  padding: 0.45rem 0.8rem;
+  border-radius: 999px;
+  background: rgba(31, 26, 22, 0.06);
+  color: var(--text);
+  font-weight: 700;
+}
+
+.ranking-compare-card h4 {
+  margin: 0 0 6px;
+}
+
+.ranking-compare-subtitle {
+  margin: 0;
+  color: var(--muted);
+}
+
+.ranking-highlight-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 12px 0 0;
+}
+
+.ranking-matrix {
+  overflow: hidden;
+  border-radius: var(--radius-lg);
+  background: rgba(255, 255, 255, 0.64);
+}
+
+.ranking-matrix-row {
+  display: grid;
+  grid-template-columns: minmax(180px, 0.95fr) repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  align-items: stretch;
+  padding: 12px;
+}
+
+.ranking-matrix-row + .ranking-matrix-row {
+  background: rgba(247, 243, 237, 0.45);
+}
+
+.ranking-matrix-header {
+  background: rgba(13, 107, 102, 0.08);
+}
+
+.ranking-matrix-label-cell,
+.ranking-matrix-doctor-cell {
+  display: flex;
+  align-items: center;
+  font-weight: 700;
+}
+
+.ranking-matrix-label-cell {
+  color: var(--text);
+}
+
+.ranking-matrix-doctor-cell {
+  color: var(--primary-strong);
+}
+
+.ranking-matrix-score-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px;
+  border-radius: 20px;
+  background: rgba(253, 249, 243, 0.9);
+}
+
+.ranking-matrix-score-cell-top {
+  background: rgba(13, 107, 102, 0.09);
+}
+
+.ranking-matrix-score-copy {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: center;
+}
+
+.ranking-matrix-score-copy strong {
+  font-size: 1rem;
+}
+
+.ranking-matrix-score-copy span {
+  color: var(--primary-strong);
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.ranking-mini-bar {
+  height: 10px;
+  border-radius: 999px;
+  background: rgba(31, 26, 22, 0.08);
+  overflow: hidden;
+}
+
+.ranking-mini-bar span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--accent), var(--primary));
+}
+
 .score-row {
   display: flex;
   flex-direction: column;
@@ -825,6 +973,20 @@ h4 {
   border-radius: var(--radius-lg);
   background: rgba(255, 255, 255, 0.74);
   border: 1px solid rgba(88, 63, 32, 0.1);
+}
+
+.booking-handoff-layout {
+  align-items: start;
+}
+
+.booking-handoff-card {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.booking-handoff-box {
+  margin-top: 16px;
 }
 
 .subtle-copy {
@@ -1588,6 +1750,11 @@ h4 {
     grid-template-columns: 1fr;
   }
 
+  .ranking-compare-grid,
+  .ranking-matrix-row {
+    grid-template-columns: 1fr;
+  }
+
   .insurance-step-toolbar {
     flex-direction: column;
     align-items: flex-start;
@@ -1620,6 +1787,11 @@ h4 {
   .form-grid,
   .doctor-card-top,
   .score-copy {
+    grid-template-columns: 1fr;
+    display: grid;
+  }
+
+  .ranking-matrix-score-copy {
     grid-template-columns: 1fr;
     display: grid;
   }

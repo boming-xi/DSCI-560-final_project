@@ -32,19 +32,24 @@ class DoctorRepository:
     def list_doctors(self) -> list[DoctorRecord]:
         doctors = self._list_doctors_from_db()
         if doctors:
-            return doctors
+            return self._merge_doctors(doctors, self.doctors)
         return self.doctors
 
     def list_clinics(self) -> list[ClinicRecord]:
         clinics = self._list_clinics_from_db()
         if clinics:
-            return clinics
+            return self._merge_clinics(clinics, self.clinics)
         return self.clinics
 
     def get_doctor(self, doctor_id: str) -> DoctorRecord | None:
         doctor = self._get_doctor_from_db(doctor_id)
         if doctor is not None:
-            return doctor
+            fixture_doctor = next((item for item in self.doctors if item.id == doctor_id), None)
+            return (
+                fixture_doctor.model_copy(update=doctor.model_dump(exclude_none=True))
+                if fixture_doctor
+                else doctor
+            )
         return next((doctor for doctor in self.doctors if doctor.id == doctor_id), None)
 
     def get_clinic(self, clinic_id: str) -> ClinicRecord | None:
@@ -99,6 +104,50 @@ class DoctorRepository:
         except SQLAlchemyError as exc:
             logger.warning("Clinic detail falling back to JSON fixtures: %s", exc)
             return None
+
+    @staticmethod
+    def _merge_doctors(db_doctors: list[DoctorRecord], fixture_doctors: list[DoctorRecord]) -> list[DoctorRecord]:
+        fixture_by_id = {doctor.id: doctor for doctor in fixture_doctors}
+        merged: list[DoctorRecord] = []
+        seen_ids: set[str] = set()
+
+        for db_doctor in db_doctors:
+            seen_ids.add(db_doctor.id)
+            fixture_doctor = fixture_by_id.get(db_doctor.id)
+            if fixture_doctor is not None:
+                merged.append(
+                    fixture_doctor.model_copy(update=db_doctor.model_dump(exclude_none=True))
+                )
+            else:
+                merged.append(db_doctor)
+
+        for fixture_doctor in fixture_doctors:
+            if fixture_doctor.id not in seen_ids:
+                merged.append(fixture_doctor)
+
+        return merged
+
+    @staticmethod
+    def _merge_clinics(db_clinics: list[ClinicRecord], fixture_clinics: list[ClinicRecord]) -> list[ClinicRecord]:
+        fixture_by_id = {clinic.id: clinic for clinic in fixture_clinics}
+        merged: list[ClinicRecord] = []
+        seen_ids: set[str] = set()
+
+        for db_clinic in db_clinics:
+            seen_ids.add(db_clinic.id)
+            fixture_clinic = fixture_by_id.get(db_clinic.id)
+            if fixture_clinic is not None:
+                merged.append(
+                    fixture_clinic.model_copy(update=db_clinic.model_dump(exclude_none=True))
+                )
+            else:
+                merged.append(db_clinic)
+
+        for fixture_clinic in fixture_clinics:
+            if fixture_clinic.id not in seen_ids:
+                merged.append(fixture_clinic)
+
+        return merged
 
     @staticmethod
     def _clinic_from_orm(clinic: ClinicORM) -> ClinicRecord:

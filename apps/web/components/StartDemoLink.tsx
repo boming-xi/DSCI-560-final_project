@@ -11,7 +11,7 @@ type StartDemoLinkProps = {
   label?: string;
 };
 
-export function StartDemoLink({ label = "Start the demo" }: StartDemoLinkProps) {
+export function StartDemoLink({ label = "Begin guided care" }: StartDemoLinkProps) {
   const [href, setHref] = useState(LOGIN_REDIRECT);
 
   useEffect(() => {

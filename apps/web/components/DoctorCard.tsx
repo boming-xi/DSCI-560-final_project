@@ -5,6 +5,7 @@ import type { DoctorProfile } from "@/lib/types";
 type DoctorCardProps = {
   doctor: DoctorProfile;
   highlighted?: boolean;
+  rank?: number;
   onBook: () => void;
   onView: () => void;
 };
@@ -12,6 +13,7 @@ type DoctorCardProps = {
 export function DoctorCard({
   doctor,
   highlighted = false,
+  rank,
   onBook,
   onView,
 }: DoctorCardProps) {
@@ -25,8 +27,8 @@ export function DoctorCard({
           <p>{doctor.profile_blurb}</p>
         </div>
         <div className="score-badge">
-          <strong>{doctor.ranking_breakdown?.total_score ?? 0}</strong>
-          <span>match score</span>
+          <strong>{rank ? `#${rank}` : "Top"}</strong>
+          <span>shortlist rank</span>
         </div>
       </div>
 
@@ -40,6 +42,8 @@ export function DoctorCard({
             ? "Same-day availability"
             : `Available in ${doctor.availability_days} days`}
         </span>
+        {doctor.provider_system ? <span className="badge">{doctor.provider_system}</span> : null}
+        {doctor.pilot_region ? <span className="badge">{doctor.pilot_region}</span> : null}
       </div>
 
       {doctor.clinical_focus.length ? (
@@ -67,9 +71,9 @@ export function DoctorCard({
         </div>
         <div>
           <h4>Network verification</h4>
-          <p>{doctor.insurance_verification?.label ?? "No plan selected yet"}</p>
+          <p>{doctor.insurance_verification?.label ?? "Insurance verification pending"}</p>
           <p className="subtle-copy">
-            {doctor.insurance_verification?.reason ?? "Choose an insurance plan to verify network fit."}
+            {doctor.insurance_verification?.reason ?? "Add or choose a plan to check network alignment."}
           </p>
         </div>
         <div>
@@ -79,6 +83,21 @@ export function DoctorCard({
           </p>
         </div>
       </div>
+
+      {doctor.official_booking_url ? (
+        <div className="info-box">
+          <strong>{doctor.booking_system_name ?? doctor.provider_system ?? "Official booking"}</strong>
+          <p>
+            {doctor.booking_note ??
+              "This doctor can continue to the provider's official public booking page."}
+          </p>
+          <div className="form-actions">
+            <a href={doctor.official_profile_url ?? doctor.official_booking_url}>
+              View official profile
+            </a>
+          </div>
+        </div>
+      ) : null}
 
       {doctor.insurance_verification?.network_url ? (
         <div className="info-box">
@@ -101,7 +120,7 @@ export function DoctorCard({
           View full profile
         </button>
         <button className="button button-primary" onClick={onBook} type="button">
-          Book this doctor
+          {doctor.official_booking_label ?? "Book this doctor"}
         </button>
       </div>
     </article>

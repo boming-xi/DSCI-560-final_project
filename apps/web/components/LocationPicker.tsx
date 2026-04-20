@@ -14,7 +14,7 @@ const LeafletLocationMap = dynamic(
     ssr: false,
     loading: () => (
       <div className="location-map-shell">
-        <div className="location-map-skeleton">Loading map...</div>
+        <div className="location-map-skeleton">Preparing location tools...</div>
       </div>
     ),
   },
@@ -52,8 +52,8 @@ export function LocationPicker({
   const [isLocating, setIsLocating] = useState(false);
   const [helperText, setHelperText] = useState(
     autoLocateOnMount
-      ? "Trying to read your browser location..."
-      : "Use your browser location or click the map to set where to search.",
+      ? "Looking up your current location to center the search area..."
+      : "Use your browser location or click the map to place the search area.",
   );
   const [error, setError] = useState("");
 
@@ -64,7 +64,7 @@ export function LocationPicker({
     });
     setError("");
     setHelperText(
-      message ?? "Location updated. You can drag the pin, click the map, or fine-tune the numbers.",
+      message ?? "Location updated. You can drag the pin or click the map to refine the search area.",
     );
   }
 
@@ -95,7 +95,7 @@ export function LocationPicker({
       (positionError) => {
         setIsLocating(false);
         setError(getBrowserLocationError(positionError));
-        setHelperText("Click the map to continue.");
+        setHelperText("Click the map to keep moving.");
       },
       {
         enableHighAccuracy: true,
@@ -137,8 +137,8 @@ export function LocationPicker({
       <LeafletLocationMap location={value} onChange={setNextLocation} />
 
       <p className="location-status">
-        Search area is set from your current pin. Click the map or drag the pin
-        to update it.
+        The current pin sets the search area used for nearby doctor ranking.
+        Click the map or drag the pin to adjust it.
       </p>
 
       {error ? <p className="error-text">{error}</p> : null}

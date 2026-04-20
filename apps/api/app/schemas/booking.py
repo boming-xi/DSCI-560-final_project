@@ -18,6 +18,10 @@ class BookingSlotsResponse(BaseModel):
     doctor_name: str
     slots: list[TimeSlot] = Field(default_factory=list)
     source: str = "demo_fallback"
+    external_booking_url: str | None = None
+    external_booking_label: str | None = None
+    booking_system_name: str | None = None
+    official_profile_url: str | None = None
 
 
 class BookingRequest(BaseModel):

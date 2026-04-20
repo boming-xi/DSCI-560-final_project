@@ -15,7 +15,7 @@ const navItems = [
 
 export const metadata = {
   title: "AI Healthcare Assistant",
-  description: "Symptom triage, insurance matching, doctor ranking, and booking support.",
+  description: "Symptom triage, insurance guidance, doctor ranking, and official booking handoff.",
 };
 
 export default function RootLayout({
@@ -30,7 +30,7 @@ export default function RootLayout({
           <header className="topbar">
             <Link className="brand" href="/">
               <span>AI Healthcare Assistant</span>
-              <small>Symptom to booking demo</small>
+              <small>Symptom to booking navigation</small>
             </Link>
             <div className="topbar-controls">
               <nav className="topnav">

@@ -49,7 +49,7 @@ export function AuthForm({ mode }: AuthFormProps) {
       setError(
         submissionError instanceof Error
           ? submissionError.message
-          : "Authentication failed."
+          : "We could not complete sign-in right now."
       );
     } finally {
       setIsLoading(false);
@@ -66,7 +66,7 @@ export function AuthForm({ mode }: AuthFormProps) {
       setError(
         submissionError instanceof Error
           ? submissionError.message
-          : "Demo login failed."
+          : "Quick access sign-in is not available right now."
       );
     } finally {
       setIsLoading(false);
@@ -77,11 +77,11 @@ export function AuthForm({ mode }: AuthFormProps) {
     <form className="panel form-panel auth-form-panel" onSubmit={handleSubmit}>
       <div className="panel-heading">
         <span className="eyebrow">{isRegister ? "Register" : "Log in"}</span>
-        <h1>{isRegister ? "Create your demo account" : "Welcome back"}</h1>
+        <h1>{isRegister ? "Create your account" : "Welcome back"}</h1>
         <p>
           {isRegister
-            ? "Register once and your demo password will keep working on your next visit."
-            : "Log in with your saved demo account or use the shared demo login."}
+            ? "Register once and your password will keep working on your next visit."
+            : "Log in with your saved account or use the quick access login."}
         </p>
       </div>
 
@@ -91,7 +91,7 @@ export function AuthForm({ mode }: AuthFormProps) {
           <input
             autoComplete="name"
             onChange={(event) => setName(event.target.value)}
-            placeholder="Boming Xi"
+            placeholder="Enter your full name"
             value={name}
           />
         </label>
@@ -102,7 +102,7 @@ export function AuthForm({ mode }: AuthFormProps) {
         <input
           autoComplete="email"
           onChange={(event) => setEmail(event.target.value)}
-          placeholder="you@example.com"
+          placeholder="Enter your email address"
           type="email"
           value={email}
         />
@@ -113,7 +113,7 @@ export function AuthForm({ mode }: AuthFormProps) {
         <input
           autoComplete={isRegister ? "new-password" : "current-password"}
           onChange={(event) => setPassword(event.target.value)}
-          placeholder="At least 6 characters"
+          placeholder={isRegister ? "Create a password with at least 6 characters" : "Enter your password"}
           type="password"
           value={password}
         />
@@ -132,7 +132,7 @@ export function AuthForm({ mode }: AuthFormProps) {
             onClick={handleDemoLogin}
             type="button"
           >
-            Use demo login
+            Use quick access login
           </button>
         ) : null}
       </div>

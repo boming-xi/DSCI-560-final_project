@@ -231,9 +231,8 @@ class DoctorDecisionService:
         status_score = {
             "verified": 3.2,
             "likely": 2.1,
-            "demo": 1.0,
             "uncertain": -0.6,
-        }[status]
+        }.get(status, -0.6)
         copay_bonus = 0.0
         if doctor.estimated_cost is not None:
             copay_bonus = max(0.0, 80 - doctor.estimated_cost) / 45
@@ -314,7 +313,7 @@ class DoctorDecisionService:
             return f"{best.name} may still need a referral before specialist care can be scheduled."
         if (
             best.insurance_verification
-            and best.insurance_verification.status in {"uncertain", "demo"}
+            and best.insurance_verification.status == "uncertain"
             and coverage_pick.id != best.id
         ):
             return (

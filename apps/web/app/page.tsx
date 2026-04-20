@@ -18,8 +18,8 @@ const featureCards = [
   },
   {
     number: "04",
-    title: "Instant Booking",
-    body: "Move from recommendation to a confirmed next step without forcing the user to restart the search journey.",
+    title: "Booking Handoff",
+    body: "Carry the selected doctor into an official provider booking path without forcing the user to rebuild the search context.",
   },
 ];
 
@@ -35,8 +35,8 @@ const insuranceMetrics = [
     tone: "primary",
   },
   {
-    value: "5",
-    label: "quick-match upload plans",
+    value: "LA",
+    label: "live booking handoff pilot",
     tone: "soft",
   },
 ];
@@ -60,7 +60,7 @@ const pathSteps = [
   {
     number: "4",
     title: "Book",
-    body: "Carry the recommendation into a scheduling step with less uncertainty and less backtracking.",
+    body: "Move from the final shortlist into an official provider booking path with the recommendation context preserved.",
   },
 ];
 

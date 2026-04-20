@@ -28,6 +28,18 @@ class BookingService:
         if doctor is None:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Doctor not found.")
 
+        if doctor.official_booking_url:
+            return BookingSlotsResponse(
+                doctor_id=doctor_id,
+                doctor_name=doctor.name,
+                slots=[],
+                source="official_external_link",
+                external_booking_url=doctor.official_booking_url,
+                external_booking_label=doctor.official_booking_label,
+                booking_system_name=doctor.booking_system_name,
+                official_profile_url=doctor.official_profile_url,
+            )
+
         synced_slots = [
             slot
             for slot in self.availability_repo.list_current_slots_for_doctor(doctor_id)

@@ -7,6 +7,7 @@ import { DoctorDecisionChat } from "@/components/DoctorDecisionChat";
 import { DoctorCard } from "@/components/DoctorCard";
 import { RankingExplanation } from "@/components/RankingExplanation";
 import { api } from "@/lib/api";
+import { beginDoctorBooking } from "@/lib/doctor-booking";
 import { getFlowState, patchFlowState } from "@/lib/flow";
 import { useProtectedRoute } from "@/lib/useProtectedRoute";
 import type { DoctorSearchResponse } from "@/lib/types";
@@ -29,7 +30,7 @@ export default function DoctorsPage() {
       }
       const flow = getFlowState();
       if (!flow.symptomText || !flow.location) {
-        setError("Please complete the symptom step first.");
+        setError("Start with symptoms first so we can narrow the right doctors for you.");
         setIsLoading(false);
         return;
       }
@@ -53,7 +54,7 @@ export default function DoctorsPage() {
         setError(
           searchError instanceof Error
             ? searchError.message
-            : "Unable to load doctor recommendations."
+            : "We could not build the doctor shortlist just yet."
         );
       } finally {
         setIsLoading(false);
@@ -66,7 +67,7 @@ export default function DoctorsPage() {
   if (isCheckingAuth) {
     return (
       <main className="page-shell">
-        <div className="panel">Checking your account before opening doctor search...</div>
+        <div className="panel">Preparing your doctor shortlist...</div>
       </main>
     );
   }
@@ -85,8 +86,9 @@ export default function DoctorsPage() {
       return;
     }
 
-    patchFlowState({ selectedDoctor });
-    router.push("/booking");
+    beginDoctorBooking(selectedDoctor, {
+      onInternalBooking: () => router.push("/booking"),
+    });
   }
 
   function handleViewDoctor(doctorId: string) {
@@ -112,7 +114,7 @@ export default function DoctorsPage() {
         </p>
       </section>
 
-      {isLoading ? <div className="panel">Loading ranked doctor matches...</div> : null}
+      {isLoading ? <div className="panel">Building your ranked doctor shortlist...</div> : null}
       {error ? <div className="panel error-panel">{error}</div> : null}
 
       {result ? (
@@ -131,12 +133,12 @@ export default function DoctorsPage() {
                   ? `${flow.insuranceSummary.provider} ${flow.insuranceSummary.plan_name}`
                   : result.insurance_summary?.matched
                   ? `${result.insurance_summary.provider} ${result.insurance_summary.plan_name}`
-                  : "No matched plan"}
+                  : "Plan not attached yet"}
               </h2>
               <p>
                 {flow.insuranceSummary?.notes?.[0] ??
                   result.insurance_summary?.notes?.[0] ??
-                  "Browsing without insurance filter."}
+                  "Doctor ranking is currently based on symptoms, location, and clinician fit."}
               </p>
               {flow.insuranceNetworkUrl ? (
                 <p>
@@ -148,7 +150,9 @@ export default function DoctorsPage() {
             </article>
           </section>
 
-          {result.doctors[0] ? <RankingExplanation doctor={result.doctors[0]} /> : null}
+          {result.doctors[0] ? (
+            <RankingExplanation doctors={result.doctors.slice(0, 3)} />
+          ) : null}
 
           <DoctorDecisionChat
             doctors={result.doctors}
@@ -160,11 +164,12 @@ export default function DoctorsPage() {
           />
 
           <section className="doctor-list">
-            {result.doctors.map((doctor) => (
+            {result.doctors.map((doctor, index) => (
               <DoctorCard
                 doctor={doctor}
                 highlighted={doctor.id === recommendedDoctorId}
                 key={doctor.id}
+                rank={index + 1}
                 onBook={() => handleBookDoctor(doctor.id)}
                 onView={() => handleViewDoctor(doctor.id)}
               />

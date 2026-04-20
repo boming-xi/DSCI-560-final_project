@@ -13,8 +13,8 @@ import type {
   InsuranceAdvisorRecommendation,
 } from "@/lib/types";
 
-const starterPrompt =
-  "I am a USC student in 90007 and I want a PPO if possible. My budget is around $350 per month.";
+const advisorPromptHint =
+  "Tell the advisor your ZIP code, budget, whether you need PPO flexibility, and how often you expect to use care.";
 
 const defaultConversation: InsuranceAdvisorConversationTurn[] = [
   {
@@ -81,9 +81,10 @@ export function InsuranceAdvisorChat() {
     "This is a planning tool, not official enrollment advice.",
   );
   const [suggestedPrompts, setSuggestedPrompts] = useState<string[]>([]);
-  const [message, setMessage] = useState(starterPrompt);
+  const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const [isSending, setIsSending] = useState(false);
+  const [showAdvisorHint, setShowAdvisorHint] = useState(true);
 
   function persistAdvisorState(next: {
     nextConversation: InsuranceAdvisorConversationTurn[];
@@ -159,7 +160,7 @@ export function InsuranceAdvisorChat() {
       setError(
         submissionError instanceof Error
           ? submissionError.message
-          : "Unable to talk to the insurance advisor right now.",
+          : "We could not reach the plan advisor just yet.",
       );
     } finally {
       setIsSending(false);
@@ -183,7 +184,6 @@ export function InsuranceAdvisorChat() {
       insuranceAdvisorReadinessLabel: readinessLabel,
       searchResult: undefined,
       selectedDoctor: undefined,
-      booking: undefined,
     });
     router.push("/doctors");
   }
@@ -228,10 +228,12 @@ export function InsuranceAdvisorChat() {
           rows={4}
           value={message}
           onChange={(event) => setMessage(event.target.value)}
-          placeholder="Tell the advisor about your budget, ZIP code, student status, prescriptions, or whether you want PPO flexibility."
+          onFocus={() => setShowAdvisorHint(false)}
+          onBlur={() => setShowAdvisorHint(!message.trim())}
+          placeholder={showAdvisorHint ? advisorPromptHint : ""}
         />
         <button className="button button-primary" disabled={isSending} type="submit">
-          {isSending ? "Thinking..." : "Send to advisor"}
+          {isSending ? "Reviewing options..." : "Ask the plan advisor"}
         </button>
       </form>
 
@@ -266,8 +268,9 @@ export function InsuranceAdvisorChat() {
             </ul>
           ) : (
             <p className="muted-copy">
-              No structured profile yet. Start by sharing your ZIP code, budget,
-              and whether you are comparing student or marketplace coverage.
+              Your insurance profile will appear here after the first message.
+              Start with your ZIP code, budget, and whether you want marketplace,
+              student, or employer coverage.
             </p>
           )}
 
@@ -411,8 +414,8 @@ export function InsuranceAdvisorChat() {
             </>
           ) : (
             <p className="muted-copy">
-              Recommendations will appear once the advisor has enough detail to
-              narrow the catalog down responsibly.
+              Plan recommendations will appear once the advisor has enough detail
+              to narrow the official catalog responsibly.
             </p>
           )}
         </section>

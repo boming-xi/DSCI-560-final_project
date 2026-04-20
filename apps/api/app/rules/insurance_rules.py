@@ -26,8 +26,6 @@ def insurance_fit_score(
             return 1.0
         if verification.status == "likely":
             return 0.78
-        if verification.status == "demo":
-            return 0.58
         return 0.12
     if plan is None:
         return 0.45
@@ -39,7 +37,7 @@ def insurance_notes(plan: InsurancePlanRecord | None, matched: bool) -> list[str
         return ["No insurance plan matched, so cost estimates are approximate."]
     notes = [plan.notes]
     if matched:
-        notes.append("Matched an in-network style plan from the mock data catalog.")
+        notes.append("Matched a structured insurance plan record.")
     else:
         notes.append("Plan matched, but not every doctor shown is necessarily in-network.")
     return notes

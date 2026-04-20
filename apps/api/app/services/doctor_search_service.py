@@ -59,6 +59,8 @@ class DoctorSearchService:
 
         candidate_profiles: list[DoctorProfile] = []
         for doctor in self.doctor_repo.list_doctors():
+            if not doctor.official_profile_url or not doctor.official_booking_url:
+                continue
             clinic = self.doctor_repo.get_clinic(doctor.clinic_id)
             if clinic is None:
                 continue
@@ -107,6 +109,11 @@ class DoctorSearchService:
         doctor = self.doctor_repo.get_doctor(doctor_id)
         if doctor is None:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Doctor not found.")
+        if not doctor.official_profile_url or not doctor.official_booking_url:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Only official provider-backed doctors are currently available.",
+            )
         clinic = self.doctor_repo.get_clinic(doctor.clinic_id)
         if clinic is None:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Clinic not found.")
@@ -152,7 +159,7 @@ class DoctorSearchService:
                 and profile.insurance_verification.status == "likely"
             )
             notes.append(
-                f"Insurance verification used stored carrier and network aliases: {verified_count} verified matches, {likely_count} carrier-level matches."
+                f"Insurance verification used official provider-directory checks when available: {verified_count} verified matches, {likely_count} preliminary carrier-level matches."
             )
         if preferred_language:
             notes.append(f"Language preference boosted doctors who speak {preferred_language}.")

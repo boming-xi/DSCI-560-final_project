@@ -1,5 +1,7 @@
 # Architecture
 
+> Note: for the current product snapshot, active flow, and live integration boundaries, use [current-state.md](/Users/boming/Downloads/DSCI-560-final_project/docs/current-state.md) as the primary reference.
+
 ## Overview
 
 The system is organized as a monorepo with a presentation layer, an API layer, retrieval and rules modules, and a mock data package that simulates provider and insurance integrations.
@@ -25,4 +27,3 @@ The system is organized as a monorepo with a presentation layer, an API layer, r
 - Replace mock repositories with SQLAlchemy-backed repositories.
 - Replace deterministic AI stubs with OpenAI responses and Qdrant retrieval.
 - Add auth, persistent chat sessions, and real calendar booking integrations.
-

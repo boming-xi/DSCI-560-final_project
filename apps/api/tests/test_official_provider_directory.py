@@ -30,7 +30,7 @@ def _build_network_service(
     return network_service, doctor_repo
 
 
-def test_official_directory_match_wins_over_local_aliases() -> None:
+def test_official_directory_match_wins_when_live_official_check_succeeds() -> None:
     network_service, doctor_repo = _build_network_service(
         OfficialDirectoryMatch(
             label="Verified by official directory",
@@ -40,15 +40,15 @@ def test_official_directory_match_wins_over_local_aliases() -> None:
             source="official_provider_directory_api:test-carrier",
         )
     )
-    doctor = doctor_repo.get_doctor("dr-michelle-lin")
-    clinic = doctor_repo.get_clinic("clinic-union")
+    doctor = doctor_repo.get_doctor("ucla-ryan-aronin")
+    clinic = doctor_repo.get_clinic("clinic-ucla-westwood")
     assert doctor is not None
     assert clinic is not None
 
     plan_context, _summary = network_service.resolve_plan_context(
-        selected_plan_id="usc-aetna-student",
-        doctor_search_plan_id="usc-aetna-student",
-        insurance_query="USC SHIP / Aetna Student Health",
+        selected_plan_id="70285CA8040016",
+        doctor_search_plan_id=None,
+        insurance_query="Blue Shield of California Gold 80 Trio HMO",
     )
 
     verification = network_service.build_verification(doctor, clinic, plan_context)
@@ -59,22 +59,22 @@ def test_official_directory_match_wins_over_local_aliases() -> None:
     assert verification.network_url == "https://carrier.example.com/find-care"
 
 
-def test_local_alias_fallback_still_works_when_live_directory_has_no_match() -> None:
+def test_official_only_mode_returns_uncertain_when_live_directory_has_no_match() -> None:
     network_service, doctor_repo = _build_network_service(None)
-    doctor = doctor_repo.get_doctor("dr-michelle-lin")
-    clinic = doctor_repo.get_clinic("clinic-union")
+    doctor = doctor_repo.get_doctor("ucla-ryan-aronin")
+    clinic = doctor_repo.get_clinic("clinic-ucla-westwood")
     assert doctor is not None
     assert clinic is not None
 
     plan_context, _summary = network_service.resolve_plan_context(
-        selected_plan_id="usc-aetna-student",
-        doctor_search_plan_id="usc-aetna-student",
-        insurance_query="USC SHIP / Aetna Student Health",
+        selected_plan_id="70285CA8040016",
+        doctor_search_plan_id=None,
+        insurance_query="Blue Shield of California Gold 80 Trio HMO",
     )
 
     verification = network_service.build_verification(doctor, clinic, plan_context)
 
     assert verification is not None
-    assert verification.status == "verified"
-    assert verification.source == "advisor_catalog"
-    assert any("Live carrier provider directory check did not confirm a match" in item for item in verification.evidence)
+    assert verification.status == "uncertain"
+    assert verification.source == "official_ca_marketplace_catalog"
+    assert any("A live carrier provider directory was queried and did not confirm this doctor." in item for item in verification.evidence)

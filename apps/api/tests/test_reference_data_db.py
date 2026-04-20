@@ -59,6 +59,8 @@ def build_test_settings(tmp_path: Path) -> Settings:
 
 def test_bootstrap_reference_data_seeds_database(tmp_path: Path) -> None:
     settings = build_test_settings(tmp_path)
+    doctor_repo = DoctorRepository(settings)
+    insurance_repo = InsuranceRepository(settings)
 
     assert bootstrap_reference_data(settings) is True
     assert bootstrap_reference_data(settings) is True
@@ -68,9 +70,9 @@ def test_bootstrap_reference_data_seeds_database(tmp_path: Path) -> None:
         doctor_ids = session.scalars(select(DoctorORM.id)).all()
         plan_ids = session.scalars(select(InsurancePlanORM.id)).all()
 
-    assert len(clinic_ids) == 4
-    assert len(doctor_ids) == 8
-    assert len(plan_ids) == 5
+    assert len(clinic_ids) == len(doctor_repo.clinics)
+    assert len(doctor_ids) == len(doctor_repo.doctors)
+    assert len(plan_ids) == len(insurance_repo.plans)
 
 
 def test_repositories_read_from_database_after_bootstrap(tmp_path: Path) -> None:

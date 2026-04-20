@@ -1,5 +1,7 @@
 # API Contract
 
+> Note: this file is a lightweight contract sketch. For the current product scope and live workflow status, use [current-state.md](/Users/boming/Downloads/DSCI-560-final_project/docs/current-state.md) as the primary reference.
+
 Base URL: `http://localhost:8000/api/v1`
 
 ## Endpoints
@@ -41,4 +43,3 @@ Base URL: `http://localhost:8000/api/v1`
   "preferred_language": "Mandarin"
 }
 ```
-

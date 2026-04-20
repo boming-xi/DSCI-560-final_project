@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useMemo, useState } from "react";
+import { FormEvent, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 
 import { LocationPicker } from "@/components/LocationPicker";
@@ -13,12 +13,18 @@ const defaultLocation: Location = {
   longitude: -118.2851,
 };
 
+const LEGACY_SYMPTOM_EXAMPLE = "I have had a sore throat and fever for three days.";
+const SYMPTOM_HINT =
+  "Describe what you're feeling, how it started, and what feels most urgent right now.";
+
 export function SymptomForm() {
   const router = useRouter();
   const initialFlow = useMemo(() => getFlowState(), []);
   const hasSavedLocation = Boolean(initialFlow.location);
+  const sanitizedInitialSymptomText =
+    initialFlow.symptomText === LEGACY_SYMPTOM_EXAMPLE ? "" : (initialFlow.symptomText ?? "");
   const [symptomText, setSymptomText] = useState(
-    initialFlow.symptomText ?? "I have had a sore throat and fever for three days."
+    sanitizedInitialSymptomText
   );
   const [preferredLanguage, setPreferredLanguage] = useState(
     initialFlow.preferredLanguage ?? "Mandarin"
@@ -28,6 +34,13 @@ export function SymptomForm() {
   );
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [showSymptomHint, setShowSymptomHint] = useState(true);
+
+  useEffect(() => {
+    if (initialFlow.symptomText === LEGACY_SYMPTOM_EXAMPLE) {
+      patchFlowState({ symptomText: undefined });
+    }
+  }, [initialFlow.symptomText]);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -43,20 +56,18 @@ export function SymptomForm() {
 
       patchFlowState({
         symptomText,
-        durationDays: undefined,
         preferredLanguage,
         location,
         triage,
         searchResult: undefined,
         selectedDoctor: undefined,
-        booking: undefined,
       });
       router.push("/insurance");
     } catch (submissionError) {
       setError(
         submissionError instanceof Error
           ? submissionError.message
-          : "Unable to analyze symptoms right now."
+          : "We could not review those symptoms just yet."
       );
     } finally {
       setIsLoading(false);
@@ -79,8 +90,10 @@ export function SymptomForm() {
         <textarea
           value={symptomText}
           onChange={(event) => setSymptomText(event.target.value)}
+          onFocus={() => setShowSymptomHint(false)}
+          onBlur={() => setShowSymptomHint(!symptomText.trim())}
           rows={6}
-          placeholder="I have had a sore throat and fever for three days..."
+          placeholder={showSymptomHint ? SYMPTOM_HINT : ""}
         />
       </label>
 
@@ -109,7 +122,7 @@ export function SymptomForm() {
 
       <div className="form-actions">
         <button className="button button-primary" type="submit" disabled={isLoading}>
-          {isLoading ? "Analyzing..." : "Continue to insurance"}
+          {isLoading ? "Reviewing symptoms..." : "Continue to insurance"}
         </button>
       </div>
     </form>

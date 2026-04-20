@@ -58,6 +58,35 @@
     "open_weekends": true,
     "urgent_care": false,
     "phone": "(310) 555-0104"
+  },
+  {
+    "id": "clinic-ucla-westside",
+    "name": "UCLA Health Westside Primary Care",
+    "care_types": ["primary_care", "general_practitioner"],
+    "address": "1950 Sawtelle Boulevard, Suite 130",
+    "city": "Los Angeles",
+    "state": "CA",
+    "zip": "90025",
+    "latitude": 34.0394,
+    "longitude": -118.4461,
+    "languages": ["English"],
+    "open_weekends": false,
+    "urgent_care": false,
+    "phone": "(310) 996-9355"
+  },
+  {
+    "id": "clinic-ucla-westwood",
+    "name": "UCLA Health Westwood Internal Medicine 100",
+    "care_types": ["primary_care", "general_practitioner", "adult_primary_care"],
+    "address": "100 Medical Plaza, Suite 490",
+    "city": "Los Angeles",
+    "state": "CA",
+    "zip": "90095",
+    "latitude": 34.0658,
+    "longitude": -118.4449,
+    "languages": ["English"],
+    "open_weekends": false,
+    "urgent_care": false,
+    "phone": "(310) 206-8000"
   }
 ]
-

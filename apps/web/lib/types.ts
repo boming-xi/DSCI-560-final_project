@@ -78,7 +78,7 @@ export type InsuranceAdvisorRecommendation = {
 };
 
 export type InsuranceVerification = {
-  status: "verified" | "likely" | "demo" | "uncertain";
+  status: "verified" | "likely" | "uncertain";
   label: string;
   reason: string;
   evidence: string[];
@@ -150,6 +150,13 @@ export type DoctorProfile = {
   referral_required: boolean;
   insurance_verification?: InsuranceVerification | null;
   ranking_breakdown?: RankingBreakdown | null;
+  provider_system?: string | null;
+  official_profile_url?: string | null;
+  official_booking_url?: string | null;
+  official_booking_label?: string | null;
+  booking_system_name?: string | null;
+  booking_note?: string | null;
+  pilot_region?: string | null;
 };
 
 export type DoctorSearchResponse = {
@@ -157,33 +164,6 @@ export type DoctorSearchResponse = {
   insurance_summary?: InsuranceSummary | null;
   doctors: DoctorProfile[];
   explanation: string[];
-};
-
-export type TimeSlot = {
-  start: string;
-  end: string;
-  label: string;
-  available: boolean;
-  appointment_mode?: string | null;
-  source?: string | null;
-  comments?: string | null;
-};
-
-export type BookingSlotsResponse = {
-  doctor_id: string;
-  doctor_name: string;
-  slots: TimeSlot[];
-  source: string;
-};
-
-export type BookingConfirmation = {
-  confirmation_id: string;
-  doctor_id: string;
-  doctor_name: string;
-  clinic_name: string;
-  slot: string;
-  estimated_cost?: number | null;
-  next_steps: string[];
 };
 
 export type ChatTurn = {
@@ -230,23 +210,6 @@ export type DoctorDecisionResponse = {
   recommended_reason?: string | null;
 };
 
-export type ChatResponse = {
-  reply: string;
-  cited_items: string[];
-  suggested_next_actions: string[];
-};
-
-export type DocumentExplainResponse = {
-  document_id: string;
-  indexed_now: boolean;
-  vector_store_backend: string;
-  supporting_chunks: string[];
-  summary: string;
-  important_terms: string[];
-  follow_up_questions: string[];
-  disclaimer: string;
-};
-
 export type DocumentExtractResponse = {
   title: string;
   document_type: string;
@@ -273,7 +236,6 @@ export type AuthResponse = {
 
 export type FlowState = {
   symptomText?: string;
-  durationDays?: number;
   preferredLanguage?: string;
   location?: Location;
   triage?: TriageRecommendation;
@@ -297,7 +259,6 @@ export type FlowState = {
   insurancePlanIdOverride?: string;
   insurancePurchaseUrl?: string;
   selectedDoctor?: DoctorProfile;
-  booking?: BookingConfirmation;
   documentTitle?: string;
   documentType?: string;
   documentText?: string;
