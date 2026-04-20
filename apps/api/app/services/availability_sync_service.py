@@ -105,7 +105,7 @@ class AvailabilitySyncService:
 
         snapshot_file = self.settings.scheduling_snapshot_file
         if snapshot_file is None:
-            snapshot_file = self.settings.mock_data_dir / "provider_availability_snapshot.json"
+            snapshot_file = self.settings.reference_data_dir / "provider_availability_snapshot.json"
         return SnapshotSchedulingClient(snapshot_file=snapshot_file)
 
     @staticmethod

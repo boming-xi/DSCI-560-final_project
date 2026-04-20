@@ -21,12 +21,12 @@ class DoctorRepository:
 
     @cached_property
     def clinics(self) -> list[ClinicRecord]:
-        data = json.loads((self.settings.mock_data_dir / "clinics.json").read_text())
+        data = json.loads((self.settings.reference_data_dir / "clinics.json").read_text())
         return [ClinicRecord.model_validate(item) for item in data]
 
     @cached_property
     def doctors(self) -> list[DoctorRecord]:
-        data = json.loads((self.settings.mock_data_dir / "doctors.json").read_text())
+        data = json.loads((self.settings.reference_data_dir / "doctors.json").read_text())
         return [DoctorRecord.model_validate(item) for item in data]
 
     def list_doctors(self) -> list[DoctorRecord]:

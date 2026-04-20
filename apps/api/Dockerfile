@@ -7,7 +7,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY apps/api/app ./app
 COPY apps/api/tests ./tests
-COPY packages/mock-data /app/packages/mock-data
+COPY packages/reference-data /app/packages/reference-data
 
 EXPOSE 8000
 

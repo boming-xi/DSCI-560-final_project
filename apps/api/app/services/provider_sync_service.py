@@ -121,7 +121,7 @@ class ProviderSyncService:
 
         snapshot_file = self.settings.provider_directory_snapshot_file
         if snapshot_file is None:
-            snapshot_file = self.settings.mock_data_dir / "provider_directory_snapshot.json"
+            snapshot_file = self.settings.reference_data_dir / "provider_directory_snapshot.json"
         return SnapshotProviderDirectoryClient(snapshot_file=snapshot_file)
 
     @staticmethod

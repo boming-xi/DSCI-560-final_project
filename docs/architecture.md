@@ -19,7 +19,7 @@ The system is organized as a monorepo with a presentation layer, an API layer, r
 
 - `apps/web`: Next.js app-router UI for the multi-step experience.
 - `apps/api`: FastAPI app with routers, services, rules, and repositories.
-- `packages/mock-data`: JSON fixtures used by repositories and tests.
+- `packages/reference-data`: reference JSON used by repositories, imports, and local tests.
 - `infra`: Optional local support for Postgres and Qdrant if the project is extended.
 
 ## Extension points

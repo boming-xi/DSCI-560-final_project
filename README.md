@@ -1,23 +1,8 @@
 # AI Healthcare Assistant
 
-AI Healthcare Assistant is a symptom-to-care navigation project built with a Next.js frontend and a FastAPI backend. The current product flow is:
+This project provides symptom triage, insurance guidance, doctor ranking, and official booking handoff. The current live flow is optimized for Los Angeles pilot providers with official public profile and booking pages.
 
-1. collect symptoms and location
-2. choose or compare insurance
-3. rank doctors with insurance-aware reasoning
-4. hand off booking to the provider's official site
-
-This version is optimized for plan-first care navigation, official booking handoff, and LA pilot provider coverage.
-
-## Current product status
-
-- Symptom triage is active
-- Insurance parsing and plan advisor are active
-- Doctor ranking and final-choice group discussion are active
-- Booking is an official third-party handoff, not an in-app confirmation flow
-- Official provider/booking coverage is currently focused on the LA pilot
-
-For a concise technical snapshot of the current build, see [docs/current-state.md](/Users/boming/Downloads/DSCI-560-final_project/docs/current-state.md).
+For a concise technical snapshot of the current build, see [docs/current-state.md](/Users/boming/Downloads/DSCI-560-final_project/docs/current-state.md). Reference datasets now live under [packages/reference-data](/Users/boming/Downloads/DSCI-560-final_project/packages/reference-data).
 
 ## Backend setup
 
@@ -28,21 +13,23 @@ source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-## Environment
+## Environment setup
 
 ```bash
 cd /Users/boming/Downloads/DSCI-560-final_project
 cp .env.example .env
 ```
 
-Important variables:
+Only these variables matter for the default local backend flow:
 
 - `OPENAI_API_KEY`  
-  Optional. Enables OpenAI-backed insurance advisor, decision support, OCR, and retrieval features.
+  Optional. Enables OpenAI-backed insurance advisor, OCR, and explanation features.
+- `DEMO_AUTH_SECRET`  
+  Used for local demo auth tokens.
 - `POSTGRES_URL`  
-  Optional. When available, the API prefers Postgres for persistent reference data.
-- carrier-specific provider directory variables such as `BLUE_SHIELD_PROVIDER_DIRECTORY_API_URL`  
-  Optional. Enable live carrier provider-directory verification when configured.
+  Optional. Used only if you want persistent reference data instead of JSON fallback.
+
+The other provider-directory and scheduling variables in `.env.example` are advanced optional integrations. They are only needed if you want to enable external provider sync or live carrier verification.
 
 ## Run the backend
 
@@ -52,38 +39,37 @@ source .venv/bin/activate
 uvicorn app.main:app --reload --port 8000
 ```
 
-## Optional Postgres
-
-If you want persistent reference data instead of JSON fallback:
-
-```bash
-cd /Users/boming/Downloads/DSCI-560-final_project/infra
-docker-compose up -d postgres
-```
-
-Then restart the API.
-
-## Optional frontend
+## Frontend setup
 
 ```bash
 cd /Users/boming/Downloads/DSCI-560-final_project/apps/web
 npm install
+```
+
+## Run the frontend
+
+```bash
+cd /Users/boming/Downloads/DSCI-560-final_project/apps/web
 npm run dev
 ```
 
-## Verify the running backend
+Frontend default URL:
+
+- `http://localhost:3000`
+
+## Verify the backend
 
 - Health check: `http://127.0.0.1:8000/api/v1/health`
 - API docs: `http://127.0.0.1:8000/docs`
 
 What to look for in `/health`:
 
-- `reference_data_backend: "postgres"` means the API is using Postgres
-- `reference_data_backend: "json_fallback"` means the API is still using local JSON reference data
+- `reference_data_backend: "postgres"` means persistent reference data is active
+- `reference_data_backend: "json_fallback"` means the API is running from local JSON reference data
 
 ## Important notes
 
-- The site does not complete appointments internally. It recommends doctors and hands booking off to the provider's official website.
-- Official booking handoff is currently strongest in the LA pilot flow.
-- Quick access login still exists for local testing.
-- The current UI is official-first: if live verification or an official booking link is missing, the interface now says so directly instead of fabricating a stronger result.
+- This site does not complete appointments internally. It recommends doctors and hands booking off to official provider websites.
+- The current public-doctor experience is official-first: only doctors with public official profile and booking paths are shown in the main ranking flow.
+- Los Angeles pilot coverage currently includes UCLA Health and Keck Medicine of USC public provider paths.
+- `packages/reference-data` is the current reference-data home. It contains official derived plan data, curated official-provider datasets, and a few optional connector snapshots used for local sync/testing.

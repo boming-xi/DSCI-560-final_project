@@ -37,7 +37,7 @@ class InsuranceAdvisorService:
         self.insurance_service = insurance_service
         self.llm_client = llm_client
         self.ca_marketplace_catalog_path = (
-            insurance_repo.settings.mock_data_dir / "ca_marketplace_plans.json"
+            insurance_repo.settings.reference_data_dir / "ca_marketplace_plans.json"
         )
 
     @cached_property

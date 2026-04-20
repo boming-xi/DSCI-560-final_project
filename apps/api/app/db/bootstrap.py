@@ -67,17 +67,17 @@ def bootstrap_reference_data(settings: Settings) -> bool:
 
 
 def _load_clinics(settings: Settings) -> list[ClinicRecord]:
-    data = json.loads((settings.mock_data_dir / "clinics.json").read_text())
+    data = json.loads((settings.reference_data_dir / "clinics.json").read_text())
     return [ClinicRecord.model_validate(item) for item in data]
 
 
 def _load_doctors(settings: Settings) -> list[DoctorRecord]:
-    data = json.loads((settings.mock_data_dir / "doctors.json").read_text())
+    data = json.loads((settings.reference_data_dir / "doctors.json").read_text())
     return [DoctorRecord.model_validate(item) for item in data]
 
 
 def _load_plans(settings: Settings) -> list[InsurancePlanRecord]:
-    data = json.loads((settings.mock_data_dir / "insurance_plans.json").read_text())
+    data = json.loads((settings.reference_data_dir / "insurance_plans.json").read_text())
     return [InsurancePlanRecord.model_validate(item) for item in data]
 
 

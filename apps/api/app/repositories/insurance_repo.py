@@ -22,7 +22,7 @@ class InsuranceRepository:
 
     @cached_property
     def plans(self) -> list[InsurancePlanRecord]:
-        data = json.loads((self.settings.mock_data_dir / "insurance_plans.json").read_text())
+        data = json.loads((self.settings.reference_data_dir / "insurance_plans.json").read_text())
         return [InsurancePlanRecord.model_validate(item) for item in data]
 
     def list_plans(self) -> list[InsurancePlanRecord]:

@@ -14,7 +14,7 @@ class InsuranceService:
     def __init__(self, insurance_repo: InsuranceRepository) -> None:
         self.insurance_repo = insurance_repo
         self.marketplace_catalog_path = (
-            insurance_repo.settings.mock_data_dir / "ca_marketplace_plans.json"
+            insurance_repo.settings.reference_data_dir / "ca_marketplace_plans.json"
         )
 
     @cached_property

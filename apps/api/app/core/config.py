@@ -47,7 +47,7 @@ class Settings:
     qdrant_local_path: Path
     qdrant_collection_prefix: str
     project_root: Path
-    mock_data_dir: Path
+    reference_data_dir: Path
 
 
 def _split_csv(value: str) -> list[str]:
@@ -130,5 +130,5 @@ def get_settings() -> Settings:
         ),
         qdrant_collection_prefix=os.getenv("QDRANT_COLLECTION_PREFIX", "documents"),
         project_root=project_root,
-        mock_data_dir=project_root / "packages" / "mock-data",
+        reference_data_dir=project_root / "packages" / "reference-data",
     )

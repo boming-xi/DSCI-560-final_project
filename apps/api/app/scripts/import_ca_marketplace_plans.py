@@ -340,7 +340,7 @@ def build_marketplace_catalog(source_dir: Path) -> list[dict[str, object]]:
 def main() -> None:
     project_root = Path(__file__).resolve().parents[4]
     source_dir = Path("/tmp/californiasbepuf2025")
-    output_path = project_root / "packages" / "mock-data" / "ca_marketplace_plans.json"
+    output_path = project_root / "packages" / "reference-data" / "ca_marketplace_plans.json"
 
     if not source_dir.exists():
         raise SystemExit(

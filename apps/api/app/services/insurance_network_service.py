@@ -37,7 +37,7 @@ class InsuranceNetworkService:
         self.insurance_service = insurance_service
         self.official_provider_directory_service = official_provider_directory_service
         settings = insurance_service.insurance_repo.settings
-        self.marketplace_catalog_path = settings.mock_data_dir / "ca_marketplace_plans.json"
+        self.marketplace_catalog_path = settings.reference_data_dir / "ca_marketplace_plans.json"
 
     @cached_property
     def marketplace_catalog(self) -> dict[str, InsuranceAdvisorPlanRecord]:

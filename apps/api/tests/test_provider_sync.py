@@ -50,7 +50,7 @@ def build_test_settings(tmp_path: Path, snapshot_path: Path) -> Settings:
         qdrant_local_path=tmp_path / "qdrant",
         qdrant_collection_prefix="documents",
         project_root=project_root,
-        mock_data_dir=project_root / "packages" / "mock-data",
+        reference_data_dir=project_root / "packages" / "reference-data",
     )
 
 
