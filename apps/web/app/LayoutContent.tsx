@@ -22,7 +22,7 @@ export default function LayoutContent({
     {href:"/insurance",label:t.layout.nav.insurance},
     {href:"/doctors",label:t.layout.nav.doctors},
     {href:"/booking",label:t.layout.nav.booking},
-    {href:"/community",label:t.layout.nav.community},
+    {href:"/group-chat",label:t.layout.nav.community},
   ];
   const overviewItem = navItems[0];
   const flowItems = navItems.slice(1);

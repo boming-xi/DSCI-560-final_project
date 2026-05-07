@@ -16,7 +16,6 @@ from app.ai.ocr_client import DemoOCRClient, OCRClient, OpenAIOCRClient, Resilie
 from app.core.config import Settings, get_settings as load_settings
 from app.repositories.availability_repo import AvailabilityRepository
 from app.repositories.booking_repo import BookingRepository
-from app.repositories.chat_repo import ChatRepository
 from app.repositories.community_repo import CommunityRepository
 from app.repositories.doctor_repo import DoctorRepository
 from app.repositories.insurance_repo import InsuranceRepository
@@ -26,7 +25,6 @@ from app.retrieval.vector_store import QdrantVectorStore, VectorStore
 from app.services.auth_service import AuthService
 from app.services.availability_sync_service import AvailabilitySyncService
 from app.services.booking_service import BookingService
-from app.services.chat_service import ChatService
 from app.services.community_service import CommunityService
 from app.services.doctor_decision_service import DoctorDecisionService
 from app.services.doctor_search_service import DoctorSearchService
@@ -84,11 +82,6 @@ def get_booking_repo() -> BookingRepository:
 @lru_cache
 def get_availability_repo() -> AvailabilityRepository:
     return AvailabilityRepository(get_settings())
-
-
-@lru_cache
-def get_chat_repo() -> ChatRepository:
-    return ChatRepository()
 
 
 @lru_cache
@@ -211,15 +204,6 @@ def get_doctor_decision_service() -> DoctorDecisionService:
 @lru_cache
 def get_booking_service() -> BookingService:
     return BookingService(get_doctor_repo(), get_booking_repo(), get_availability_repo())
-
-
-@lru_cache
-def get_chat_service() -> ChatService:
-    return ChatService(
-        triage_service=get_triage_service(),
-        insurance_service=get_insurance_service(),
-        llm_client=get_llm_client(),
-    )
 
 
 @lru_cache

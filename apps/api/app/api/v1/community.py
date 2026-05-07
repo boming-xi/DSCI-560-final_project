@@ -5,7 +5,10 @@ from fastapi import APIRouter, Depends, HTTPException
 from app.api.deps import get_authenticated_user, get_community_service
 from app.models.user import User
 from app.schemas.community import (
-    CommunityMatchRequest,
+    CommunityCreateRoomRequest,
+    CommunityDiscoverRequest,
+    CommunityJoinRequest,
+    CommunityRoomCatalogResponse,
     CommunityMessageRequest,
     CommunityRoomResponse,
 )
@@ -14,13 +17,36 @@ from app.services.community_service import CommunityService
 router = APIRouter(prefix="/community", tags=["community"])
 
 
-@router.post("/match", response_model=CommunityRoomResponse)
-def match_room(
-    request: CommunityMatchRequest,
+@router.post("/discover", response_model=CommunityRoomCatalogResponse)
+def discover_rooms(
+    request: CommunityDiscoverRequest,
+    user: User = Depends(get_authenticated_user),
+    community_service: CommunityService = Depends(get_community_service),
+) -> CommunityRoomCatalogResponse:
+    del user
+    return community_service.discover_rooms(request)
+
+
+@router.post("/rooms", response_model=CommunityRoomResponse)
+def create_room(
+    request: CommunityCreateRoomRequest,
     user: User = Depends(get_authenticated_user),
     community_service: CommunityService = Depends(get_community_service),
 ) -> CommunityRoomResponse:
-    return community_service.match_room(user, request)
+    return community_service.create_room(user, request)
+
+
+@router.post("/rooms/{room_id}/join", response_model=CommunityRoomResponse)
+def join_room(
+    room_id: str,
+    request: CommunityJoinRequest,
+    user: User = Depends(get_authenticated_user),
+    community_service: CommunityService = Depends(get_community_service),
+) -> CommunityRoomResponse:
+    try:
+        return community_service.join_room(user, room_id, request)
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
 
 
 @router.get("/rooms/{room_id}", response_model=CommunityRoomResponse)

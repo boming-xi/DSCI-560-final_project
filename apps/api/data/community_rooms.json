@@ -1,35 +1,6 @@
 {
   "rooms": [
     {
-      "id": "room-los-angeles-mandarin-routine-general-care-general-care",
-      "title": "Los Angeles · General Care · General care 经验交流",
-      "care_path": "General care",
-      "urgency_band": "Routine",
-      "symptom_tags": [
-        "general-care"
-      ],
-      "language": "Mandarin",
-      "region": "Los Angeles",
-      "memberships": [
-        {
-          "user_id": "user-4d313fb146",
-          "display_name": "Member 01-E2D",
-          "joined_at": "2026-05-07T08:15:20.923535+00:00"
-        }
-      ],
-      "messages": [
-        {
-          "id": "msg-welcome",
-          "user_id": "moderator",
-          "display_name": "Room Guide",
-          "content": "欢迎来到匿名互助讨论室。这里适合分享就医流程、保险体验、预约经验和看诊前准备，不适合替别人下诊断。",
-          "created_at": "2026-05-07T08:15:20.922400+00:00"
-        }
-      ],
-      "created_at": "2026-05-07T08:15:20.922400+00:00",
-      "updated_at": "2026-05-07T08:15:20.922400+00:00"
-    },
-    {
       "id": "room-los-angeles-mandarin-routine-general-care-cough",
       "title": "Los Angeles · Cough · General care experience room",
       "care_path": "General care",
@@ -52,11 +23,237 @@
           "user_id": "moderator",
           "display_name": "Room Guide",
           "content": "欢迎来到匿名互助讨论室。这里适合分享就医流程、保险体验、预约经验和看诊前准备，不适合替别人下诊断。",
-          "created_at": "2026-05-07T08:27:22.321630+00:00"
+          "created_at": "2026-05-07T10:13:35.175238+00:00"
+        },
+        {
+          "id": "msg-seed-1",
+          "user_id": "peer-1",
+          "display_name": "经验分享者 A",
+          "content": "我之前也是喉咙痛加发烧，最后先看了一般门诊，最有帮助的是提前准备好症状持续多久、有没有发热和咳嗽这些信息。",
+          "created_at": "2026-05-07T10:13:35.175238+00:00"
+        },
+        {
+          "id": "msg-seed-2",
+          "user_id": "peer-2",
+          "display_name": "经验分享者 B",
+          "content": "如果你也在犹豫先去哪里，可以问问别人是怎么在“先观察一下”和“尽快去看”之间做决定的。",
+          "created_at": "2026-05-07T10:13:35.175238+00:00"
         }
       ],
       "created_at": "2026-05-07T08:27:22.321630+00:00",
-      "updated_at": "2026-05-07T08:27:22.321630+00:00"
+      "updated_at": "2026-05-07T10:13:35.175238+00:00"
+    },
+    {
+      "id": "room-los-angeles-mandarin-template-primary-care-first-visit",
+      "title": "Los Angeles · first primary care visit room",
+      "care_path": "Primary care",
+      "urgency_band": "Routine",
+      "symptom_tags": [
+        "general-care"
+      ],
+      "language": "Mandarin",
+      "region": "Los Angeles",
+      "memberships": [
+        {
+          "user_id": "user-4d313fb146",
+          "display_name": "Member 01-E2D",
+          "joined_at": "2026-05-07T09:01:58.295969+00:00"
+        }
+      ],
+      "messages": [
+        {
+          "id": "msg-welcome",
+          "user_id": "moderator",
+          "display_name": "Room Guide",
+          "content": "欢迎来到匿名互助讨论室。这里适合分享就医流程、保险体验、预约经验和看诊前准备，不适合替别人下诊断。",
+          "created_at": "2026-05-07T10:13:35.175253+00:00"
+        },
+        {
+          "id": "msg-seed-1",
+          "user_id": "peer-1",
+          "display_name": "经验分享者 A",
+          "content": "我第一次约 primary care 的时候，最有帮助的是先在这里看别人是怎么挂号、要准备哪些保险信息。",
+          "created_at": "2026-05-07T10:13:35.175253+00:00"
+        },
+        {
+          "id": "msg-seed-2",
+          "user_id": "peer-2",
+          "display_name": "经验分享者 B",
+          "content": "如果你也是第一次，可以先问问大家是怎么描述症状的，通常能减少第一次就诊的紧张感。",
+          "created_at": "2026-05-07T10:13:35.175253+00:00"
+        }
+      ],
+      "created_at": "2026-05-07T09:01:58.295069+00:00",
+      "updated_at": "2026-05-07T10:13:35.175253+00:00"
+    },
+    {
+      "id": "room-los-angeles-mandarin-template-urgent-next-step",
+      "title": "Los Angeles · urgent care next-step room",
+      "care_path": "Urgent care",
+      "urgency_band": "Urgent",
+      "symptom_tags": [
+        "general-care"
+      ],
+      "language": "Mandarin",
+      "region": "Los Angeles",
+      "memberships": [
+        {
+          "user_id": "user-4d313fb146",
+          "display_name": "Member 01-E2D",
+          "joined_at": "2026-05-07T09:02:00.175927+00:00"
+        }
+      ],
+      "messages": [
+        {
+          "id": "msg-welcome",
+          "user_id": "moderator",
+          "display_name": "Room Guide",
+          "content": "Welcome to the anonymous support room. Share care navigation, insurance, booking, and preparation experiences here, not diagnoses.",
+          "created_at": "2026-05-07T09:02:00.175505+00:00"
+        },
+        {
+          "id": "msg-1778146388792766",
+          "user_id": "user-4d313fb146",
+          "display_name": "Member 01-E2D",
+          "content": "What kind of clinic did you choose first, and why?",
+          "created_at": "2026-05-07T09:33:08.793139+00:00"
+        }
+      ],
+      "created_at": "2026-05-07T09:02:00.175505+00:00",
+      "updated_at": "2026-05-07T09:33:08.793159+00:00"
+    },
+    {
+      "id": "room-los-angeles-mandarin-template-cold-flu-support",
+      "title": "Los Angeles · cold, flu, and sore throat room",
+      "care_path": "General care",
+      "urgency_band": "Routine",
+      "symptom_tags": [
+        "sore-throat",
+        "fever",
+        "cough"
+      ],
+      "language": "Mandarin",
+      "region": "Los Angeles",
+      "memberships": [
+        {
+          "user_id": "user-4d313fb146",
+          "display_name": "Member 01-E2D",
+          "joined_at": "2026-05-07T09:02:03.296232+00:00"
+        }
+      ],
+      "messages": [
+        {
+          "id": "msg-welcome",
+          "user_id": "moderator",
+          "display_name": "Room Guide",
+          "content": "欢迎来到匿名互助讨论室。这里适合分享就医流程、保险体验、预约经验和看诊前准备，不适合替别人下诊断。",
+          "created_at": "2026-05-07T10:13:35.175267+00:00"
+        },
+        {
+          "id": "msg-seed-1",
+          "user_id": "peer-1",
+          "display_name": "经验分享者 A",
+          "content": "我之前也是喉咙痛加发烧，最后先看了一般门诊，最有帮助的是提前准备好症状持续多久、有没有发热和咳嗽这些信息。",
+          "created_at": "2026-05-07T10:13:35.175267+00:00"
+        },
+        {
+          "id": "msg-seed-2",
+          "user_id": "peer-2",
+          "display_name": "经验分享者 B",
+          "content": "如果你也在犹豫先去哪里，可以问问别人是怎么在“先观察一下”和“尽快去看”之间做决定的。",
+          "created_at": "2026-05-07T10:13:35.175267+00:00"
+        }
+      ],
+      "created_at": "2026-05-07T09:02:03.295124+00:00",
+      "updated_at": "2026-05-07T10:13:35.175267+00:00"
+    },
+    {
+      "id": "room-los-angeles-english-template-cold-flu-support",
+      "title": "Los Angeles · cold, flu, and sore throat room",
+      "care_path": "General care",
+      "urgency_band": "Routine",
+      "symptom_tags": [
+        "sore-throat",
+        "fever",
+        "cough"
+      ],
+      "language": "English",
+      "region": "Los Angeles",
+      "memberships": [
+        {
+          "user_id": "demo-user",
+          "display_name": "Member 01-B81",
+          "joined_at": "2026-05-07T09:02:59.028209+00:00"
+        }
+      ],
+      "messages": [
+        {
+          "id": "msg-welcome",
+          "user_id": "moderator",
+          "display_name": "Room Guide",
+          "content": "Welcome to the anonymous support room. Share care navigation, insurance, booking, and preparation experiences here, not diagnoses.",
+          "created_at": "2026-05-07T10:13:35.175276+00:00"
+        },
+        {
+          "id": "msg-seed-1",
+          "user_id": "peer-1",
+          "display_name": "Peer Member A",
+          "content": "I also had a sore throat with fever, and starting with general care worked better once I had written down how long the symptoms had been going on and whether cough was involved.",
+          "created_at": "2026-05-07T10:13:35.175276+00:00"
+        },
+        {
+          "id": "msg-seed-2",
+          "user_id": "peer-2",
+          "display_name": "Peer Member B",
+          "content": "If you are unsure where to go first, it helps to hear how other people decided between watching symptoms a little longer and going in sooner.",
+          "created_at": "2026-05-07T10:13:35.175276+00:00"
+        }
+      ],
+      "created_at": "2026-05-07T09:02:59.027853+00:00",
+      "updated_at": "2026-05-07T10:13:35.175276+00:00"
+    },
+    {
+      "id": "room-los-angeles-mandarin-template-doctor-choice",
+      "title": "Los Angeles · doctor choice room",
+      "care_path": "General care",
+      "urgency_band": "Soon",
+      "symptom_tags": [
+        "general-care"
+      ],
+      "language": "Mandarin",
+      "region": "Los Angeles",
+      "memberships": [
+        {
+          "user_id": "user-4d313fb146",
+          "display_name": "Member 01-E2D",
+          "joined_at": "2026-05-07T09:05:43.567517+00:00"
+        }
+      ],
+      "messages": [
+        {
+          "id": "msg-welcome",
+          "user_id": "moderator",
+          "display_name": "Room Guide",
+          "content": "欢迎来到匿名互助讨论室。这里适合分享就医流程、保险体验、预约经验和看诊前准备，不适合替别人下诊断。",
+          "created_at": "2026-05-07T10:13:35.175284+00:00"
+        },
+        {
+          "id": "msg-seed-1",
+          "user_id": "peer-1",
+          "display_name": "经验分享者 A",
+          "content": "我最后是在两个医生之间比较语言沟通和预约时间，发现把“我最在意什么”先说清楚特别有帮助。",
+          "created_at": "2026-05-07T10:13:35.175284+00:00"
+        },
+        {
+          "id": "msg-seed-2",
+          "user_id": "peer-2",
+          "display_name": "经验分享者 B",
+          "content": "如果你在意解释是否清楚，可以直接问别人他们最后为什么选 A 医生而不是 B 医生。",
+          "created_at": "2026-05-07T10:13:35.175284+00:00"
+        }
+      ],
+      "created_at": "2026-05-07T09:05:43.567020+00:00",
+      "updated_at": "2026-05-07T10:13:35.175284+00:00"
     }
   ]
 }

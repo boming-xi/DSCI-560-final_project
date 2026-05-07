@@ -28,6 +28,22 @@ class CommunityDiscoverRequest(BaseModel):
 
 
 class CommunityJoinRequest(BaseModel):
+    symptom_text: str | None = Field(default=None, min_length=2, max_length=1200)
+    care_path: str | None = None
+    urgency_band: str | None = None
+    preferred_language: str | None = None
+    region: str | None = None
+    ui_language: UiLanguage | None = None
+
+
+class CommunityCreateRoomRequest(BaseModel):
+    title: str = Field(min_length=3, max_length=120)
+    focus: str = Field(min_length=8, max_length=400)
+    symptom_text: str | None = Field(default=None, min_length=2, max_length=1200)
+    care_path: str | None = None
+    urgency_band: str | None = None
+    preferred_language: str | None = None
+    region: str | None = None
     ui_language: UiLanguage | None = None
 
 
@@ -41,6 +57,7 @@ class CommunityRoomSummary(BaseModel):
     title: str
     description: str | None = None
     match_reason: str | None = None
+    preview_topics: list[str] = Field(default_factory=list)
     care_path: str
     urgency_band: str
     symptom_tags: list[str]

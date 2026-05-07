@@ -2,6 +2,8 @@ import type {
   AuthResponse,
   AuthenticatedUser,
   ChatTurn,
+  CommunityCreateRoomPayload,
+  CommunityRoomCatalogResponse,
   CommunityRoomResponse,
   DoctorDecisionConversationTurn,
   DoctorDecisionResponse,
@@ -194,16 +196,46 @@ export const api = {
       body: JSON.stringify({}),
     }),
 
-  matchCommunityRoom: (payload: {
-    symptom_text: string;
+  discoverCommunityRooms: (payload: {
+    symptom_text?: string;
     care_path?: string;
     urgency_band?: string;
     preferred_language?: string;
     region?: string;
     ui_language?: UiLanguage;
   }) =>
+    request<CommunityRoomCatalogResponse>(
+      "/community/discover",
+      {
+        method: "POST",
+        body: JSON.stringify(payload),
+      },
+      { authRequired: true },
+    ),
+
+  joinCommunityRoom: (
+    roomId: string,
+    payload: {
+      symptom_text?: string;
+      care_path?: string;
+      urgency_band?: string;
+      preferred_language?: string;
+      region?: string;
+      ui_language?: UiLanguage;
+    },
+  ) =>
     request<CommunityRoomResponse>(
-      "/community/match",
+      `/community/rooms/${roomId}/join`,
+      {
+        method: "POST",
+        body: JSON.stringify(payload),
+      },
+      { authRequired: true },
+    ),
+
+  createCommunityRoom: (payload: CommunityCreateRoomPayload) =>
+    request<CommunityRoomResponse>(
+      "/community/rooms",
       {
         method: "POST",
         body: JSON.stringify(payload),

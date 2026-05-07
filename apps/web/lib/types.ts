@@ -241,6 +241,9 @@ export type AuthResponse = {
 export type CommunityRoomSummary = {
   id: string;
   title: string;
+  description?: string | null;
+  match_reason?: string | null;
+  preview_topics: string[];
   care_path: string;
   urgency_band: string;
   symptom_tags: string[];
@@ -269,6 +272,23 @@ export type CommunityRoomResponse = {
   entry_prompt: string;
   matching_summary: string;
   starter_topics: string[];
+};
+
+export type CommunityRoomCatalogResponse = {
+  selected_context_summary: string;
+  recommended_rooms: CommunityRoomSummary[];
+  browse_rooms: CommunityRoomSummary[];
+};
+
+export type CommunityCreateRoomPayload = {
+  title: string;
+  focus: string;
+  symptom_text?: string;
+  care_path?: string;
+  urgency_band?: string;
+  preferred_language?: string;
+  region?: string;
+  ui_language?: UiLanguage;
 };
 
 export type FlowState = {

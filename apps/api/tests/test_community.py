@@ -6,7 +6,13 @@ from pathlib import Path
 from app.core.config import get_settings
 from app.models.user import User
 from app.repositories.community_repo import CommunityRepository
-from app.schemas.community import CommunityMatchRequest, CommunityMessageRequest
+from app.schemas.community import (
+    CommunityCreateRoomRequest,
+    CommunityDiscoverRequest,
+    CommunityJoinRequest,
+    CommunityMatchRequest,
+    CommunityMessageRequest,
+)
 from app.services.community_service import CommunityService
 
 
@@ -58,6 +64,46 @@ def test_similar_users_join_same_room_and_share_messages(tmp_path: Path) -> None
     assert refreshed_room.starter_topics
 
 
+def test_discover_rooms_and_join_selected_room(tmp_path: Path) -> None:
+    service = build_test_service(tmp_path)
+    user = User(id="user-a", name="Alice", email="alice@example.com")
+    catalog = service.discover_rooms(
+        CommunityDiscoverRequest(
+            symptom_text="I have a sore throat, fever, and cold symptoms.",
+            care_path="general_care",
+            urgency_band="routine",
+            preferred_language="English",
+            region="Los Angeles",
+            ui_language="English",
+        )
+    )
+
+    assert catalog.recommended_rooms
+    assert catalog.browse_rooms
+    assert "recommend rooms first" in catalog.selected_context_summary
+    assert catalog.recommended_rooms[0].preview_topics
+
+    selected_room = catalog.recommended_rooms[0]
+    joined_room = service.join_room(
+        user,
+        selected_room.id,
+        CommunityJoinRequest(
+            symptom_text="I have a sore throat, fever, and cold symptoms.",
+            care_path="general_care",
+            urgency_band="routine",
+            preferred_language="English",
+            region="Los Angeles",
+            ui_language="English",
+        ),
+    )
+
+    assert joined_room.room.id == selected_room.id
+    assert joined_room.room.member_count == 1
+    assert joined_room.room.title
+    assert joined_room.room.preview_topics
+    assert joined_room.messages[0].display_name == "Room Guide"
+
+
 def test_room_strings_localize_to_current_ui_language(tmp_path: Path) -> None:
     service = build_test_service(tmp_path)
     user = User(id="user-a", name="Alice", email="alice@example.com")
@@ -80,3 +126,41 @@ def test_room_strings_localize_to_current_ui_language(tmp_path: Path) -> None:
     assert localized_room.messages[0].display_name == "房间向导"
     assert "欢迎来到匿名互助讨论室" in localized_room.messages[0].content
     assert localized_room.matching_summary.startswith("这个房间按")
+
+
+def test_create_room_is_saved_and_seeded(tmp_path: Path) -> None:
+    service = build_test_service(tmp_path)
+    owner = User(id="owner-1", name="Ava", email="ava@example.com")
+
+    created = service.create_room(
+        owner,
+        CommunityCreateRoomRequest(
+            title="Student plan confusion before first visit",
+            focus="I want a room for people comparing student insurance, first primary care visits, and what to prepare before booking.",
+            symptom_text="sore throat and student insurance confusion",
+            care_path="primary_care",
+            urgency_band="routine",
+            preferred_language="English",
+            region="Los Angeles",
+            ui_language="English",
+        ),
+    )
+
+    assert created.room.title == "Student plan confusion before first visit"
+    assert created.room.description
+    assert created.room.member_count == 1
+    assert created.room.message_count >= 3
+    assert any(message.user_id.startswith("peer-") for message in created.messages)
+
+    catalog = service.discover_rooms(
+        CommunityDiscoverRequest(
+            preferred_language="English",
+            region="Los Angeles",
+            ui_language="English",
+        )
+    )
+
+    assert any(
+        room.id == created.room.id and room.title == created.room.title
+        for room in catalog.browse_rooms
+    )

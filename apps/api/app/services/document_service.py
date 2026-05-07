@@ -21,7 +21,7 @@ from app.schemas.document import (
 )
 
 MAX_UPLOAD_BYTES = 10 * 1024 * 1024
-SCANNED_TEXT_THRESHOLD = 80
+SCANNED_TEXT_THRESHOLD = 20
 MAX_OCR_PDF_PAGES = 6
 
 

@@ -14,7 +14,6 @@ Base URL: `http://localhost:8000/api/v1`
 - `GET /doctors/{doctor_id}`
 - `GET /booking/slots/{doctor_id}`
 - `POST /booking/appointments`
-- `POST /chat/message`
 - `POST /documents/explain`
 
 ## Sample request: triage
