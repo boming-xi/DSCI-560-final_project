@@ -8,13 +8,17 @@ import { RankingExplanation } from "@/components/RankingExplanation";
 import { api } from "@/lib/api";
 import { beginDoctorBooking } from "@/lib/doctor-booking";
 import { getFlowState, patchFlowState } from "@/lib/flow";
+import { useTranslation } from "@/lib/LanguageProvider";
 import { useProtectedRoute } from "@/lib/useProtectedRoute";
 import type { DoctorProfile } from "@/lib/types";
 
-function formatAvailabilityLabel(doctor: DoctorProfile) {
+function formatAvailabilityLabel(
+  doctor: DoctorProfile,
+  t: ReturnType<typeof useTranslation>["t"],
+) {
   return doctor.availability_days === 0
-    ? "Same-day availability"
-    : `Next opening ${doctor.next_opening_label.toLowerCase()}`;
+    ? t.doctorCard.sameDayAvailability
+    : t.doctorDetail.nextOpening.replace("{label}", doctor.next_opening_label.toLowerCase());
 }
 
 function findCachedDoctor(doctorId: string): DoctorProfile | null {
@@ -31,6 +35,7 @@ function hasPublicRating(doctor: DoctorProfile) {
 }
 
 export default function DoctorDetailPage() {
+  const { t } = useTranslation();
   const params = useParams<{ doctorId: string }>();
   const router = useRouter();
   const { isCheckingAuth, session } = useProtectedRoute();
@@ -63,7 +68,7 @@ export default function DoctorDetailPage() {
         setError(
           loadError instanceof Error
             ? loadError.message
-            : "We could not load this clinician profile just yet.",
+            : t.doctorDetail.loadError,
         );
       } finally {
         setIsLoading(false);
@@ -71,7 +76,7 @@ export default function DoctorDetailPage() {
     }
 
     void loadDoctor();
-  }, [cachedDoctor, doctorId, isCheckingAuth, session]);
+  }, [cachedDoctor, doctorId, isCheckingAuth, session, t]);
 
   function handleBook() {
     if (!doctor) {
@@ -85,7 +90,7 @@ export default function DoctorDetailPage() {
   if (isCheckingAuth) {
     return (
       <main className="page-shell">
-        <div className="panel">Preparing clinician details...</div>
+        <div className="panel">{t.doctorDetail.loadingDetails}</div>
       </main>
     );
   }
@@ -99,17 +104,17 @@ export default function DoctorDetailPage() {
       <section className="panel doctor-detail-hero">
         <div className="doctor-detail-header">
           <div>
-            <span className="eyebrow">Doctor profile</span>
-            <h1>{doctor?.name ?? "Doctor details"}</h1>
+            <span className="eyebrow">{t.doctorDetail.doctorProfile}</span>
+            <h1>{doctor?.name ?? t.doctorDetail.doctorDetails}</h1>
             <p>
               {doctor
                 ? `${doctor.specialty} at ${doctor.clinic.name}`
-                : "Gathering clinician details and recommendation context."}
+                : t.doctorDetail.gatheringDetails}
             </p>
           </div>
           <div className="doctor-detail-actions">
             <Link className="button button-secondary" href="/doctors">
-              Back to recommendations
+              {t.doctorDetail.backToRecommendations}
             </Link>
             <button
               className="button button-primary"
@@ -117,7 +122,7 @@ export default function DoctorDetailPage() {
               onClick={handleBook}
               type="button"
             >
-              {doctor?.official_booking_label ?? "Book this doctor"}
+              {doctor?.official_booking_label ?? t.doctorCard.bookDoctor}
             </button>
           </div>
         </div>
@@ -129,14 +134,16 @@ export default function DoctorDetailPage() {
               <span className="badge">{doctor.years_experience} yrs experience</span>
               {hasPublicRating(doctor) ? (
                 <>
-                  <span className="badge">{doctor.rating} rating</span>
-                  <span className="badge">{doctor.review_count} reviews</span>
+                  <span className="badge">{doctor.rating} {t.doctorDetail.rating}</span>
+                  <span className="badge">{doctor.review_count} {t.doctorDetail.reviews}</span>
                 </>
               ) : (
-                <span className="badge">Public rating not listed</span>
+                <span className="badge">{t.doctorDetail.publicRatingNotListed}</span>
               )}
-              <span className="badge">{formatAvailabilityLabel(doctor)}</span>
-              <span className="badge">{doctor.distance_km} km away</span>
+              <span className="badge">{formatAvailabilityLabel(doctor, t)}</span>
+              <span className="badge">
+                {t.booking.distanceAway.replace("{distance}", String(doctor.distance_km))}
+              </span>
               {doctor.provider_system ? <span className="badge">{doctor.provider_system}</span> : null}
               {doctor.pilot_region ? <span className="badge">{doctor.pilot_region}</span> : null}
             </div>
@@ -145,26 +152,38 @@ export default function DoctorDetailPage() {
         ) : null}
       </section>
 
-      {isLoading ? <div className="panel">Loading full clinician profile...</div> : null}
+      {isLoading ? <div className="panel">{t.doctorDetail.loadingProfile}</div> : null}
       {error ? <div className="panel error-panel">{error}</div> : null}
 
       {doctor ? (
         <>
           <section className="summary-grid">
             <article className="panel summary-card">
-              <span className="eyebrow">Profile</span>
-              <h2>{doctor.accepts_new_patients ? "Accepting new patients" : "Limited new-patient access"}</h2>
+              <span className="eyebrow">{t.doctorDetail.profile}</span>
+              <h2>
+                {doctor.accepts_new_patients
+                  ? t.doctorDetail.acceptingNewPatients
+                  : t.doctorDetail.limitedNewPatientAccess}
+              </h2>
               <p>{doctor.care_approach}</p>
             </article>
             <article className="panel summary-card">
-              <span className="eyebrow">Access</span>
-              <h2>{doctor.official_booking_url ? "Official booking available" : doctor.next_opening_label}</h2>
+              <span className="eyebrow">{t.doctorDetail.access}</span>
+              <h2>{doctor.official_booking_url ? t.doctorDetail.officialBookingAvailable : doctor.next_opening_label}</h2>
               <p>
                 {doctor.official_booking_url
-                  ? `${doctor.provider_system ?? "Provider"} booking can continue on the official scheduling page.`
-                  : `${doctor.appointment_modes.join(", ")} with ${
-                      doctor.clinic.open_weekends ? "weekend clinic support" : "weekday clinic scheduling"
-                    }.`}
+                  ? t.doctorDetail.officialSchedulingLine.replace(
+                      "{provider}",
+                      doctor.provider_system ?? t.booking.providerFallback,
+                    )
+                  : t.doctorDetail.clinicScheduleLine
+                      .replace("{modes}", doctor.appointment_modes.join(", "))
+                      .replace(
+                        "{schedule}",
+                        doctor.clinic.open_weekends
+                          ? t.doctorDetail.weekendSupport
+                          : t.doctorDetail.weekdayScheduling,
+                      )}
               </p>
             </article>
           </section>
@@ -173,8 +192,8 @@ export default function DoctorDetailPage() {
 
           <section className="doctor-detail-grid">
             <article className="panel doctor-detail-card">
-              <span className="eyebrow">Common visits</span>
-              <h3>What this doctor commonly helps with</h3>
+              <span className="eyebrow">{t.doctorDetail.commonVisits}</span>
+              <h3>{t.doctorDetail.commonlyHelps}</h3>
               <ul className="detail-list">
                 {doctor.clinical_focus.map((focus) => (
                   <li key={focus}>{focus}</li>
@@ -183,8 +202,8 @@ export default function DoctorDetailPage() {
             </article>
 
             <article className="panel doctor-detail-card">
-              <span className="eyebrow">Visit style</span>
-              <h3>What patients usually notice</h3>
+              <span className="eyebrow">{t.doctorDetail.visitStyle}</span>
+              <h3>{t.doctorDetail.whatPatientsNotice}</h3>
               <ul className="detail-list">
                 {doctor.visit_highlights.map((item) => (
                   <li key={item}>{item}</li>
@@ -193,15 +212,15 @@ export default function DoctorDetailPage() {
             </article>
 
             <article className="panel doctor-detail-card">
-              <span className="eyebrow">Credentials</span>
-              <h3>Training and certification</h3>
-              <h4>Education</h4>
+              <span className="eyebrow">{t.doctorDetail.credentials}</span>
+              <h3>{t.doctorDetail.trainingCertification}</h3>
+              <h4>{t.doctorDetail.education}</h4>
               <ul className="detail-list">
                 {doctor.education.map((item) => (
                   <li key={item}>{item}</li>
                 ))}
               </ul>
-              <h4>Board certifications</h4>
+              <h4>{t.doctorDetail.boardCertifications}</h4>
               <ul className="detail-list">
                 {doctor.board_certifications.map((item) => (
                   <li key={item}>{item}</li>
@@ -210,34 +229,34 @@ export default function DoctorDetailPage() {
             </article>
 
             <article className="panel doctor-detail-card">
-              <span className="eyebrow">Clinic access</span>
+              <span className="eyebrow">{t.doctorDetail.clinicAccess}</span>
               <h3>{doctor.clinic.name}</h3>
               <div className="doctor-detail-meta-list">
                 <p>{doctor.clinic.address}</p>
                 <p>{doctor.clinic.city}, {doctor.clinic.state} {doctor.clinic.zip}</p>
                 <p>{doctor.clinic.phone}</p>
-                <p>Clinic languages: {doctor.clinic.languages.join(", ")}</p>
-                <p>Care types: {doctor.clinic.care_types.join(", ")}</p>
+                <p>{t.doctorDetail.clinicLanguages}: {doctor.clinic.languages.join(", ")}</p>
+                <p>{t.doctorDetail.careTypes}: {doctor.clinic.care_types.join(", ")}</p>
               </div>
               <div className="badge-row compact-badge-row">
                 <span className="badge">
-                  {doctor.telehealth ? "Telehealth available" : "In-person only"}
+                  {doctor.telehealth ? t.doctorDetail.telehealthAvailable : t.doctorDetail.inPersonOnly}
                 </span>
                 <span className="badge">
-                  {doctor.clinic.open_weekends ? "Open weekends" : "Weekday clinic"}
+                  {doctor.clinic.open_weekends ? t.doctorDetail.openWeekends : t.doctorDetail.weekdayClinic}
                 </span>
                 <span className="badge">
-                  {doctor.clinic.urgent_care ? "Urgent care on site" : "Standard clinic scheduling"}
+                  {doctor.clinic.urgent_care ? t.doctorDetail.urgentCareOnSite : t.doctorDetail.standardScheduling}
                 </span>
               </div>
             </article>
 
             <article className="panel doctor-detail-card doctor-detail-card-wide">
-              <span className="eyebrow">Insurance and booking</span>
-              <h3>Coverage, referrals, and appointment setup</h3>
+              <span className="eyebrow">{t.doctorDetail.insuranceBooking}</span>
+              <h3>{t.doctorDetail.coverageReferralsSetup}</h3>
               <div className="doctor-detail-insurance-grid">
                 <div>
-                  <h4>Accepted plans</h4>
+                  <h4>{t.doctorDetail.acceptedPlans}</h4>
                   <ul className="detail-list">
                     {doctor.accepted_insurance.map((plan) => (
                       <li key={plan}>{plan}</li>
@@ -245,7 +264,7 @@ export default function DoctorDetailPage() {
                   </ul>
                 </div>
                 <div>
-                  <h4>Network verification</h4>
+                  <h4>{t.doctorCard.networkVerification}</h4>
                   {doctor.insurance_verification ? (
                     <>
                       <p>{doctor.insurance_verification.label}</p>
@@ -264,22 +283,26 @@ export default function DoctorDetailPage() {
                             rel="noreferrer"
                             target="_blank"
                           >
-                            Open official network directory
+                            {t.doctors.openOfficialNetworkDirectory}
                           </a>
                         </p>
                       ) : null}
                     </>
                   ) : (
-                    <p>Select an insurance plan first to verify this doctor against a network.</p>
+                    <p>{t.doctorDetail.selectPlanFirst}</p>
                   )}
                 </div>
                 <div>
-                  <h4>Visit setup</h4>
+                  <h4>{t.doctorDetail.visitSetup}</h4>
                   <ul className="detail-list">
-                    <li>{doctor.accepts_new_patients ? "Accepting new patients" : "May require a referral or waitlist"}</li>
-                    <li>{doctor.next_opening_label} next opening</li>
-                    <li>{doctor.estimated_cost ? `$${doctor.estimated_cost} estimated copay` : "Estimated cost depends on plan"}</li>
-                    <li>{doctor.referral_required ? "Specialist referral may be required" : "Referral usually not required"}</li>
+                    <li>{doctor.accepts_new_patients ? t.doctorDetail.acceptingNewPatients : t.doctorDetail.mayRequireReferral}</li>
+                    <li>{t.doctorDetail.nextOpening.replace("{label}", doctor.next_opening_label)}</li>
+                    <li>
+                      {doctor.estimated_cost
+                        ? t.doctorCard.copayEstimate.replace("{amount}", `$${doctor.estimated_cost}`)
+                        : t.doctorDetail.estimatedCostDepends}
+                    </li>
+                    <li>{doctor.referral_required ? t.doctorDetail.specialistReferralMayBeRequired : t.doctorDetail.referralUsuallyNotRequired}</li>
                     {doctor.booking_system_name ? <li>{doctor.booking_system_name}</li> : null}
                     {doctor.booking_note ? <li>{doctor.booking_note}</li> : null}
                   </ul>
@@ -288,12 +311,15 @@ export default function DoctorDetailPage() {
               {doctor.official_profile_url || doctor.official_booking_url ? (
                 <div className="info-box">
                   <strong>
-                    {doctor.provider_system ?? "Official provider"} booking path
+                    {t.doctorDetail.providerBookingPath.replace(
+                      "{provider}",
+                      doctor.provider_system ?? t.doctorCard.officialBooking,
+                    )}
                   </strong>
                   <p>
                     {doctor.official_booking_url
-                      ? "This doctor has a live public provider page, so the primary booking action can continue on the official system."
-                      : "Profile details are available on the provider's official public page."}
+                      ? t.doctorDetail.livePublicPageBooking
+                      : t.doctorDetail.publicProfileOnly}
                   </p>
                   <div className="form-actions">
                     {doctor.official_booking_url ? (
@@ -301,7 +327,7 @@ export default function DoctorDetailPage() {
                         className="button button-primary"
                         href={doctor.official_booking_url}
                       >
-                        {doctor.official_booking_label ?? "Open official booking"}
+                        {doctor.official_booking_label ?? t.doctorDetail.openOfficialBooking}
                       </a>
                     ) : null}
                     {doctor.official_profile_url ? (
@@ -309,7 +335,7 @@ export default function DoctorDetailPage() {
                         className="button button-secondary"
                         href={doctor.official_profile_url}
                       >
-                        View official profile
+                        {t.doctorCard.viewOfficialProfile}
                       </a>
                     ) : null}
                   </div>
@@ -317,7 +343,7 @@ export default function DoctorDetailPage() {
               ) : null}
               <div className="form-actions">
                 <button className="button button-primary" onClick={handleBook} type="button">
-                  {doctor.official_booking_label ?? "Continue to booking"}
+                  {doctor.official_booking_label ?? t.doctorDetail.continueToBooking}
                 </button>
               </div>
             </article>

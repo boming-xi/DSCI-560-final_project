@@ -6,24 +6,13 @@ import { useRouter } from "next/navigation";
 import { ChatMessageContent } from "@/components/ChatMessageContent";
 import { api } from "@/lib/api";
 import { getFlowState, patchFlowState } from "@/lib/flow";
+import { useTranslation } from "@/lib/LanguageProvider";
 import type {
   ChatTurn,
   InsuranceAdvisorConversationTurn,
   InsuranceAdvisorProfile,
   InsuranceAdvisorRecommendation,
 } from "@/lib/types";
-
-const advisorPromptHint =
-  "Tell the advisor your ZIP code, budget, whether you need PPO flexibility, and how often you expect to use care.";
-
-const defaultConversation: InsuranceAdvisorConversationTurn[] = [
-  {
-    role: "assistant",
-    speaker: "Navigator",
-    content:
-      "Tell me about your coverage path, ZIP code, budget, and how often you expect to use care. I will turn that into a shortlist before you pick doctors.",
-  },
-];
 
 function toBackendConversation(turns: InsuranceAdvisorConversationTurn[]): ChatTurn[] {
   return turns.map((turn) => ({
@@ -32,21 +21,41 @@ function toBackendConversation(turns: InsuranceAdvisorConversationTurn[]): ChatT
   }));
 }
 
-function confidenceLabelText(value: InsuranceAdvisorRecommendation["confidence_label"]) {
+function confidenceLabelText(
+  value: InsuranceAdvisorRecommendation["confidence_label"],
+  t: ReturnType<typeof useTranslation>["t"],
+) {
   if (value === "strong") {
-    return "Strong fit";
+    return t.insurance.strongFit;
   }
   if (value === "good") {
-    return "Good fit";
+    return t.insurance.goodFit;
   }
-  return "Early shortlist";
+  return t.insurance.earlyShortlist;
 }
 
-function formatCurrency(value?: number | null) {
-  if (value === null || value === undefined) {
-    return "Varies";
+function readinessLabelText(
+  value: "intake" | "narrowing" | "recommended",
+  t: ReturnType<typeof useTranslation>["t"],
+) {
+  if (value === "recommended") {
+    return t.insurance.readinessRecommended;
   }
-  return new Intl.NumberFormat("en-US", {
+  if (value === "narrowing") {
+    return t.insurance.readinessNarrowing;
+  }
+  return t.insurance.readinessIntake;
+}
+
+function formatCurrency(
+  value: number | null | undefined,
+  locale: string,
+  variesLabel: string,
+) {
+  if (value === null || value === undefined) {
+    return variesLabel;
+  }
+  return new Intl.NumberFormat(locale, {
     style: "currency",
     currency: "USD",
     maximumFractionDigits: value >= 100 ? 0 : 2,
@@ -80,8 +89,26 @@ function normalizeRecommendations(
 }
 
 export function InsuranceAdvisorChat() {
+  const { t, lang } = useTranslation();
   const router = useRouter();
   const initialFlow = useMemo(() => getFlowState(), []);
+  const advisorLocale =
+    lang === "Mandarin" ? "zh-CN" : lang === "Spanish" ? "es-ES" : "en-US";
+  const defaultConversation = useMemo<InsuranceAdvisorConversationTurn[]>(
+    () => [
+      {
+        role: "assistant",
+        speaker: t.insurance.navigatorSpeaker,
+        content:
+          lang === "Mandarin"
+            ? "请先告诉我你的保险路径、邮编、预算，以及你预计会多频繁使用医疗服务。我会在你选医生前，先把它缩小成一个更可解释的计划候选列表。"
+            : lang === "Spanish"
+            ? "Cuéntame tu ruta de cobertura, código postal, presupuesto y con qué frecuencia esperas usar atención médica. Lo convertiré en una lista corta antes de que elijas doctores."
+            : "Tell me about your coverage path, ZIP code, budget, and how often you expect to use care. I will turn that into a shortlist before you pick doctors.",
+      },
+    ],
+    [lang, t.insurance.navigatorSpeaker],
+  );
   const initialRecommendations = useMemo(
     () => normalizeRecommendations(initialFlow.insuranceAdvisorRecommendations),
     [initialFlow],
@@ -106,8 +133,8 @@ export function InsuranceAdvisorChat() {
   const [readinessLabel, setReadinessLabel] = useState<
     "intake" | "narrowing" | "recommended"
   >(initialFlow.insuranceAdvisorReadinessLabel ?? "intake");
-  const [disclaimer, setDisclaimer] = useState(
-    "This is a planning tool, not official enrollment advice.",
+  const [disclaimer, setDisclaimer] = useState<string>(
+    t.insurance.disclaimer,
   );
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
@@ -142,7 +169,7 @@ export function InsuranceAdvisorChat() {
 
     const nextUserTurn: InsuranceAdvisorConversationTurn = {
       role: "user",
-      speaker: "You",
+      speaker: t.insurance.userSpeaker,
       content: message.trim(),
     };
     const optimisticConversation = [...conversation, nextUserTurn];
@@ -156,6 +183,7 @@ export function InsuranceAdvisorChat() {
         message: nextUserTurn.content,
         conversation: toBackendConversation(optimisticConversation),
         profile,
+        ui_language: lang,
       });
 
       const assistantTurns: InsuranceAdvisorConversationTurn[] = response.group_messages.map(
@@ -189,7 +217,7 @@ export function InsuranceAdvisorChat() {
       setError(
         submissionError instanceof Error
           ? submissionError.message
-          : "We could not reach the plan advisor just yet.",
+          : t.insurance.reviewError,
       );
     } finally {
       setIsSending(false);
@@ -227,13 +255,9 @@ export function InsuranceAdvisorChat() {
   return (
     <section className="panel insurance-advisor-panel">
       <div className="panel-heading">
-        <span className="eyebrow">Step 2</span>
-        <h2>Talk through plan fit before choosing doctors</h2>
-        <p>
-          This group-style chat gathers a lightweight insurance profile, narrows
-          your plan options, and lets you carry the chosen plan into the doctor
-          search flow.
-        </p>
+        <span className="eyebrow">{t.insurance.advisorStep}</span>
+        <h2>{t.insurance.advisorTitle}</h2>
+        <p>{t.insurance.advisorSubtitle}</p>
       </div>
 
       <div className="conversation insurance-advisor-conversation">
@@ -258,10 +282,10 @@ export function InsuranceAdvisorChat() {
           onChange={(event) => setMessage(event.target.value)}
           onFocus={() => setShowAdvisorHint(false)}
           onBlur={() => setShowAdvisorHint(!message.trim())}
-          placeholder={showAdvisorHint ? advisorPromptHint : ""}
+          placeholder={showAdvisorHint ? t.insurance.advisorHint : ""}
         />
         <button className="button button-primary" disabled={isSending} type="submit">
-          {isSending ? "Reviewing options..." : "Ask the plan advisor"}
+          {isSending ? t.insurance.advisorReviewing : t.insurance.advisorAskButton}
         </button>
       </form>
 
@@ -270,8 +294,8 @@ export function InsuranceAdvisorChat() {
       <div className="insurance-advisor-stack">
         <section className="insurance-advisor-summary-card insurance-advisor-profile-card">
           <div className="detail-section-heading">
-            <h3>Current profile</h3>
-            <span className="meta-pill">{readinessLabel}</span>
+            <h3>{t.insurance.currentProfile}</h3>
+            <span className="meta-pill">{readinessLabelText(readinessLabel, t)}</span>
           </div>
           {profileSummary.length ? (
             <ul className="detail-list">
@@ -281,15 +305,13 @@ export function InsuranceAdvisorChat() {
             </ul>
           ) : (
             <p className="muted-copy">
-              Your insurance profile will appear here after the first message.
-              Start with your ZIP code, budget, and whether you want marketplace,
-              student, or employer coverage.
+              {t.insurance.profileEmpty}
             </p>
           )}
 
           {missingFields.length ? (
             <>
-              <h4>Still helpful to know</h4>
+              <h4>{t.insurance.stillHelpful}</h4>
               <ul className="detail-list">
                 {missingFields.map((item) => (
                   <li key={item}>{item}</li>
@@ -303,9 +325,11 @@ export function InsuranceAdvisorChat() {
 
         <section className="insurance-advisor-summary-card insurance-advisor-recommendations-card">
           <div className="detail-section-heading">
-            <h3>Recommended insurance brands</h3>
+            <h3>{t.insurance.recommendedBrands}</h3>
             {recommendations.length ? (
-              <span className="meta-pill">{recommendations.length} carriers ready</span>
+              <span className="meta-pill">
+                {recommendations.length} {t.insurance.carriersReady}
+              </span>
             ) : null}
           </div>
           {recommendations.length ? (
@@ -317,7 +341,7 @@ export function InsuranceAdvisorChat() {
                       <div>
                         <h4>{recommendation.provider}</h4>
                         <p className="muted-copy advisor-plan-subtitle">
-                          Best-fit starting plan: {recommendation.plan_name}
+                          {t.insurance.bestFitPlan}: {recommendation.plan_name}
                           {recommendation.metal_level
                             ? ` · ${recommendation.metal_level}`
                             : ""}
@@ -330,33 +354,50 @@ export function InsuranceAdvisorChat() {
                     <div className="advisor-recommendation-fit-row">
                       <div className="advisor-recommendation-score">
                         <strong>{recommendation.fit_score}</strong>
-                        <span>{confidenceLabelText(recommendation.confidence_label)}</span>
+                        <span>{confidenceLabelText(recommendation.confidence_label, t)}</span>
                       </div>
                       <span className="meta-pill">
                         {recommendation.available_plan_count}{" "}
-                        {recommendation.available_plan_count === 1 ? "plan" : "plans"} in this
-                        carrier shortlist
+                        {recommendation.available_plan_count === 1
+                          ? t.insurance.planSingular
+                          : t.insurance.planPlural}{" "}
+                        {t.insurance.inCarrierShortlist}
                       </span>
                     </div>
 
                     <div className="document-meta-row advisor-metric-grid">
                       <span className="meta-pill">
-                        premium {formatCurrency(recommendation.monthly_premium_amount)}
+                        {t.insurance.premium}{" "}
+                        {formatCurrency(
+                          recommendation.monthly_premium_amount,
+                          advisorLocale,
+                          t.insurance.varies,
+                        )}
                       </span>
                       <span className="meta-pill">
-                        deductible {formatCurrency(recommendation.deductible_amount)}
+                        {t.insurance.deductible}{" "}
+                        {formatCurrency(
+                          recommendation.deductible_amount,
+                          advisorLocale,
+                          t.insurance.varies,
+                        )}
                       </span>
                       <span className="meta-pill">
-                        OOP max {formatCurrency(recommendation.out_of_pocket_max_amount)}
+                        {t.insurance.oopMax}{" "}
+                        {formatCurrency(
+                          recommendation.out_of_pocket_max_amount,
+                          advisorLocale,
+                          t.insurance.varies,
+                        )}
                       </span>
                       <span className="meta-pill">
                         {recommendation.network_flexibility === "high"
-                          ? "more flexible network"
-                          : "tighter network"}
+                          ? t.insurance.flexibleNetwork
+                          : t.insurance.tighterNetwork}
                       </span>
                       {recommendation.quality_rating ? (
                         <span className="meta-pill">
-                          quality {recommendation.quality_rating.toFixed(1)} / 5
+                          {t.insurance.quality} {recommendation.quality_rating.toFixed(1)} / 5
                         </span>
                       ) : null}
                       {recommendation.network_name ? (
@@ -364,14 +405,14 @@ export function InsuranceAdvisorChat() {
                       ) : null}
                     </div>
 
-                    <h5>Why this brand is a strong starting point</h5>
+                    <h5>{t.insurance.whyStrongStartingPoint}</h5>
                     <ul className="detail-list">
                       {recommendation.reasons.map((reason) => (
                         <li key={reason}>{reason}</li>
                       ))}
                     </ul>
 
-                    <h5>Tradeoffs</h5>
+                    <h5>{t.insurance.tradeoffs}</h5>
                     <ul className="detail-list">
                       {recommendation.tradeoffs.map((tradeoff) => (
                         <li key={tradeoff}>{tradeoff}</li>
@@ -386,8 +427,14 @@ export function InsuranceAdvisorChat() {
                           type="button"
                         >
                           {expandedProviders[recommendation.plan_id]
-                            ? `Hide ${recommendation.provider} plan options`
-                            : `View more plans from ${recommendation.provider}`}
+                            ? t.insurance.hidePlans.replace(
+                                "{provider}",
+                                recommendation.provider,
+                              )
+                            : t.insurance.viewMorePlans.replace(
+                                "{provider}",
+                                recommendation.provider,
+                              )}
                         </button>
 
                         {expandedProviders[recommendation.plan_id] ? (
@@ -405,18 +452,33 @@ export function InsuranceAdvisorChat() {
                                   </div>
                                   <div className="advisor-more-plan-score">
                                     <strong>{planOption.fit_score}</strong>
-                                    <span>{confidenceLabelText(planOption.confidence_label)}</span>
+                                    <span>{confidenceLabelText(planOption.confidence_label, t)}</span>
                                   </div>
                                 </div>
                                 <div className="document-meta-row advisor-metric-grid">
                                   <span className="meta-pill">
-                                    premium {formatCurrency(planOption.monthly_premium_amount)}
+                                    {t.insurance.premium}{" "}
+                                    {formatCurrency(
+                                      planOption.monthly_premium_amount,
+                                      advisorLocale,
+                                      t.insurance.varies,
+                                    )}
                                   </span>
                                   <span className="meta-pill">
-                                    deductible {formatCurrency(planOption.deductible_amount)}
+                                    {t.insurance.deductible}{" "}
+                                    {formatCurrency(
+                                      planOption.deductible_amount,
+                                      advisorLocale,
+                                      t.insurance.varies,
+                                    )}
                                   </span>
                                   <span className="meta-pill">
-                                    OOP max {formatCurrency(planOption.out_of_pocket_max_amount)}
+                                    {t.insurance.oopMax}{" "}
+                                    {formatCurrency(
+                                      planOption.out_of_pocket_max_amount,
+                                      advisorLocale,
+                                      t.insurance.varies,
+                                    )}
                                   </span>
                                   {planOption.network_name ? (
                                     <span className="meta-pill">{planOption.network_name}</span>
@@ -431,7 +493,7 @@ export function InsuranceAdvisorChat() {
                                     onClick={() => applyRecommendation(planOption)}
                                     type="button"
                                   >
-                                    Use this plan instead
+                                    {t.insurance.useThisPlanInstead}
                                   </button>
                                   {planOption.source_url ? (
                                     <a
@@ -440,7 +502,7 @@ export function InsuranceAdvisorChat() {
                                       rel="noreferrer"
                                       target="_blank"
                                     >
-                                      Plan details
+                                      {t.insurance.planDetails}
                                     </a>
                                   ) : null}
                                 </div>
@@ -457,7 +519,7 @@ export function InsuranceAdvisorChat() {
                         onClick={() => applyRecommendation(recommendation)}
                         type="button"
                       >
-                        Use best-fit plan for doctor search
+                        {t.insurance.useBestFitPlan}
                       </button>
                       {recommendation.purchase_url ? (
                         <a
@@ -466,7 +528,7 @@ export function InsuranceAdvisorChat() {
                           rel="noreferrer"
                           target="_blank"
                         >
-                          {recommendation.purchase_cta_label ?? "Official purchase link"}
+                          {recommendation.purchase_cta_label ?? t.insurance.officialPurchaseLink}
                         </a>
                       ) : null}
                       {recommendation.source_url ? (
@@ -476,7 +538,7 @@ export function InsuranceAdvisorChat() {
                           rel="noreferrer"
                           target="_blank"
                         >
-                          Plan details
+                          {t.insurance.planDetails}
                         </a>
                       ) : null}
                     </div>
@@ -486,8 +548,7 @@ export function InsuranceAdvisorChat() {
             </>
           ) : (
             <p className="muted-copy">
-              Plan recommendations will appear once the advisor has enough detail
-              to narrow the official catalog responsibly.
+              {t.insurance.recommendationsEmpty}
             </p>
           )}
         </section>

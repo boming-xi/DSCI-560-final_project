@@ -1,17 +1,17 @@
 "use client";
 
-import { SymptomForm } from "@/components/SymptomForm";
-import { useTranslation } from "@/lib/LanguageProvider";
+import { PeerSupportChat } from "@/components/PeerSupportChat";
 import { useProtectedRoute } from "@/lib/useProtectedRoute";
+import { useTranslation } from "@/lib/LanguageProvider";
 
-export default function SymptomPage() {
+export default function CommunityPage() {
   const { t } = useTranslation();
   const { isCheckingAuth, session } = useProtectedRoute();
 
   if (isCheckingAuth) {
     return (
       <main className="page-shell">
-        <div className="panel">{t.symptom.authLoading}</div>
+        <div className="panel">{t.community.authLoading}</div>
       </main>
     );
   }
@@ -20,9 +20,5 @@ export default function SymptomPage() {
     return null;
   }
 
-  return (
-    <main className="page-shell">
-      <SymptomForm />
-    </main>
-  );
+  return <PeerSupportChat />;
 }

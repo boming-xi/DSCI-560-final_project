@@ -26,6 +26,7 @@ def build_test_settings(tmp_path: Path, snapshot_path: Path) -> Settings:
         openai_reasoning_effort="low",
         openai_max_output_tokens=700,
         demo_users_file=tmp_path / "demo_users.json",
+        community_rooms_file=tmp_path / "community_rooms.json",
         demo_auth_secret="test-secret",
         postgres_url=f"sqlite+pysqlite:///{tmp_path / 'availability_sync.db'}",
         provider_directory_source="snapshot",

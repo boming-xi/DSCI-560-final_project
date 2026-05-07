@@ -31,14 +31,24 @@ class SharedDecisionContext:
 
 
 class DoctorDecisionService:
+    def _language(self, ui_language: str | None) -> str:
+        if ui_language in {"Mandarin", "Spanish"}:
+            return ui_language
+        return "English"
+
     def reply(self, request: DoctorDecisionRequest) -> DoctorDecisionResponse:
+        language = self._language(request.ui_language)
         doctors = request.doctors[:5]
         if not doctors:
             return DoctorDecisionResponse(
                 group_messages=[
                     DoctorDecisionSpeakerMessage(
                         speaker="Decision Guide",
-                        content="I need a current doctor shortlist before I can help with the final choice. Run doctor search first, then I can compare the options.",
+                        content={
+                            "English": "I need a current doctor shortlist before I can help with the final choice. Run doctor search first, then I can compare the options.",
+                            "Mandarin": "我需要先拿到当前的医生候选列表，才能帮你做最后选择。请先运行医生搜索，然后我再来比较这些选项。",
+                            "Spanish": "Necesito primero una lista actual de doctores antes de ayudarte con la elección final. Ejecuta la búsqueda de doctores y luego comparo las opciones.",
+                        }[language],
                     )
                 ],
                 shared_brief=None,
@@ -69,29 +79,31 @@ class DoctorDecisionService:
             best=best,
             alternate=alternate,
             coverage_pick=coverage_pick,
+            language=language,
         )
 
-        recommended_reason = self._recommended_reason(shared)
+        recommended_reason = self._recommended_reason(shared, language)
         return DoctorDecisionResponse(
             group_messages=[
                 DoctorDecisionSpeakerMessage(
                     speaker="Fit Analyst",
-                    content=self._fit_message(shared),
+                    content=self._fit_message(shared, language),
                 ),
                 DoctorDecisionSpeakerMessage(
                     speaker="Coverage Checker",
-                    content=self._coverage_message(shared),
+                    content=self._coverage_message(shared, language),
                 ),
                 DoctorDecisionSpeakerMessage(
                     speaker="Decision Guide",
                     content=self._decision_message(
                         shared=shared,
                         recommended_reason=recommended_reason,
+                        language=language,
                     ),
                 ),
             ],
             shared_brief=self._serialize_shared_brief(shared),
-            suggested_prompts=self._suggested_prompts(shared),
+            suggested_prompts=self._suggested_prompts(shared, language),
             recommended_doctor_id=best.id,
             recommended_reason=recommended_reason,
         )
@@ -164,24 +176,76 @@ class DoctorDecisionService:
 
         return priorities
 
-    def _priority_labels(self, priorities: dict[str, str | bool | None]) -> list[str]:
+    def _priority_labels(
+        self,
+        priorities: dict[str, str | bool | None],
+        language: str,
+    ) -> list[str]:
         labels: list[str] = []
         if priorities["speed"]:
-            labels.append("fastest appointment")
+            labels.append(
+                {
+                    "English": "fastest appointment",
+                    "Mandarin": "尽快约到号",
+                    "Spanish": "cita más rápida",
+                }[language]
+            )
         if priorities["insurance"]:
-            labels.append("insurance certainty")
+            labels.append(
+                {
+                    "English": "insurance certainty",
+                    "Mandarin": "保险更确定",
+                    "Spanish": "certeza del seguro",
+                }[language]
+            )
         if priorities["distance"]:
-            labels.append("shorter commute")
+            labels.append(
+                {
+                    "English": "shorter commute",
+                    "Mandarin": "通勤更短",
+                    "Spanish": "trayecto más corto",
+                }[language]
+            )
         if priorities["language"] and priorities["language_target"]:
-            labels.append(f"{priorities['language_target']} support")
+            labels.append(
+                {
+                    "English": f"{priorities['language_target']} support",
+                    "Mandarin": f"{priorities['language_target']} 支持",
+                    "Spanish": f"atención en {priorities['language_target']}",
+                }[language]
+            )
         if priorities["clarity"]:
-            labels.append("clear explanations")
+            labels.append(
+                {
+                    "English": "clear explanations",
+                    "Mandarin": "讲解清楚",
+                    "Spanish": "explicaciones claras",
+                }[language]
+            )
         if priorities["telehealth"]:
-            labels.append("telehealth flexibility")
+            labels.append(
+                {
+                    "English": "telehealth flexibility",
+                    "Mandarin": "远程问诊灵活",
+                    "Spanish": "flexibilidad de telemedicina",
+                }[language]
+            )
         if priorities["trust"]:
-            labels.append("strong trust profile")
+            labels.append(
+                {
+                    "English": "strong trust profile",
+                    "Mandarin": "信任度更强",
+                    "Spanish": "perfil de confianza sólido",
+                }[language]
+            )
         if not labels:
-            labels.append("overall balance")
+            labels.append(
+                {
+                    "English": "overall balance",
+                    "Mandarin": "整体平衡",
+                    "Spanish": "equilibrio general",
+                }[language]
+            )
         return labels
 
     def _decision_score(
@@ -249,8 +313,9 @@ class DoctorDecisionService:
         best: DoctorProfile,
         alternate: DoctorProfile | None,
         coverage_pick: DoctorProfile,
+        language: str,
     ) -> SharedDecisionContext:
-        priority_labels = self._priority_labels(priorities)
+        priority_labels = self._priority_labels(priorities, language)
         shortlist_names = [doctor.name for doctor in ranked[:3]]
         symptom_anchor = request.symptom_text.strip() if request.symptom_text else None
         insurance_anchor = request.insurance_query.strip() if request.insurance_query else None
@@ -264,8 +329,13 @@ class DoctorDecisionService:
             shortlist_names=shortlist_names,
             symptom_anchor=symptom_anchor,
             priority_labels=priority_labels,
+            language=language,
         )
-        coverage_watchout = self._coverage_watchout(best=best, coverage_pick=coverage_pick)
+        coverage_watchout = self._coverage_watchout(
+            best=best,
+            coverage_pick=coverage_pick,
+            language=language,
+        )
 
         return SharedDecisionContext(
             transcript=transcript,
@@ -290,13 +360,32 @@ class DoctorDecisionService:
         shortlist_names: list[str],
         symptom_anchor: str | None,
         priority_labels: list[str],
+        language: str,
     ) -> str:
         shortlist_text = ", ".join(shortlist_names) if shortlist_names else "the current shortlist"
         priority_text = ", ".join(priority_labels[:3])
         if symptom_anchor:
+            if language == "Mandarin":
+                return (
+                    f"当前讨论在比较 {shortlist_text}，针对的症状背景是：{symptom_anchor[:120]}，"
+                    f"目前最优先考虑的是 {priority_text}。"
+                )
+            if language == "Spanish":
+                return (
+                    f"El grupo está comparando {shortlist_text} para {symptom_anchor[:120]}, "
+                    f"y ahora mismo prioriza {priority_text}."
+                )
             return (
                 f"The group is comparing {shortlist_text} for {symptom_anchor[:120]}, "
                 f"with the discussion currently prioritizing {priority_text}."
+            )
+        if language == "Mandarin":
+            return (
+                f"当前讨论在比较 {shortlist_text}，目前最优先考虑的是 {priority_text}。"
+            )
+        if language == "Spanish":
+            return (
+                f"El grupo está comparando {shortlist_text}, y ahora mismo prioriza {priority_text}."
             )
         return (
             f"The group is comparing {shortlist_text}, "
@@ -308,14 +397,23 @@ class DoctorDecisionService:
         *,
         best: DoctorProfile,
         coverage_pick: DoctorProfile,
+        language: str,
     ) -> str | None:
         if best.referral_required:
+            if language == "Mandarin":
+                return f"{best.name} 在安排专科就诊前，可能仍然需要先拿到转诊。"
+            if language == "Spanish":
+                return f"{best.name} todavía podría necesitar un referido antes de programar atención especializada."
             return f"{best.name} may still need a referral before specialist care can be scheduled."
         if (
             best.insurance_verification
             and best.insurance_verification.status == "uncertain"
             and coverage_pick.id != best.id
         ):
+            if language == "Mandarin":
+                return f"{best.name} 是整体最优选择，但 {coverage_pick.name} 是保险层面更稳妥的备选。"
+            if language == "Spanish":
+                return f"{best.name} es la mejor opción general, pero {coverage_pick.name} es el respaldo más seguro desde el punto de vista del seguro."
             return (
                 f"{best.name} is the strongest overall fit, but {coverage_pick.name} is the safer insurance fallback."
             )
@@ -335,27 +433,50 @@ class DoctorDecisionService:
             coverage_watchout=shared.coverage_watchout,
         )
 
-    def _fit_message(self, shared: SharedDecisionContext) -> str:
+    def _fit_message(self, shared: SharedDecisionContext, language: str) -> str:
         focus_preview = (
             ", ".join(shared.best.clinical_focus[:2])
             if shared.best.clinical_focus
             else shared.best.specialty
         )
         priority_text = ", ".join(shared.priority_labels[:2])
-        message = (
-            f"Using the shared case file, I would keep {shared.best.name} as the clinical lead. "
-            f"The strongest fit comes from {shared.best.specialty} care with particular strength in {focus_preview}. "
-            f"That lines up well with the current priorities around {priority_text}. "
-        )
-        if shared.symptom_anchor:
-            message += f"I am anchoring this recommendation to the symptom story: {shared.symptom_anchor[:140]}. "
-        if shared.alternate is not None:
-            message += (
-                f"If the user wants a second clinical option in the room, {shared.alternate.name} is the most credible backup."
+        if language == "Mandarin":
+            message = (
+                f"基于这份共享病例摘要，我会继续把 {shared.best.name} 放在临床匹配的第一位。"
+                f"最强的匹配点来自 {shared.best.specialty}，尤其擅长 {focus_preview}。"
+                f"这和当前优先考虑的 {priority_text} 很一致。"
             )
+        elif language == "Spanish":
+            message = (
+                f"Usando el expediente compartido, mantendría a {shared.best.name} como líder clínico. "
+                f"El ajuste más fuerte viene de su atención en {shared.best.specialty}, con fortaleza particular en {focus_preview}. "
+                f"Eso encaja bien con las prioridades actuales alrededor de {priority_text}. "
+            )
+        else:
+            message = (
+                f"Using the shared case file, I would keep {shared.best.name} as the clinical lead. "
+                f"The strongest fit comes from {shared.best.specialty} care with particular strength in {focus_preview}. "
+                f"That lines up well with the current priorities around {priority_text}. "
+            )
+        if shared.symptom_anchor:
+            if language == "Mandarin":
+                message += f"我把这条建议锚定在你的症状描述上：{shared.symptom_anchor[:140]}。"
+            elif language == "Spanish":
+                message += f"Estoy anclando esta recomendación a la historia de síntomas: {shared.symptom_anchor[:140]}. "
+            else:
+                message += f"I am anchoring this recommendation to the symptom story: {shared.symptom_anchor[:140]}. "
+        if shared.alternate is not None:
+            if language == "Mandarin":
+                message += f"如果你想保留第二个临床上也说得通的选择，{shared.alternate.name} 是最可信的备选。"
+            elif language == "Spanish":
+                message += f"Si el usuario quiere una segunda opción clínica en la mesa, {shared.alternate.name} es el respaldo más creíble."
+            else:
+                message += (
+                    f"If the user wants a second clinical option in the room, {shared.alternate.name} is the most credible backup."
+                )
         return message
 
-    def _coverage_message(self, shared: SharedDecisionContext) -> str:
+    def _coverage_message(self, shared: SharedDecisionContext, language: str) -> str:
         best_label = (
             shared.best.insurance_verification.label
             if shared.best.insurance_verification
@@ -367,6 +488,18 @@ class DoctorDecisionService:
             else "estimated cost still depends on plan"
         )
         if shared.coverage_pick.id == shared.best.id:
+            if language == "Mandarin":
+                return (
+                    f"从保险和网络角度看，我同意目前排第一的医生也是更稳妥的覆盖选择。"
+                    f"{shared.best.name} 当前标记为 {best_label.lower()}，费用上 {best_cost}，"
+                    f"{'而且可能仍然需要转诊' if shared.best.referral_required else '通常不需要转诊'}。"
+                )
+            if language == "Spanish":
+                return (
+                    f"Revisando la misma lista y prioridades, coincido en que el doctor líder también es la opción de cobertura más segura. "
+                    f"{shared.best.name} está marcado como {best_label.lower()}, con {best_cost}, "
+                    f"y {'todavía puede requerir un referido' if shared.best.referral_required else 'normalmente no requiere referido'}."
+                )
             return (
                 f"Reviewing the same shortlist and priorities, I agree the front-runner is also the safest coverage choice. "
                 f"{shared.best.name} is marked {best_label.lower()}, with {best_cost}, "
@@ -383,6 +516,16 @@ class DoctorDecisionService:
             if shared.coverage_watchout
             else ""
         )
+        if language == "Mandarin":
+            return (
+                f"如果只从保险角度看，{shared.coverage_pick.name} 是更干净的覆盖优先备选，因为它当前标记为 {coverage_label.lower()}。"
+                f"{shared.best.name} 在整体平衡上仍然更好，但这里我会进一步确认你愿意承受多少网络风险。{watchout}"
+            )
+        if language == "Spanish":
+            return (
+                f"Mirando el caso compartido desde el lado del seguro, {shared.coverage_pick.name} es el respaldo más limpio si priorizamos cobertura, porque está marcado como {coverage_label.lower()}. "
+                f"{shared.best.name} sigue teniendo el mejor equilibrio general, pero aquí yo preguntaría cuánto riesgo quiere tolerar el usuario.{watchout}"
+            )
         return (
             f"Looking at the shared case file from the insurance side, {shared.coverage_pick.name} is the cleaner coverage-first fallback because it is marked "
             f"{coverage_label.lower()}. {shared.best.name} still has the better overall balance, but this is the place where I would ask the user how much risk they can tolerate.{watchout}"
@@ -393,52 +536,135 @@ class DoctorDecisionService:
         *,
         shared: SharedDecisionContext,
         recommended_reason: str,
+        language: str,
     ) -> str:
-        message = (
-            f"Taking Fit Analyst's clinical lead and Coverage Checker's risk review together, my final call is to start with {shared.best.name}. "
-            f"{recommended_reason} "
-        )
-        if shared.alternate is not None:
-            message += (
-                f"If the user becomes more insurance-conservative or wants a different bedside style, I would keep {shared.alternate.name} as the main alternative."
+        if language == "Mandarin":
+            message = (
+                f"综合 Fit Analyst 的临床判断和 Coverage Checker 的风险评估后，我最后建议先从 {shared.best.name} 开始。"
+                f"{recommended_reason} "
             )
+        elif language == "Spanish":
+            message = (
+                f"Tomando juntos el liderazgo clínico de Fit Analyst y la revisión de riesgo de Coverage Checker, mi decisión final es empezar con {shared.best.name}. "
+                f"{recommended_reason} "
+            )
+        else:
+            message = (
+                f"Taking Fit Analyst's clinical lead and Coverage Checker's risk review together, my final call is to start with {shared.best.name}. "
+                f"{recommended_reason} "
+            )
+        if shared.alternate is not None:
+            if language == "Mandarin":
+                message += f"如果你后来更保守地看待保险风险，或更在意沟通风格不同，我会把 {shared.alternate.name} 作为主要备选。"
+            elif language == "Spanish":
+                message += f"Si el usuario después se vuelve más conservador con el seguro o quiere otro estilo de trato, mantendría a {shared.alternate.name} como la alternativa principal."
+            else:
+                message += (
+                    f"If the user becomes more insurance-conservative or wants a different bedside style, I would keep {shared.alternate.name} as the main alternative."
+                )
         return message
 
-    def _recommended_reason(self, shared: SharedDecisionContext) -> str:
+    def _recommended_reason(self, shared: SharedDecisionContext, language: str) -> str:
         reasons: list[str] = []
         doctor = shared.best
         priorities = shared.priorities
 
         if priorities["speed"]:
             reasons.append(
-                "It gives one of the fastest paths to an appointment"
-                if doctor.availability_days <= 1
-                else "It still balances fit well even if speed is not the absolute best"
+                {
+                    "English": "It gives one of the fastest paths to an appointment"
+                    if doctor.availability_days <= 1
+                    else "It still balances fit well even if speed is not the absolute best",
+                    "Mandarin": "它提供了最快的一批就诊路径之一"
+                    if doctor.availability_days <= 1
+                    else "即使不是最快，它在整体匹配上仍然很平衡",
+                    "Spanish": "Ofrece una de las rutas más rápidas para conseguir cita"
+                    if doctor.availability_days <= 1
+                    else "Sigue equilibrando muy bien el ajuste aunque no sea la opción más rápida",
+                }[language]
             )
         if priorities["insurance"] and doctor.insurance_verification:
-            reasons.append(f"the insurance status is {doctor.insurance_verification.label.lower()}")
+            reasons.append(
+                {
+                    "English": f"the insurance status is {doctor.insurance_verification.label.lower()}",
+                    "Mandarin": f"它的保险状态是 {doctor.insurance_verification.label.lower()}",
+                    "Spanish": f"el estado del seguro es {doctor.insurance_verification.label.lower()}",
+                }[language]
+            )
         if priorities["language"] and shared.language_anchor and shared.language_anchor in doctor.languages:
-            reasons.append(f"it supports {shared.language_anchor}")
+            reasons.append(
+                {
+                    "English": f"it supports {shared.language_anchor}",
+                    "Mandarin": f"它支持 {shared.language_anchor}",
+                    "Spanish": f"ofrece atención en {shared.language_anchor}",
+                }[language]
+            )
         if priorities["clarity"]:
-            reasons.append("the profile suggests a clearer and more explanatory visit style")
+            reasons.append(
+                {
+                    "English": "the profile suggests a clearer and more explanatory visit style",
+                    "Mandarin": "资料显示它的就诊风格更重视解释和说明",
+                    "Spanish": "el perfil sugiere un estilo de visita más claro y explicativo",
+                }[language]
+            )
         if priorities["distance"]:
-            reasons.append("it stays relatively close to the search area")
+            reasons.append(
+                {
+                    "English": "it stays relatively close to the search area",
+                    "Mandarin": "它离你的搜索区域相对更近",
+                    "Spanish": "se mantiene relativamente cerca del área de búsqueda",
+                }[language]
+            )
         if priorities["trust"]:
-            reasons.append("it has a strong trust and experience profile")
+            reasons.append(
+                {
+                    "English": "it has a strong trust and experience profile",
+                    "Mandarin": "它的信任度和经验画像都更强",
+                    "Spanish": "tiene un perfil sólido de confianza y experiencia",
+                }[language]
+            )
 
         if not reasons:
-            reasons.append("it offers the cleanest overall balance across fit, insurance, access, and trust")
+            reasons.append(
+                {
+                    "English": "it offers the cleanest overall balance across fit, insurance, access, and trust",
+                    "Mandarin": "它在匹配度、保险、可达性和信任度之间给出了最平衡的组合",
+                    "Spanish": "ofrece el equilibrio más limpio entre ajuste, seguro, acceso y confianza",
+                }[language]
+            )
         return reasons[0][0].upper() + reasons[0][1:] + "."
 
-    def _suggested_prompts(self, shared: SharedDecisionContext) -> list[str]:
-        prompts = [
-            "Ask Fit Analyst to compare the top two doctors on clinical fit.",
-            "Ask Coverage Checker whether the safer in-network choice changes the recommendation.",
-            "Ask Decision Guide what happens if speed matters less than communication style.",
-            "Ask the group which doctor is easiest for a first visit if I am anxious about the process.",
-        ]
+    def _suggested_prompts(self, shared: SharedDecisionContext, language: str) -> list[str]:
+        prompts = {
+            "English": [
+                "Ask Fit Analyst to compare the top two doctors on clinical fit.",
+                "Ask Coverage Checker whether the safer in-network choice changes the recommendation.",
+                "Ask Decision Guide what happens if speed matters less than communication style.",
+                "Ask the group which doctor is easiest for a first visit if I am anxious about the process.",
+            ],
+            "Mandarin": [
+                "请 Fit Analyst 比较一下前两位医生在临床匹配上的差别。",
+                "请 Coverage Checker 看看更稳妥的院内网络选择会不会改变推荐。",
+                "请 Decision Guide 解释一下：如果速度没那么重要，沟通风格会不会改变选择。",
+                "如果我是第一次看诊而且比较紧张，请问哪位医生会更容易开始？",
+            ],
+            "Spanish": [
+                "Pide a Fit Analyst que compare a los dos mejores doctores en ajuste clínico.",
+                "Pide a Coverage Checker que evalúe si la opción más segura dentro de la red cambia la recomendación.",
+                "Pide a Decision Guide que explique qué pasa si la rapidez importa menos que el estilo de comunicación.",
+                "Pregunta al grupo qué doctor sería más fácil para una primera visita si estoy ansioso por el proceso.",
+            ],
+        }[language]
         if shared.priorities["language"]:
-            prompts[2] = "Ask Decision Guide whether language support should outweigh rating or distance."
+            prompts[2] = {
+                "English": "Ask Decision Guide whether language support should outweigh rating or distance.",
+                "Mandarin": "请 Decision Guide 判断：语言支持是否应该比评分或距离更重要。",
+                "Spanish": "Pide a Decision Guide que evalúe si el apoyo en idioma debe pesar más que la calificación o la distancia.",
+            }[language]
         if shared.priorities["insurance"]:
-            prompts[1] = "Ask Coverage Checker whether the most verified network option should become the top choice."
+            prompts[1] = {
+                "English": "Ask Coverage Checker whether the most verified network option should become the top choice.",
+                "Mandarin": "请 Coverage Checker 判断：网络核验最稳的选项是否应该升为首选。",
+                "Spanish": "Pide a Coverage Checker que evalúe si la opción con red más verificada debería convertirse en la principal.",
+            }[language]
         return prompts

@@ -6,6 +6,8 @@ from pydantic import BaseModel, Field
 
 from app.schemas.doctor import DoctorProfile
 
+UiLanguage = Literal["English", "Mandarin", "Spanish"]
+
 
 class DoctorDecisionConversationTurn(BaseModel):
     role: Literal["user", "assistant"]
@@ -39,6 +41,7 @@ class DoctorDecisionRequest(BaseModel):
     symptom_text: str | None = None
     insurance_query: str | None = None
     preferred_language: str | None = None
+    ui_language: UiLanguage | None = None
 
 
 class DoctorDecisionResponse(BaseModel):

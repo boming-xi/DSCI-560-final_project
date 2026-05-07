@@ -5,9 +5,11 @@ import { useMemo, useState } from "react";
 import { InsuranceAdvisorChat } from "@/components/InsuranceAdvisorChat";
 import { InsuranceUpload } from "@/components/InsuranceUpload";
 import { getFlowState, patchFlowState } from "@/lib/flow";
+import { useTranslation } from "@/lib/LanguageProvider";
 import { useProtectedRoute } from "@/lib/useProtectedRoute";
 
 export default function InsurancePage() {
+  const { t } = useTranslation();
   const { isCheckingAuth, session } = useProtectedRoute();
   const initialFlow = useMemo(() => getFlowState(), []);
   const [entryMode, setEntryMode] = useState<"has_insurance" | "needs_help" | null>(() => {
@@ -29,7 +31,7 @@ export default function InsurancePage() {
   if (isCheckingAuth) {
     return (
       <main className="page-shell">
-        <div className="panel">Preparing your insurance step...</div>
+        <div className="panel">{t.insurance.authLoading}</div>
       </main>
     );
   }
@@ -47,13 +49,9 @@ export default function InsurancePage() {
     <main className="page-shell">
       <section className="panel insurance-entry-panel">
         <div className="panel-heading">
-          <span className="eyebrow">Step 1</span>
-          <h2>Choose your insurance path</h2>
-          <p>
-            If you already have a plan, we can parse it and move straight into
-            doctor search. If you do not have insurance yet, the advisor can
-            help you narrow plans first.
-          </p>
+          <span className="eyebrow">{t.insurance.step1}</span>
+          <h2>{t.insurance.choosePathTitle}</h2>
+          <p>{t.insurance.choosePathSubtitle}</p>
         </div>
 
         <div className="insurance-entry-grid">
@@ -62,12 +60,9 @@ export default function InsurancePage() {
             onClick={() => chooseMode("has_insurance")}
             type="button"
           >
-            <span className="meta-pill">I already have insurance</span>
-            <h3>Upload or paste my current plan</h3>
-            <p>
-              Best when you have an insurance card, portal screenshot, plan PDF,
-              or already know the plan name you want to use.
-            </p>
+            <span className="meta-pill">{t.insurance.hasInsurancePill}</span>
+            <h3>{t.insurance.hasInsuranceTitle}</h3>
+            <p>{t.insurance.hasInsuranceBody}</p>
           </button>
 
           <button
@@ -75,13 +70,9 @@ export default function InsurancePage() {
             onClick={() => chooseMode("needs_help")}
             type="button"
           >
-            <span className="meta-pill">I need help choosing insurance</span>
-            <h3>Compare plans with the AI advisor</h3>
-            <p>
-              Best when you want help thinking through budget, PPO vs HMO,
-              referrals, prescriptions, and plan tradeoffs before choosing
-              doctors.
-            </p>
+            <span className="meta-pill">{t.insurance.needsHelpPill}</span>
+            <h3>{t.insurance.needsHelpTitle}</h3>
+            <p>{t.insurance.needsHelpBody}</p>
           </button>
         </div>
       </section>
@@ -91,8 +82,8 @@ export default function InsurancePage() {
           <div className="insurance-step-toolbar">
             <p className="muted-copy">
               {entryMode === "has_insurance"
-                ? "Step 2 is set to existing insurance upload. You can switch paths anytime."
-                : "Step 2 is set to insurance advisor. You can switch paths anytime."}
+                ? t.insurance.existingModeNotice
+                : t.insurance.advisorModeNotice}
             </p>
             <button
               className="button button-secondary"
@@ -102,8 +93,8 @@ export default function InsurancePage() {
               type="button"
             >
               {entryMode === "has_insurance"
-                ? "Switch to plan advisor"
-                : "Switch to existing insurance upload"}
+                ? t.insurance.switchToAdvisor
+                : t.insurance.switchToUpload}
             </button>
           </div>
 
@@ -111,11 +102,8 @@ export default function InsurancePage() {
         </div>
       ) : (
         <section className="panel notice-box">
-          <strong>Step 2 opens after you choose a path.</strong>
-          <p>
-            Choose whether you already have a plan or want advisor guidance,
-            and we will keep the next step focused on that route.
-          </p>
+          <strong>{t.insurance.step2PendingTitle}</strong>
+          <p>{t.insurance.step2PendingBody}</p>
         </section>
       )}
     </main>

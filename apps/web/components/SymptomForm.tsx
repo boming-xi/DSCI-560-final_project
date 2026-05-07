@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { LocationPicker } from "@/components/LocationPicker";
 import { api } from "@/lib/api";
 import { getFlowState, patchFlowState } from "@/lib/flow";
+import { useTranslation } from "@/lib/LanguageProvider";
 import type { Location } from "@/lib/types";
 
 const defaultLocation: Location = {
@@ -14,10 +15,9 @@ const defaultLocation: Location = {
 };
 
 const LEGACY_SYMPTOM_EXAMPLE = "I have had a sore throat and fever for three days.";
-const SYMPTOM_HINT =
-  "Describe what you're feeling, how it started, and what feels most urgent right now.";
 
 export function SymptomForm() {
+  const { t } = useTranslation();
   const router = useRouter();
   const initialFlow = useMemo(() => getFlowState(), []);
   const hasSavedLocation = Boolean(initialFlow.location);
@@ -67,7 +67,7 @@ export function SymptomForm() {
       setError(
         submissionError instanceof Error
           ? submissionError.message
-          : "We could not review those symptoms just yet."
+          : t.symptom.error
       );
     } finally {
       setIsLoading(false);
@@ -77,37 +77,34 @@ export function SymptomForm() {
   return (
     <form className="panel form-panel" onSubmit={handleSubmit}>
       <div className="panel-heading">
-        <span className="eyebrow">Step 1</span>
-        <h2>Describe what is going on</h2>
-        <p>
-          We turn symptom text into an urgency band and the most likely care
-          starting point.
-        </p>
+        <span className="eyebrow">{t.symptom.step}</span>
+        <h2>{t.symptom.title}</h2>
+        <p>{t.symptom.subtitle}</p>
       </div>
 
       <label className="field">
-        <span>Symptoms</span>
+        <span>{t.symptom.symptomsLabel}</span>
         <textarea
           value={symptomText}
           onChange={(event) => setSymptomText(event.target.value)}
           onFocus={() => setShowSymptomHint(false)}
           onBlur={() => setShowSymptomHint(!symptomText.trim())}
           rows={6}
-          placeholder={showSymptomHint ? SYMPTOM_HINT : ""}
+          placeholder={showSymptomHint ? t.symptom.symptomsHint : ""}
         />
       </label>
 
       <div className="form-grid">
         <label className="field">
-          <span>Preferred language</span>
+          <span>{t.symptom.preferredLanguage}</span>
           <select
             value={preferredLanguage}
             onChange={(event) => setPreferredLanguage(event.target.value)}
           >
-            <option value="English">English</option>
-            <option value="Mandarin">Mandarin</option>
-            <option value="Spanish">Spanish</option>
-            <option value="Korean">Korean</option>
+            <option value="English">{t.symptom.optionEnglish}</option>
+            <option value="Mandarin">{t.symptom.optionMandarin}</option>
+            <option value="Spanish">{t.symptom.optionSpanish}</option>
+            <option value="Korean">{t.symptom.optionKorean}</option>
           </select>
         </label>
       </div>
@@ -122,7 +119,7 @@ export function SymptomForm() {
 
       <div className="form-actions">
         <button className="button button-primary" type="submit" disabled={isLoading}>
-          {isLoading ? "Reviewing symptoms..." : "Continue to insurance"}
+          {isLoading ? t.symptom.reviewing : t.symptom.continueButton}
         </button>
       </div>
     </form>

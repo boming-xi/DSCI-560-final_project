@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 
+import { useTranslation } from "@/lib/LanguageProvider";
 import type { DoctorProfile, InsuranceSummary, TriageRecommendation } from "@/lib/types";
 
 type CarePassportCardProps = {
@@ -13,6 +14,10 @@ type CarePassportCardProps = {
   bookingUrl?: string | null;
 };
 
+type PassportTextProps = CarePassportCardProps & {
+  t: ReturnType<typeof useTranslation>["t"];
+};
+
 function buildPassportText({
   symptomText,
   triage,
@@ -20,41 +25,52 @@ function buildPassportText({
   doctor,
   insuranceQuery,
   bookingUrl,
-}: CarePassportCardProps): string {
+  t,
+}: PassportTextProps): string {
   const insuranceLine = insuranceSummary?.matched
     ? `${insuranceSummary.provider} ${insuranceSummary.plan_name}`
     : insuranceQuery?.trim()
-    ? `Insurance entered for review: ${insuranceQuery.trim()}`
-    : "No insurance plan attached";
+      ? t.carePassport.insuranceEnteredForReview.replace("{query}", insuranceQuery.trim())
+      : t.carePassport.noPlanAttached;
 
   const doctorLine = doctor
     ? `${doctor.name}, ${doctor.specialty}, ${doctor.clinic.name}`
-    : "Doctor not selected";
+    : t.carePassport.doctorNotChosen;
 
   return [
-    "AI Healthcare Assistant - Personal Care Passport",
+    t.carePassport.textTitle,
     "",
-    `Symptoms: ${symptomText?.trim() || "Not provided"}`,
-    `Recommended care path: ${triage?.care_type || "Not available yet"}`,
-    `Urgency band: ${triage?.urgency_level || "Not available yet"}`,
-    `Insurance status: ${insuranceLine}`,
-    `Recommended doctor: ${doctorLine}`,
-    `Network check: ${doctor?.insurance_verification?.label || "Pending"}`,
-    `Official booking link: ${bookingUrl || doctor?.official_booking_url || "Not attached"}`,
+    `${t.carePassport.textSymptoms}: ${symptomText?.trim() || t.carePassport.notProvided}`,
+    `${t.carePassport.textCarePath}: ${triage?.care_type || t.carePassport.notAvailableYet}`,
+    `${t.carePassport.textUrgencyBand}: ${
+      triage?.urgency_level || t.carePassport.notAvailableYet
+    }`,
+    `${t.carePassport.textInsuranceStatus}: ${insuranceLine}`,
+    `${t.carePassport.textRecommendedDoctor}: ${doctorLine}`,
+    `${t.carePassport.textNetworkCheck}: ${
+      doctor?.insurance_verification?.label || t.carePassport.pending
+    }`,
+    `${t.carePassport.textOfficialBookingLink}: ${
+      bookingUrl || doctor?.official_booking_url || t.carePassport.notAttached
+    }`,
   ].join("\n");
 }
 
 export function CarePassportCard(props: CarePassportCardProps) {
+  const { t } = useTranslation();
   const [feedback, setFeedback] = useState("");
 
-  const passportText = useMemo(() => buildPassportText(props), [props]);
+  const passportText = useMemo(
+    () => buildPassportText({ ...props, t }),
+    [props, t],
+  );
 
   async function handleCopy() {
     try {
       await navigator.clipboard.writeText(passportText);
-      setFeedback("Care passport copied.");
+      setFeedback(t.carePassport.copied);
     } catch {
-      setFeedback("Copy is not available in this browser.");
+      setFeedback(t.carePassport.copyUnavailable);
     }
   }
 
@@ -66,11 +82,11 @@ export function CarePassportCard(props: CarePassportCardProps) {
 
     try {
       await navigator.share({
-        title: "Personal care passport",
+        title: t.carePassport.title,
         text: passportText,
         url: props.bookingUrl || props.doctor?.official_booking_url || undefined,
       });
-      setFeedback("Care passport shared.");
+      setFeedback(t.carePassport.shared);
     } catch {
       setFeedback("");
     }
@@ -80,56 +96,50 @@ export function CarePassportCard(props: CarePassportCardProps) {
     <section className="panel care-passport-card">
       <div className="care-passport-header">
         <div>
-          <span className="eyebrow">Personal care passport</span>
-          <h2>Your shareable care summary</h2>
-          <p>
-            This summary captures the current symptom context, care path,
-            insurance status, recommended doctor, and official booking handoff.
-          </p>
+          <span className="eyebrow">{t.carePassport.title}</span>
+          <h2>{t.carePassport.heading}</h2>
+          <p>{t.carePassport.subtitle}</p>
         </div>
         <div className="form-actions">
           <button className="button button-secondary" onClick={handleCopy} type="button">
-            Copy summary
+            {t.carePassport.copySummary}
           </button>
           <button className="button button-primary" onClick={handleShare} type="button">
-            Share summary
+            {t.carePassport.shareSummary}
           </button>
         </div>
       </div>
 
       <div className="care-passport-grid">
         <article className="care-passport-item">
-          <span className="eyebrow">Symptoms</span>
-          <h3>{props.triage?.summary ?? "Symptom review pending"}</h3>
-          <p>{props.symptomText ?? "Add symptoms to generate a full passport."}</p>
+          <span className="eyebrow">{t.carePassport.symptoms}</span>
+          <h3>{props.triage?.summary ?? t.carePassport.symptomPending}</h3>
+          <p>{props.symptomText ?? t.carePassport.addSymptoms}</p>
         </article>
 
         <article className="care-passport-item">
-          <span className="eyebrow">Care path</span>
-          <h3>{props.triage?.care_type ?? "Not selected yet"}</h3>
-          <p>{props.triage?.next_step ?? "The care path will appear after symptom triage."}</p>
+          <span className="eyebrow">{t.carePassport.carePath}</span>
+          <h3>{props.triage?.care_type ?? t.carePassport.carePathPending}</h3>
+          <p>{props.triage?.next_step ?? t.carePassport.carePathAppears}</p>
         </article>
 
         <article className="care-passport-item">
-          <span className="eyebrow">Insurance status</span>
+          <span className="eyebrow">{t.carePassport.insuranceStatus}</span>
           <h3>
             {props.insuranceSummary?.matched
               ? `${props.insuranceSummary.provider} ${props.insuranceSummary.plan_name}`
-              : props.insuranceQuery?.trim() || "No plan attached"}
+              : props.insuranceQuery?.trim() || t.carePassport.noPlanAttached}
           </h3>
-          <p>
-            {props.insuranceSummary?.notes?.[0] ??
-              "Insurance guidance will appear here once a plan is uploaded or selected."}
-          </p>
+          <p>{props.insuranceSummary?.notes?.[0] ?? t.carePassport.insuranceAppears}</p>
         </article>
 
         <article className="care-passport-item">
-          <span className="eyebrow">Recommended doctor</span>
-          <h3>{props.doctor?.name ?? "Doctor not chosen yet"}</h3>
+          <span className="eyebrow">{t.carePassport.recommendedDoctor}</span>
+          <h3>{props.doctor?.name ?? t.carePassport.doctorNotChosen}</h3>
           <p>
             {props.doctor
               ? `${props.doctor.specialty} at ${props.doctor.clinic.name}`
-              : "Choose a doctor to complete this passport."}
+              : t.carePassport.chooseDoctor}
           </p>
         </article>
       </div>

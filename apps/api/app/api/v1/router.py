@@ -4,7 +4,17 @@ from fastapi import APIRouter
 
 from app.api.deps import get_settings
 from app.db.session import database_is_available
-from app.api.v1 import auth, booking, chat, doctors, documents, insurance, providers, symptoms
+from app.api.v1 import (
+    auth,
+    booking,
+    chat,
+    community,
+    doctors,
+    documents,
+    insurance,
+    providers,
+    symptoms,
+)
 
 router = APIRouter()
 
@@ -14,6 +24,7 @@ router.include_router(insurance.router)
 router.include_router(doctors.router)
 router.include_router(booking.router)
 router.include_router(chat.router)
+router.include_router(community.router)
 router.include_router(documents.router)
 router.include_router(providers.router)
 

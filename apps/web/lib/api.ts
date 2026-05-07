@@ -2,6 +2,7 @@ import type {
   AuthResponse,
   AuthenticatedUser,
   ChatTurn,
+  CommunityRoomResponse,
   DoctorDecisionConversationTurn,
   DoctorDecisionResponse,
   DoctorProfile,
@@ -12,6 +13,7 @@ import type {
   InsuranceSummary,
   Location,
   TriageRecommendation,
+  UiLanguage,
 } from "@/lib/types";
 import { getAccessToken } from "@/lib/auth";
 
@@ -110,6 +112,7 @@ export const api = {
     message: string;
     conversation: ChatTurn[];
     profile?: InsuranceAdvisorProfile;
+    ui_language?: UiLanguage;
   }) =>
     request<InsuranceAdvisorResponse>("/insurance/advisor/message", {
       method: "POST",
@@ -138,6 +141,7 @@ export const api = {
     symptom_text?: string;
     insurance_query?: string;
     preferred_language?: string;
+    ui_language?: UiLanguage;
   }) =>
     request<DoctorDecisionResponse>(
       "/doctors/advisor/message",
@@ -189,6 +193,46 @@ export const api = {
       method: "POST",
       body: JSON.stringify({}),
     }),
+
+  matchCommunityRoom: (payload: {
+    symptom_text: string;
+    care_path?: string;
+    urgency_band?: string;
+    preferred_language?: string;
+    region?: string;
+    ui_language?: UiLanguage;
+  }) =>
+    request<CommunityRoomResponse>(
+      "/community/match",
+      {
+        method: "POST",
+        body: JSON.stringify(payload),
+      },
+      { authRequired: true },
+    ),
+
+  getCommunityRoom: (roomId: string, payload?: { ui_language?: UiLanguage }) =>
+    request<CommunityRoomResponse>(
+      `/community/rooms/${roomId}${payload?.ui_language ? `?ui_language=${encodeURIComponent(payload.ui_language)}` : ""}`,
+      { method: "GET" },
+      { authRequired: true },
+    ),
+
+  sendCommunityMessage: (
+    roomId: string,
+    payload: {
+      content: string;
+      ui_language?: UiLanguage;
+    },
+  ) =>
+    request<CommunityRoomResponse>(
+      `/community/rooms/${roomId}/messages`,
+      {
+        method: "POST",
+        body: JSON.stringify(payload),
+      },
+      { authRequired: true },
+    ),
 
   getMe: (accessToken: string) =>
     request<AuthenticatedUser>("/auth/me", {

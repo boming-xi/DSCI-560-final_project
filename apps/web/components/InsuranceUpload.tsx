@@ -5,13 +5,13 @@ import { useRouter } from "next/navigation";
 
 import { api } from "@/lib/api";
 import { getFlowState, patchFlowState } from "@/lib/flow";
+import { useTranslation } from "@/lib/LanguageProvider";
 import type { DocumentExtractResponse, InsuranceSummary } from "@/lib/types";
 
 const LEGACY_INSURANCE_EXAMPLE = "USC Aetna student PPO";
-const INSURANCE_QUERY_HINT =
-  "Paste the carrier, plan name, or the key text you see on your insurance card or marketplace plan.";
 
 export function InsuranceUpload() {
+  const { t } = useTranslation();
   const router = useRouter();
   const initialFlow = useMemo(() => getFlowState(), []);
   const hasExistingInsuranceFlow = initialFlow.insuranceEntryMode === "has_insurance";
@@ -66,7 +66,7 @@ export function InsuranceUpload() {
       setError(
         uploadError instanceof Error
           ? uploadError.message
-          : "We could not read that insurance file just yet.",
+          : t.insurance.uploadError,
       );
     } finally {
       setIsExtracting(false);
@@ -99,7 +99,7 @@ export function InsuranceUpload() {
       setError(
         submissionError instanceof Error
           ? submissionError.message
-          : "We could not review that plan just yet."
+          : t.insurance.reviewError
       );
     } finally {
       setIsLoading(false);
@@ -127,16 +127,13 @@ export function InsuranceUpload() {
   return (
     <form className="panel form-panel" onSubmit={handleSubmit}>
       <div className="panel-heading">
-        <span className="eyebrow">Step 2</span>
-        <h2>Use your existing insurance</h2>
-        <p>
-          Paste plan text or upload an insurance card, screenshot, or PDF. We
-          will parse the plan first, then carry it into doctor matching.
-        </p>
+        <span className="eyebrow">{t.insurance.uploadStep}</span>
+        <h2>{t.insurance.uploadTitle}</h2>
+        <p>{t.insurance.uploadSubtitle}</p>
       </div>
 
       <label className="field">
-        <span>Insurance plan text</span>
+        <span>{t.insurance.planTextLabel}</span>
         <textarea
           value={insuranceQuery}
           onChange={(event) => {
@@ -146,12 +143,12 @@ export function InsuranceUpload() {
           onFocus={() => setShowQueryHint(false)}
           onBlur={() => setShowQueryHint(!insuranceQuery.trim())}
           rows={5}
-          placeholder={showQueryHint ? INSURANCE_QUERY_HINT : ""}
+          placeholder={showQueryHint ? t.insurance.planTextHint : ""}
         />
       </label>
 
       <label className="field">
-        <span>Upload insurance card, screenshot, PDF, or text file</span>
+        <span>{t.insurance.uploadLabel}</span>
         <input
           type="file"
           accept=".txt,.md,.json,.csv,.pdf,.png,.jpg,.jpeg,.gif,.webp,image/*,application/pdf,text/plain"
@@ -159,7 +156,7 @@ export function InsuranceUpload() {
         />
       </label>
 
-      {isExtracting ? <p className="upload-status-copy">Reading your insurance document...</p> : null}
+      {isExtracting ? <p className="upload-status-copy">{t.insurance.readingDocument}</p> : null}
 
       {uploadedDocument ? (
         <div className="info-box">
@@ -167,7 +164,7 @@ export function InsuranceUpload() {
             <span className="meta-pill">{uploadedDocument.extraction_method}</span>
             <span className="meta-pill">{uploadedDocument.source_mime_type}</span>
           </div>
-          <strong>Uploaded preview:</strong>
+          <strong>{t.insurance.uploadedPreview}</strong>
           <p>{uploadedDocument.extracted_preview}...</p>
           {uploadedDocument.warnings.map((warning) => (
             <p className="document-warning-copy" key={warning}>
@@ -181,49 +178,46 @@ export function InsuranceUpload() {
 
       <div className="form-actions">
         <button className="button button-primary" type="submit" disabled={isLoading}>
-          {isLoading ? "Reviewing plan details..." : "Review plan"}
+          {isLoading ? t.insurance.reviewingPlan : t.insurance.reviewPlan}
         </button>
         <button className="button button-secondary" type="button" onClick={skipInsurance}>
-          Continue without plan verification
+          {t.insurance.continueWithoutVerification}
         </button>
       </div>
 
       {reviewedSummary ? (
         <section className="panel insurance-plan-review">
           <div className="panel-heading">
-            <span className="eyebrow">Plan review ready</span>
+            <span className="eyebrow">{t.insurance.planReviewReady}</span>
             <h3>
               {reviewedSummary.matched
                 ? `${reviewedSummary.provider} ${reviewedSummary.plan_name}`
-                : "Coverage details captured"}
+                : t.insurance.coverageCaptured}
             </h3>
-            <p>
-              Review the parsed plan details before moving to doctor
-              recommendations.
-            </p>
+            <p>{t.insurance.planReviewTitle}</p>
           </div>
 
           <div className="insurance-plan-review-grid">
             <article className="insurance-plan-review-item">
-              <strong>Plan status</strong>
+              <strong>{t.insurance.planStatus}</strong>
               <p>
                 {reviewedSummary.matched
-                  ? "We found a structured plan match for this coverage."
-                  : "We captured partial coverage details, but the plan still needs manual confirmation."}
+                  ? t.insurance.planStatusMatched
+                  : t.insurance.planStatusPartial}
               </p>
             </article>
             <article className="insurance-plan-review-item">
-              <strong>Most important note</strong>
+              <strong>{t.insurance.mostImportantNote}</strong>
               <p>
                 {reviewedSummary.notes[0] ??
-                  "Use the doctor step to keep checking network and access details."}
+                  t.insurance.fallbackPlanNote}
               </p>
             </article>
           </div>
 
           <div className="form-actions">
             <button className="button button-primary" onClick={continueToDoctors} type="button">
-              Continue to doctors
+              {t.insurance.continueToDoctors}
             </button>
           </div>
         </section>

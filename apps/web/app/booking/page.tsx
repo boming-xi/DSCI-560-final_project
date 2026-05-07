@@ -5,9 +5,11 @@ import { useEffect, useMemo } from "react";
 
 import { CarePassportCard } from "@/components/CarePassportCard";
 import { getFlowState, patchFlowState } from "@/lib/flow";
+import { useTranslation } from "@/lib/LanguageProvider";
 import { useProtectedRoute } from "@/lib/useProtectedRoute";
 
 export default function BookingPage() {
+  const { t } = useTranslation();
   const { isCheckingAuth, session } = useProtectedRoute();
   const flow = getFlowState();
   const doctor = flow.selectedDoctor ?? flow.searchResult?.doctors[0] ?? null;
@@ -28,16 +30,18 @@ export default function BookingPage() {
     }
 
     return [
-      doctor.provider_system ? `${doctor.provider_system} booking handoff` : "Third-party booking handoff",
-      doctor.insurance_verification?.label ?? "Coverage should be rechecked on the provider site",
-      doctor.booking_system_name ?? "Official scheduling page",
+      doctor.provider_system
+        ? `${doctor.provider_system} ${t.booking.thirdPartyHandoff.toLowerCase()}`
+        : t.booking.thirdPartyHandoff,
+      doctor.insurance_verification?.label ?? t.booking.coverageRecheck,
+      doctor.booking_system_name ?? t.booking.officialSchedulingPage,
     ];
-  }, [doctor]);
+  }, [doctor, t]);
 
   if (isCheckingAuth) {
     return (
       <main className="page-shell">
-        <div className="panel">Preparing your booking handoff...</div>
+        <div className="panel">{t.booking.preparing}</div>
       </main>
     );
   }
@@ -49,12 +53,9 @@ export default function BookingPage() {
   return (
     <main className="page-shell">
       <section className="results-header panel">
-        <span className="eyebrow">Step 4</span>
-        <h1>Third-party booking handoff</h1>
-        <p>
-          This project does not complete appointments inside the site. We recommend the doctor,
-          then hand you off to the provider&apos;s official booking page.
-        </p>
+        <span className="eyebrow">{t.booking.step}</span>
+        <h1>{t.booking.title}</h1>
+        <p>{t.booking.subtitle}</p>
       </section>
 
       {doctor ? (
@@ -66,17 +67,19 @@ export default function BookingPage() {
               <p>{doctor.clinic.name}</p>
               <p>{doctor.clinic.address}</p>
               <div className="badge-row">
-                <span className="badge">{doctor.distance_km} km away</span>
+                <span className="badge">
+                  {t.booking.distanceAway.replace("{distance}", String(doctor.distance_km))}
+                </span>
                 <span className="badge">{doctor.next_opening_label}</span>
                 {doctor.provider_system ? <span className="badge">{doctor.provider_system}</span> : null}
                 {doctor.pilot_region ? <span className="badge">{doctor.pilot_region}</span> : null}
               </div>
               <div className="info-box booking-handoff-box">
-                <strong>What happens on this page</strong>
+                <strong>{t.booking.whatHappens}</strong>
                 <ul className="detail-list">
-                  <li>We preserve the recommended doctor and insurance context.</li>
-                  <li>You finish appointment booking on the provider&apos;s own website.</li>
-                  <li>This project does not create a confirmation number or hold a time slot.</li>
+                  <li>{t.booking.handoffPoint1}</li>
+                  <li>{t.booking.handoffPoint2}</li>
+                  <li>{t.booking.handoffPoint3}</li>
                 </ul>
               </div>
             </div>
@@ -84,13 +87,16 @@ export default function BookingPage() {
             <div className="booking-side-card booking-handoff-card">
               <h3>
                 {officialBookingUrl
-                  ? "Official booking ready"
-                  : "Official booking link unavailable"}
+                  ? t.booking.officialBookingReady
+                  : t.booking.officialBookingUnavailable}
               </h3>
               <p className="subtle-copy">
                 {officialBookingUrl
-                  ? `Your summary is ready. Use the official ${doctor.provider_system ?? "provider"} button below when you are ready to finish scheduling.`
-                  : "This clinician does not currently have a live public scheduling link attached to the recommendation flow."}
+                  ? t.booking.officialBookingReadyBody.replace(
+                      "{provider}",
+                      doctor.provider_system ?? t.booking.providerFallback,
+                    )
+                  : t.booking.officialBookingUnavailableBody}
               </p>
 
               {handoffSummary ? (
@@ -109,7 +115,7 @@ export default function BookingPage() {
                     className="button button-primary"
                     href={officialBookingUrl}
                   >
-                    {doctor.official_booking_label ?? "Open official booking"}
+                    {doctor.official_booking_label ?? t.booking.openOfficialBooking}
                   </a>
                 ) : null}
 
@@ -118,19 +124,18 @@ export default function BookingPage() {
                     className="button button-secondary"
                     href={officialProfileUrl}
                   >
-                    View official provider profile
+                    {t.booking.viewOfficialProviderProfile}
                   </a>
                 ) : null}
 
                 <Link className="button button-secondary" href="/doctors">
-                  Back to doctors
+                  {t.booking.backToDoctors}
                 </Link>
               </div>
 
               {!officialBookingUrl ? (
                 <div className="notice-box">
-                  Official booking handoff is currently available for clinicians connected to the
-                  live LA provider pilot, including UCLA Health.
+                  {t.booking.pilotNotice}
                 </div>
               ) : null}
             </div>
@@ -147,7 +152,7 @@ export default function BookingPage() {
         </>
       ) : (
         <section className="panel error-panel">
-          Return to recommendations and choose a doctor before opening booking handoff.
+          {t.booking.chooseDoctorFirst}
         </section>
       )}
     </main>

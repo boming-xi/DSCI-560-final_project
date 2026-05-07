@@ -13,6 +13,7 @@ CareUsage = Literal["low", "moderate", "high"]
 DeductibleBand = Literal["low", "medium", "high"]
 PremiumBand = Literal["low", "medium", "high"]
 NetworkFlexibility = Literal["low", "high"]
+UiLanguage = Literal["English", "Mandarin", "Spanish"]
 
 
 class InsuranceAdvisorProfile(BaseModel):
@@ -104,6 +105,7 @@ class InsuranceAdvisorMessageRequest(BaseModel):
     message: str
     conversation: list[ChatTurn] = Field(default_factory=list)
     profile: InsuranceAdvisorProfile | None = None
+    ui_language: UiLanguage | None = None
 
 
 class InsuranceAdvisorMessageResponse(BaseModel):

@@ -3,6 +3,7 @@
 import dynamic from "next/dynamic";
 import { useEffect, useRef, useState } from "react";
 
+import { useTranslation } from "@/lib/LanguageProvider";
 import type { Location } from "@/lib/types";
 
 const LeafletLocationMap = dynamic(
@@ -14,7 +15,7 @@ const LeafletLocationMap = dynamic(
     ssr: false,
     loading: () => (
       <div className="location-map-shell">
-        <div className="location-map-skeleton">Preparing location tools...</div>
+        <div className="location-map-skeleton" />
       </div>
     ),
   },
@@ -26,20 +27,25 @@ type LocationPickerProps = {
   autoLocateOnMount?: boolean;
 };
 
+type LocationTranslations = ReturnType<typeof useTranslation>["t"]["location"];
+
 function normalizeCoordinate(value: number): number {
   return Number(value.toFixed(6));
 }
 
-function getBrowserLocationError(error: GeolocationPositionError): string {
+function getBrowserLocationError(
+  error: GeolocationPositionError,
+  locationT: LocationTranslations,
+): string {
   switch (error.code) {
     case error.PERMISSION_DENIED:
-      return "Location permission was denied. You can still click the map to choose where to search.";
+      return locationT.permissionDenied;
     case error.POSITION_UNAVAILABLE:
-      return "Your device could not determine a location just now. Try again or place the pin manually.";
+      return locationT.positionUnavailable;
     case error.TIMEOUT:
-      return "Location lookup took too long. Try again or choose a point on the map.";
+      return locationT.timeout;
     default:
-      return "We could not get your location right now. You can still place the pin manually.";
+      return locationT.unknownError;
   }
 }
 
@@ -48,14 +54,15 @@ export function LocationPicker({
   onChange,
   autoLocateOnMount = false,
 }: LocationPickerProps) {
+  const { t } = useTranslation();
   const hasTriedAutoLocate = useRef(false);
   const [isLocating, setIsLocating] = useState(false);
-  const [helperText, setHelperText] = useState(
+  const [helperText, setHelperText] = useState<string>(
     autoLocateOnMount
-      ? "Looking up your current location to center the search area..."
-      : "Use your browser location or click the map to place the search area.",
+      ? t.location.helperAuto
+      : t.location.helperDefault,
   );
-  const [error, setError] = useState("");
+  const [error, setError] = useState<string>("");
 
   function setNextLocation(nextLocation: Location, message?: string) {
     onChange({
@@ -64,22 +71,20 @@ export function LocationPicker({
     });
     setError("");
     setHelperText(
-      message ?? "Location updated. You can drag the pin or click the map to refine the search area.",
+      message ?? t.location.helperUpdated,
     );
   }
 
   function requestCurrentLocation() {
     if (typeof navigator === "undefined" || !navigator.geolocation) {
-      setError(
-        "This browser does not support automatic location. Please use the map to choose your search area.",
-      );
-      setHelperText("Pick a point on the map to continue.");
+      setError(t.location.noBrowserSupport);
+      setHelperText(t.location.helperPickMap);
       return;
     }
 
     setIsLocating(true);
     setError("");
-    setHelperText("Requesting your current location...");
+    setHelperText(t.location.helperRequesting);
 
     navigator.geolocation.getCurrentPosition(
       (position) => {
@@ -89,13 +94,13 @@ export function LocationPicker({
             latitude: position.coords.latitude,
             longitude: position.coords.longitude,
           },
-          "Using your current location. You can still drag the pin to adjust it.",
+          t.location.helperCurrent,
         );
       },
       (positionError) => {
         setIsLocating(false);
-        setError(getBrowserLocationError(positionError));
-        setHelperText("Click the map to keep moving.");
+        setError(getBrowserLocationError(positionError, t.location));
+        setHelperText(t.location.helperClickToKeepMoving);
       },
       {
         enableHighAccuracy: true,
@@ -112,17 +117,14 @@ export function LocationPicker({
 
     hasTriedAutoLocate.current = true;
     requestCurrentLocation();
-  }, [autoLocateOnMount]);
+  }, [autoLocateOnMount, t]);
 
   return (
     <section className="location-section">
       <div className="location-toolbar">
         <div className="location-copy">
-          <h3>Location</h3>
-          <p>
-            We use your location to find nearby clinics and rank doctors more
-            accurately.
-          </p>
+          <h3>{t.location.title}</h3>
+          <p>{t.location.subtitle}</p>
         </div>
         <button
           className="button button-secondary"
@@ -130,15 +132,14 @@ export function LocationPicker({
           onClick={requestCurrentLocation}
           type="button"
         >
-          {isLocating ? "Locating..." : "Use my current location"}
+          {isLocating ? t.location.locating : t.location.useCurrent}
         </button>
       </div>
 
       <LeafletLocationMap location={value} onChange={setNextLocation} />
 
       <p className="location-status">
-        The current pin sets the search area used for nearby doctor ranking.
-        Click the map or drag the pin to adjust it.
+        {t.location.status}
       </p>
 
       {error ? <p className="error-text">{error}</p> : null}

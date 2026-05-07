@@ -1,15 +1,16 @@
+import { useTranslation } from "@/lib/LanguageProvider";
 import type { DoctorProfile, RankingBreakdown } from "@/lib/types";
 
-const metricRows = [
-  { key: "specialty_score", label: "Specialty fit" },
-  { key: "insurance_score", label: "Insurance fit" },
-  { key: "distance_score", label: "Distance" },
-  { key: "availability_score", label: "Availability" },
-  { key: "language_score", label: "Language" },
-  { key: "trust_score", label: "Trust" },
+const metricKeys = [
+  "specialty_score",
+  "insurance_score",
+  "distance_score",
+  "availability_score",
+  "language_score",
+  "trust_score",
 ] as const;
 
-type MetricKey = (typeof metricRows)[number]["key"];
+type MetricKey = (typeof metricKeys)[number];
 
 type RankingExplanationProps = {
   doctor?: DoctorProfile;
@@ -27,7 +28,10 @@ function formatScore(value: number): string {
   return `${Math.round(value * 100)} / 100`;
 }
 
-function getTopStrengths(doctor: DoctorProfile): string[] {
+function getTopStrengths(
+  doctor: DoctorProfile,
+  metricRows: ReadonlyArray<{ key: MetricKey; label: string }>,
+): string[] {
   if (!doctor.ranking_breakdown) {
     return [];
   }
@@ -51,6 +55,15 @@ function buildDoctors(props: RankingExplanationProps): DoctorProfile[] {
 }
 
 export function RankingExplanation(props: RankingExplanationProps) {
+  const { t } = useTranslation();
+  const metricRows = [
+    { key: "specialty_score", label: t.ranking.specialtyFit },
+    { key: "insurance_score", label: t.ranking.insuranceFit },
+    { key: "distance_score", label: t.ranking.distance },
+    { key: "availability_score", label: t.ranking.availability },
+    { key: "language_score", label: t.ranking.language },
+    { key: "trust_score", label: t.ranking.trust },
+  ] as const;
   const comparisonDoctors = buildDoctors(props);
 
   if (!comparisonDoctors.length) {
@@ -63,15 +76,15 @@ export function RankingExplanation(props: RankingExplanationProps) {
     return (
       <div className="panel explanation-panel">
         <div className="panel-heading">
-          <span className="eyebrow">Why this doctor ranks highly</span>
+          <span className="eyebrow">{t.ranking.whyDoctorRanksHighly}</span>
           <h3>{doctor.name}</h3>
           <p>{doctor.ranking_breakdown?.summary}</p>
         </div>
 
         <div className="ranking-highlight-row">
-          {getTopStrengths(doctor).map((strength) => (
+          {getTopStrengths(doctor, metricRows).map((strength) => (
             <span className="meta-pill" key={strength}>
-              Strong in {strength.toLowerCase()}
+              {t.ranking.strongIn.replace("{label}", strength.toLowerCase())}
             </span>
           ))}
         </div>
@@ -99,18 +112,14 @@ export function RankingExplanation(props: RankingExplanationProps) {
   return (
     <section className="panel explanation-panel ranking-comparison-panel">
       <div className="panel-heading">
-        <span className="eyebrow">Top 3 doctor comparison</span>
-        <h3>Compare the shortlist at a glance</h3>
-        <p>
-          Instead of one opaque total, this view shows how each top doctor
-          performs across specialty fit, insurance confidence, distance,
-          availability, language, and trust.
-        </p>
+        <span className="eyebrow">{t.ranking.top3Comparison}</span>
+        <h3>{t.ranking.compareAtGlance}</h3>
+        <p>{t.ranking.comparisonDescription}</p>
       </div>
 
       <div className="ranking-compare-grid">
         {comparisonDoctors.map((doctor, index) => {
-          const strengths = getTopStrengths(doctor);
+          const strengths = getTopStrengths(doctor, metricRows);
           return (
             <article
               className={`ranking-compare-card ${index === 0 ? "ranking-compare-card-leading" : ""}`}
@@ -119,7 +128,7 @@ export function RankingExplanation(props: RankingExplanationProps) {
               <div className="ranking-compare-card-top">
                 <span className="ranking-rank-badge">#{index + 1}</span>
                 {index === 0 ? (
-                  <span className="recommended-doctor-tag">Best overall fit</span>
+                  <span className="recommended-doctor-tag">{t.ranking.bestOverallFit}</span>
                 ) : null}
               </div>
               <h4>{doctor.name}</h4>
@@ -128,9 +137,11 @@ export function RankingExplanation(props: RankingExplanationProps) {
               </p>
               <div className="badge-row compact-badge-row">
                 <span className="badge">{doctor.next_opening_label}</span>
-                <span className="badge">{doctor.distance_km} km away</span>
                 <span className="badge">
-                  {doctor.insurance_verification?.label ?? "Coverage review pending"}
+                  {t.booking.distanceAway.replace("{distance}", String(doctor.distance_km))}
+                </span>
+                <span className="badge">
+                  {doctor.insurance_verification?.label ?? t.ranking.coverageReviewPending}
                 </span>
               </div>
               <div className="ranking-highlight-row">
@@ -148,7 +159,7 @@ export function RankingExplanation(props: RankingExplanationProps) {
 
       <div className="ranking-matrix">
         <div className="ranking-matrix-header ranking-matrix-row">
-          <div className="ranking-matrix-label-cell">Decision lens</div>
+          <div className="ranking-matrix-label-cell">{t.ranking.decisionLens}</div>
           {comparisonDoctors.map((doctor) => (
             <div className="ranking-matrix-doctor-cell" key={`header-${doctor.id}`}>
               {doctor.name}
@@ -175,7 +186,7 @@ export function RankingExplanation(props: RankingExplanationProps) {
                   >
                     <div className="ranking-matrix-score-copy">
                       <strong>{formatScore(value)}</strong>
-                      {isTop ? <span>Best in top 3</span> : null}
+                      {isTop ? <span>{t.ranking.bestInTop3}</span> : null}
                     </div>
                     <div className="ranking-mini-bar">
                       <span style={{ width: `${Math.max(value * 100, 8)}%` }} />

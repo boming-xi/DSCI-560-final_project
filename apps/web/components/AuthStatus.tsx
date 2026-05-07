@@ -5,9 +5,11 @@ import { useEffect, useState } from "react";
 
 import { api } from "@/lib/api";
 import { clearAuthSession, getAuthSession, saveAuthSession } from "@/lib/auth";
+import { useTranslation } from "@/lib/LanguageProvider";
 import type { AuthSession } from "@/lib/auth";
 
 export function AuthStatus() {
+  const { t } = useTranslation();
   const [session, setSession] = useState<AuthSession | null>(null);
   const [isReady, setIsReady] = useState(false);
 
@@ -61,17 +63,17 @@ export function AuthStatus() {
   }, []);
 
   if (!isReady) {
-    return <div className="auth-shell auth-loading">Restoring your session...</div>;
+    return <div className="auth-shell auth-loading">{t.auth.restoringSession}</div>;
   }
 
   if (!session) {
     return (
       <div className="auth-shell">
         <Link className="button button-secondary" href="/login">
-          Log in
+          {t.auth.login}
         </Link>
         <Link className="button button-primary" href="/register">
-          Register
+          {t.auth.register}
         </Link>
       </div>
     );
@@ -91,7 +93,7 @@ export function AuthStatus() {
         }}
         type="button"
       >
-        Log out
+        {t.auth.logout}
       </button>
     </div>
   );

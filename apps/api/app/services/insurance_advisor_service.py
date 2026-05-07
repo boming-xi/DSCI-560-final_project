@@ -47,14 +47,84 @@ class InsuranceAdvisorService:
         payload = json.loads(self.ca_marketplace_catalog_path.read_text())
         return [InsuranceAdvisorPlanRecord.model_validate(item) for item in payload]
 
+    def _language_name(self, ui_language: str | None) -> str:
+        if ui_language in {"Mandarin", "Spanish"}:
+            return ui_language
+        return "English"
+
+    def _disclaimer(self, ui_language: str | None) -> str:
+        language = self._language_name(ui_language)
+        if language == "Mandarin":
+            return (
+                "这是一个规划辅助工具，不构成官方投保、税务或法律建议。"
+                "最终资格、补贴、医生网络和投保结果仍需在官方计划页面确认。"
+            )
+        if language == "Spanish":
+            return (
+                "Esta es una herramienta de planificación, no asesoría oficial de inscripción,"
+                " impuestos ni asuntos legales. La elegibilidad final, los subsidios, las redes"
+                " de proveedores y la inscripción deben confirmarse en el sitio oficial del plan."
+            )
+        return (
+            "This is a planning tool, not official enrollment, tax, or legal advice. "
+            "Final eligibility, subsidies, provider networks, and enrollment still need confirmation on the official plan site."
+        )
+
+    def _missing_field_label(self, key: str, ui_language: str | None) -> str:
+        language = self._language_name(ui_language)
+        labels = {
+            "coverage_channel": {
+                "English": "how you expect to access coverage (student, marketplace, or employer)",
+                "Mandarin": "你准备通过什么渠道获得保险（学生计划、marketplace 或雇主保险）",
+                "Spanish": "cómo esperas obtener la cobertura (estudiantil, marketplace o empleador)",
+            },
+            "zip_code": {
+                "English": "your ZIP code",
+                "Mandarin": "你的邮编",
+                "Spanish": "tu código postal",
+            },
+            "monthly_budget": {
+                "English": "your monthly budget comfort level",
+                "Mandarin": "你每月可接受的预算范围",
+                "Spanish": "tu nivel de comodidad con el presupuesto mensual",
+            },
+            "care_usage": {
+                "English": "whether you expect low, moderate, or high care usage",
+                "Mandarin": "你预计医疗使用频率是低、中还是高",
+                "Spanish": "si esperas un uso bajo, moderado o alto de atención médica",
+            },
+            "referrals_ok": {
+                "English": "whether you are okay with referrals / HMO-style coordination",
+                "Mandarin": "你是否能接受转诊 / HMO 式协调",
+                "Spanish": "si te parece bien usar referidos o coordinación tipo HMO",
+            },
+            "household_size": {
+                "English": "how many people need coverage",
+                "Mandarin": "有多少人需要这份保险",
+                "Spanish": "cuántas personas necesitan cobertura",
+            },
+            "has_prescriptions": {
+                "English": "whether you have regular prescriptions",
+                "Mandarin": "你是否有长期处方药需求",
+                "Spanish": "si tienes recetas regulares",
+            },
+            "age": {
+                "English": "your age, so I can ground the premium estimate more accurately",
+                "Mandarin": "你的年龄，这样我可以更准确估算保费",
+                "Spanish": "tu edad, para estimar la prima con mayor precisión",
+            },
+        }
+        return labels.get(key, labels["zip_code"])[language]
+
     def reply(self, request: InsuranceAdvisorMessageRequest) -> InsuranceAdvisorMessageResponse:
+        ui_language = request.ui_language or "English"
         base_profile = request.profile or InsuranceAdvisorProfile()
         extracted_profile = self._extract_profile_updates(request.message)
         profile = self._merge_profiles(base_profile, extracted_profile)
 
-        profile_summary = self._profile_summary(profile)
-        missing_fields = self._missing_fields(profile)
-        recommendations = self._recommend_plans(profile)
+        profile_summary = self._profile_summary(profile, ui_language)
+        missing_fields = self._missing_fields(profile, ui_language)
+        recommendations = self._recommend_plans(profile, ui_language)
         readiness_label = self._readiness_label(profile, recommendations)
 
         navigator_message = self._navigator_message(
@@ -62,9 +132,14 @@ class InsuranceAdvisorService:
             profile=profile,
             missing_fields=missing_fields,
             recommendations=recommendations,
+            ui_language=ui_language,
         )
-        eligibility_message = self._eligibility_message(profile, missing_fields)
-        plan_matcher_message = self._plan_matcher_message(recommendations, readiness_label)
+        eligibility_message = self._eligibility_message(profile, missing_fields, ui_language)
+        plan_matcher_message = self._plan_matcher_message(
+            recommendations,
+            readiness_label,
+            ui_language,
+        )
 
         return InsuranceAdvisorMessageResponse(
             profile=profile,
@@ -86,11 +161,13 @@ class InsuranceAdvisorService:
                 ),
             ],
             recommendations=recommendations,
-            suggested_prompts=self._suggested_prompts(profile, missing_fields, readiness_label),
-            disclaimer=(
-                "This is a planning tool, not official enrollment, tax, or legal advice. "
-                "Final eligibility, subsidies, provider networks, and enrollment still need confirmation on the official plan site."
+            suggested_prompts=self._suggested_prompts(
+                profile,
+                missing_fields,
+                readiness_label,
+                ui_language,
             ),
+            disclaimer=self._disclaimer(ui_language),
         )
 
     def _merge_profiles(
@@ -355,50 +432,134 @@ class InsuranceAdvisorService:
             return "Korean"
         return None
 
-    def _profile_summary(self, profile: InsuranceAdvisorProfile) -> list[str]:
+    def _profile_summary(
+        self,
+        profile: InsuranceAdvisorProfile,
+        ui_language: str | None,
+    ) -> list[str]:
+        language = self._language_name(ui_language)
         summary: list[str] = []
         if profile.coverage_channel:
-            summary.append(f"Coverage path: {profile.coverage_channel}")
+            if language == "Mandarin":
+                summary.append(f"保险路径：{profile.coverage_channel}")
+            elif language == "Spanish":
+                summary.append(f"Ruta de cobertura: {profile.coverage_channel}")
+            else:
+                summary.append(f"Coverage path: {profile.coverage_channel}")
         if profile.age:
-            summary.append(f"Age used for premium estimates: {profile.age}")
+            if language == "Mandarin":
+                summary.append(f"用于保费估算的年龄：{profile.age}")
+            elif language == "Spanish":
+                summary.append(f"Edad usada para estimar la prima: {profile.age}")
+            else:
+                summary.append(f"Age used for premium estimates: {profile.age}")
         if profile.state or profile.zip_code:
             location_bits = [bit for bit in [profile.state, profile.zip_code] if bit]
-            summary.append(f"Location: {' / '.join(location_bits)}")
+            location_text = " / ".join(location_bits)
+            if language == "Mandarin":
+                summary.append(f"位置：{location_text}")
+            elif language == "Spanish":
+                summary.append(f"Ubicación: {location_text}")
+            else:
+                summary.append(f"Location: {location_text}")
         if profile.household_size:
-            summary.append(f"Household size: {profile.household_size}")
+            if language == "Mandarin":
+                summary.append(f"家庭人数：{profile.household_size}")
+            elif language == "Spanish":
+                summary.append(f"Tamaño del hogar: {profile.household_size}")
+            else:
+                summary.append(f"Household size: {profile.household_size}")
         if profile.income_band:
-            summary.append(f"Income band noted for subsidy context: {profile.income_band}")
+            if language == "Mandarin":
+                summary.append(f"补贴判断参考的收入区间：{profile.income_band}")
+            elif language == "Spanish":
+                summary.append(f"Rango de ingresos anotado para contexto de subsidio: {profile.income_band}")
+            else:
+                summary.append(f"Income band noted for subsidy context: {profile.income_band}")
         if profile.monthly_budget:
-            summary.append(f"Monthly budget preference: {profile.monthly_budget}")
+            if language == "Mandarin":
+                summary.append(f"每月预算偏好：{profile.monthly_budget}")
+            elif language == "Spanish":
+                summary.append(f"Preferencia de presupuesto mensual: {profile.monthly_budget}")
+            else:
+                summary.append(f"Monthly budget preference: {profile.monthly_budget}")
         if profile.care_usage:
-            summary.append(f"Expected care usage: {profile.care_usage}")
+            if language == "Mandarin":
+                summary.append(f"预计医疗使用频率：{profile.care_usage}")
+            elif language == "Spanish":
+                summary.append(f"Uso esperado de atención: {profile.care_usage}")
+            else:
+                summary.append(f"Expected care usage: {profile.care_usage}")
         if profile.referrals_ok is not None:
-            summary.append(
-                "Referral tolerance: okay with referrals"
-                if profile.referrals_ok
-                else "Referral tolerance: prefers direct specialist access"
-            )
+            if language == "Mandarin":
+                summary.append(
+                    "转诊接受度：可以接受转诊"
+                    if profile.referrals_ok
+                    else "转诊接受度：更偏向直接看专科"
+                )
+            elif language == "Spanish":
+                summary.append(
+                    "Tolerancia a referidos: le parece bien usar referidos"
+                    if profile.referrals_ok
+                    else "Tolerancia a referidos: prefiere acceso directo a especialistas"
+                )
+            else:
+                summary.append(
+                    "Referral tolerance: okay with referrals"
+                    if profile.referrals_ok
+                    else "Referral tolerance: prefers direct specialist access"
+                )
         if profile.keep_existing_doctors is not None:
-            summary.append(
-                "Provider preference: wants to keep current doctors"
-                if profile.keep_existing_doctors
-                else "Provider preference: no specific doctor lock-in"
-            )
+            if language == "Mandarin":
+                summary.append(
+                    "医生偏好：希望保留现有医生"
+                    if profile.keep_existing_doctors
+                    else "医生偏好：没有固定想保留的医生"
+                )
+            elif language == "Spanish":
+                summary.append(
+                    "Preferencia de proveedor: quiere conservar a sus doctores actuales"
+                    if profile.keep_existing_doctors
+                    else "Preferencia de proveedor: sin doctor específico"
+                )
+            else:
+                summary.append(
+                    "Provider preference: wants to keep current doctors"
+                    if profile.keep_existing_doctors
+                    else "Provider preference: no specific doctor lock-in"
+                )
         if profile.has_prescriptions is not None:
-            summary.append(
-                "Prescription needs: ongoing medications matter"
-                if profile.has_prescriptions
-                else "Prescription needs: no regular medications flagged"
-            )
+            if language == "Mandarin":
+                summary.append(
+                    "处方需求：长期用药很重要"
+                    if profile.has_prescriptions
+                    else "处方需求：暂未标记长期用药"
+                )
+            elif language == "Spanish":
+                summary.append(
+                    "Necesidades de recetas: los medicamentos continuos importan"
+                    if profile.has_prescriptions
+                    else "Necesidades de recetas: no se marcaron medicamentos regulares"
+                )
+            else:
+                summary.append(
+                    "Prescription needs: ongoing medications matter"
+                    if profile.has_prescriptions
+                    else "Prescription needs: no regular medications flagged"
+                )
         return summary
 
-    def _missing_fields(self, profile: InsuranceAdvisorProfile) -> list[str]:
+    def _missing_fields(
+        self,
+        profile: InsuranceAdvisorProfile,
+        ui_language: str | None,
+    ) -> list[str]:
         required_fields = [
-            ("coverage_channel", "how you expect to access coverage (student, marketplace, or employer)"),
-            ("zip_code", "your ZIP code"),
-            ("monthly_budget", "your monthly budget comfort level"),
-            ("care_usage", "whether you expect low, moderate, or high care usage"),
-            ("referrals_ok", "whether you are okay with referrals / HMO-style coordination"),
+            ("coverage_channel", self._missing_field_label("coverage_channel", ui_language)),
+            ("zip_code", self._missing_field_label("zip_code", ui_language)),
+            ("monthly_budget", self._missing_field_label("monthly_budget", ui_language)),
+            ("care_usage", self._missing_field_label("care_usage", ui_language)),
+            ("referrals_ok", self._missing_field_label("referrals_ok", ui_language)),
         ]
 
         missing = [
@@ -407,11 +568,11 @@ class InsuranceAdvisorService:
             if getattr(profile, field_name) is None
         ]
         if profile.household_size is None:
-            missing.append("how many people need coverage")
+            missing.append(self._missing_field_label("household_size", ui_language))
         if profile.has_prescriptions is None:
-            missing.append("whether you have regular prescriptions")
+            missing.append(self._missing_field_label("has_prescriptions", ui_language))
         if profile.coverage_channel == "marketplace" and profile.age is None:
-            missing.append("your age, so I can ground the premium estimate more accurately")
+            missing.append(self._missing_field_label("age", ui_language))
         return missing[:5]
 
     def _readiness_label(
@@ -419,13 +580,17 @@ class InsuranceAdvisorService:
         profile: InsuranceAdvisorProfile,
         recommendations: list[InsuranceAdvisorRecommendation],
     ) -> str:
-        if recommendations and len(self._missing_fields(profile)) <= 2:
+        if recommendations and len(self._missing_fields(profile, "English")) <= 2:
             return "recommended"
         if recommendations:
             return "narrowing"
         return "intake"
 
-    def _recommend_plans(self, profile: InsuranceAdvisorProfile) -> list[InsuranceAdvisorRecommendation]:
+    def _recommend_plans(
+        self,
+        profile: InsuranceAdvisorProfile,
+        ui_language: str | None,
+    ) -> list[InsuranceAdvisorRecommendation]:
         populated_fields = sum(
             1
             for value in profile.model_dump().values()
@@ -454,6 +619,7 @@ class InsuranceAdvisorService:
                     confidence_label=confidence_label,
                     premium_amount=premium_amount,
                     reasons=reasons,
+                    ui_language=ui_language,
                 )
             )
 
@@ -490,6 +656,7 @@ class InsuranceAdvisorService:
             self._rewrite_recommendation_copy_with_llm(
                 recommendation=item,
                 profile=profile,
+                ui_language=ui_language,
             )
             for item in grouped_recommendations[:3]
         ]
@@ -503,6 +670,7 @@ class InsuranceAdvisorService:
         confidence_label: str,
         premium_amount: float | None,
         reasons: list[str],
+        ui_language: str | None,
     ) -> InsuranceAdvisorRecommendation:
         provider = plan_metadata.provider or "Unknown provider"
         plan_name = plan_metadata.plan_name or plan_metadata.plan_id
@@ -542,7 +710,11 @@ class InsuranceAdvisorService:
             purchase_cta_label=plan_metadata.purchase_cta_label,
             source_url=plan_metadata.source_url,
             network_url=plan_metadata.network_url,
-            insurance_summary=self._insurance_summary_for_record(plan_metadata, premium_amount),
+            insurance_summary=self._insurance_summary_for_record(
+                plan_metadata,
+                premium_amount,
+                ui_language,
+            ),
         )
 
     def _candidate_catalog(self, profile: InsuranceAdvisorProfile) -> list[InsuranceAdvisorPlanRecord]:
@@ -784,6 +956,7 @@ class InsuranceAdvisorService:
         *,
         recommendation: InsuranceAdvisorRecommendation,
         profile: InsuranceAdvisorProfile,
+        ui_language: str | None,
     ) -> InsuranceAdvisorRecommendation:
         fallback_reasons = recommendation.reasons
         fallback_tradeoffs = recommendation.tradeoffs
@@ -792,11 +965,12 @@ class InsuranceAdvisorService:
             response_text = self.llm_client.complete(
                 system_prompt=INSURANCE_ADVISOR_EXPLANATION_PROMPT,
                 user_prompt=self._insurance_explanation_prompt(
-                    recommendation=recommendation,
-                    profile=profile,
-                    fallback_reasons=fallback_reasons,
-                    fallback_tradeoffs=fallback_tradeoffs,
-                ),
+                recommendation=recommendation,
+                profile=profile,
+                fallback_reasons=fallback_reasons,
+                fallback_tradeoffs=fallback_tradeoffs,
+                ui_language=ui_language,
+            ),
             )
             parsed = self._parse_explanation_json(response_text)
             if not parsed:
@@ -825,7 +999,9 @@ class InsuranceAdvisorService:
         profile: InsuranceAdvisorProfile,
         fallback_reasons: list[str],
         fallback_tradeoffs: list[str],
+        ui_language: str | None,
     ) -> str:
+        language = self._language_name(ui_language)
         context = {
             "user_profile": profile.model_dump(),
             "recommendation": {
@@ -850,7 +1026,8 @@ class InsuranceAdvisorService:
         return (
             "Rewrite the following brand-level insurance explanation to sound more natural and personalized.\n"
             "Keep the meaning grounded in the structured data. Focus on why this carrier is a good starting point for this user, "
-            "using the lead plan only as supporting evidence.\n\n"
+            "using the lead plan only as supporting evidence.\n"
+            f"Write the final bullets in {language}.\n\n"
             f"{json.dumps(context, indent=2)}"
         )
 
@@ -959,16 +1136,34 @@ class InsuranceAdvisorService:
         self,
         plan_metadata: InsuranceAdvisorPlanRecord,
         premium_amount: float | None,
+        ui_language: str | None,
     ) -> InsuranceSummary:
+        language = self._language_name(ui_language)
         provider = plan_metadata.provider or "Unknown provider"
         plan_name = plan_metadata.plan_name or plan_metadata.plan_id
         plan_type = plan_metadata.plan_type or "Unknown"
-        notes = [
-            "Shortlisted from the official California marketplace plan catalog using your ZIP code, budget, and care-usage preferences.",
-            "Confirm subsidy amounts, exact doctor network participation, and final enrollment details on the official plan page.",
-        ]
+        if language == "Mandarin":
+            notes = [
+                "这是根据你的邮编、预算和医疗使用偏好，从加州官方 marketplace 计划目录中筛出的候选。",
+                "补贴金额、医生是否真正属于该网络，以及最终投保细节，仍需在官方计划页面确认。",
+            ]
+        elif language == "Spanish":
+            notes = [
+                "Esta opción fue seleccionada del catálogo oficial del marketplace de California usando tu código postal, presupuesto y preferencias de uso médico.",
+                "Confirma subsidios, participación exacta de doctores en la red y detalles finales de inscripción en la página oficial del plan.",
+            ]
+        else:
+            notes = [
+                "Shortlisted from the official California marketplace plan catalog using your ZIP code, budget, and care-usage preferences.",
+                "Confirm subsidy amounts, exact doctor network participation, and final enrollment details on the official plan page.",
+            ]
         if premium_amount is not None:
-            notes.insert(1, f"Estimated monthly premium is around ${premium_amount:.0f} before subsidies.")
+            if language == "Mandarin":
+                notes.insert(1, f"预计月保费约为 ${premium_amount:.0f}，未计入补贴前。")
+            elif language == "Spanish":
+                notes.insert(1, f"La prima mensual estimada es de aproximadamente ${premium_amount:.0f} antes de subsidios.")
+            else:
+                notes.insert(1, f"Estimated monthly premium is around ${premium_amount:.0f} before subsidies.")
 
         return InsuranceSummary(
             matched=True,
@@ -994,7 +1189,9 @@ class InsuranceAdvisorService:
         profile: InsuranceAdvisorProfile,
         missing_fields: list[str],
         recommendations: list[InsuranceAdvisorRecommendation],
+        ui_language: str | None,
     ) -> str:
+        language = self._language_name(ui_language)
         recommendation_names = ", ".join(
             f"{item.provider} {item.plan_name}" for item in recommendations[:2]
         ) or "none yet"
@@ -1007,7 +1204,7 @@ class InsuranceAdvisorService:
             "Write a short, warm next message from the Navigator role. "
             "If information is still missing, ask at most two concrete follow-up questions. "
             "If there is already a shortlist, briefly acknowledge that and ask one decision-making question. "
-            "Do not mention being an AI model."
+            f"Do not mention being an AI model. Reply in {language}."
         )
         try:
             return self.llm_client.complete(
@@ -1016,42 +1213,104 @@ class InsuranceAdvisorService:
             )
         except Exception:
             if missing_fields:
+                if language == "Mandarin":
+                    return (
+                        "我可以继续帮你缩小范围。接下来请告诉我"
+                        f"{missing_fields[0]}"
+                        + (f"，以及 {missing_fields[1]}。" if len(missing_fields) > 1 else "。")
+                    )
+                if language == "Spanish":
+                    return (
+                        "Puedo seguir reduciendo las opciones. Ahora cuéntame "
+                        f"{missing_fields[0]}"
+                        + (f" y también {missing_fields[1]}." if len(missing_fields) > 1 else ".")
+                    )
                 return (
                     "I can keep narrowing this down. Next, tell me "
                     f"{missing_fields[0]}"
                     + (f", and {missing_fields[1]}." if len(missing_fields) > 1 else ".")
                 )
             if recommendations:
+                if language == "Mandarin":
+                    return "现在已经有一个可用的候选列表了。告诉我你更在意更低的月保费，还是更直接的专科就诊路径，我可以继续帮你缩小范围。"
+                if language == "Spanish":
+                    return "Ya tenemos una lista corta útil. Dime si te importa más un costo mensual más bajo o un acceso más directo a especialistas, y seguiré afinando la recomendación."
                 return (
                     "We have a usable shortlist now. Tell me whether lower monthly cost or easier specialist access matters more, "
                     "and I can help you choose between the top plans."
                 )
+            if language == "Mandarin":
+                return "再多告诉我一点你的预算和预计医疗使用频率，我就能继续缩小计划范围。"
+            if language == "Spanish":
+                return "Cuéntame un poco más sobre tu presupuesto y el uso médico que esperas tener, y reduciré la lista de planes."
             return "Tell me a little more about your budget and expected care use, and I’ll narrow the plan list."
 
     def _eligibility_message(
         self,
         profile: InsuranceAdvisorProfile,
         missing_fields: list[str],
+        ui_language: str | None,
     ) -> str:
+        language = self._language_name(ui_language)
         if profile.coverage_channel == "marketplace":
-            base = "This looks most like a marketplace comparison, and for California I can now ground the shortlist in Covered California plan data."
+            if language == "Mandarin":
+                base = "这看起来最像是 marketplace 方案比较，而且在加州我可以用 Covered California 的计划数据来支撑候选列表。"
+            elif language == "Spanish":
+                base = "Esto se parece más a una comparación del marketplace y, para California, ya puedo basar la lista corta en datos de planes de Covered California."
+            else:
+                base = "This looks most like a marketplace comparison, and for California I can now ground the shortlist in Covered California plan data."
         elif profile.coverage_channel == "employer":
-            base = "Right now this advisor is restricted to California marketplace plans, so I cannot return an official shortlist for employer coverage."
+            if language == "Mandarin":
+                base = "目前这个顾问只支持加州官方 marketplace 计划，所以我暂时无法给出雇主保险的官方候选列表。"
+            elif language == "Spanish":
+                base = "Por ahora este asesor está limitado a planes oficiales del marketplace de California, así que no puedo devolver una lista oficial para cobertura del empleador."
+            else:
+                base = "Right now this advisor is restricted to California marketplace plans, so I cannot return an official shortlist for employer coverage."
         elif profile.coverage_channel == "student":
-            base = "Right now this advisor stays inside official California marketplace data, so I cannot rank school-only plans unless they appear in that official marketplace catalog."
+            if language == "Mandarin":
+                base = "目前这个顾问只使用加州官方 marketplace 数据，所以除非学校计划出现在官方目录里，否则我不能正式给学校专属计划排序。"
+            elif language == "Spanish":
+                base = "Por ahora este asesor se mantiene dentro de datos oficiales del marketplace de California, así que no puedo clasificar planes solo escolares a menos que aparezcan en ese catálogo oficial."
+            else:
+                base = "Right now this advisor stays inside official California marketplace data, so I cannot rank school-only plans unless they appear in that official marketplace catalog."
         else:
-            base = "I still need a little more intake detail before I can confidently choose the right coverage path."
+            if language == "Mandarin":
+                base = "我还需要再多一点基础信息，才能更有把握地判断哪条保险路径更合适。"
+            elif language == "Spanish":
+                base = "Todavía necesito un poco más de información inicial antes de elegir con confianza la ruta de cobertura adecuada."
+            else:
+                base = "I still need a little more intake detail before I can confidently choose the right coverage path."
 
         if missing_fields:
+            if language == "Mandarin":
+                return f"{base} 目前最大的缺口是：{', '.join(missing_fields[:3])}。"
+            if language == "Spanish":
+                return f"{base} Las mayores brechas ahora son: {', '.join(missing_fields[:3])}."
             return f"{base} The biggest gaps are {', '.join(missing_fields[:3])}."
+        if language == "Mandarin":
+            return f"{base} 现在的信息已经足够让我开始给出更具体的候选列表。"
+        if language == "Spanish":
+            return f"{base} Ya tengo suficiente detalle para empezar a dar una lista más concreta."
         return f"{base} I have enough detail to start giving a more concrete shortlist."
 
     def _plan_matcher_message(
         self,
         recommendations: list[InsuranceAdvisorRecommendation],
         readiness_label: str,
+        ui_language: str | None,
     ) -> str:
+        language = self._language_name(ui_language)
         if not recommendations:
+            if language == "Mandarin":
+                return (
+                    "我现在还没有开始正式排序，因为 intake 信息还不够完整。"
+                    "一旦我拿到你的保险路径、邮编、预算和大致就医频率，就能给出更站得住脚的跨品牌候选列表。"
+                )
+            if language == "Spanish":
+                return (
+                    "Todavía no estoy clasificando aseguradoras porque la información inicial sigue siendo limitada. "
+                    "Cuando tenga tu ruta de cobertura, código postal, presupuesto y uso probable de atención, podré generar una lista entre marcas mucho más defendible."
+                )
             return (
                 "I am not ranking carriers yet because the intake is still thin. "
                 "Once I have your coverage path, ZIP code, budget, and likely care usage, I can produce a more defensible cross-carrier shortlist."
@@ -1070,11 +1329,51 @@ class InsuranceAdvisorService:
                 if second
                 else ""
             )
+            if language == "Mandarin":
+                premium_copy = (
+                    f" 预计月保费大约是 ${top.monthly_premium_amount:.0f}，未计入补贴前。"
+                    if top.monthly_premium_amount is not None
+                    else ""
+                )
+                comparison_tail = (
+                    f" 如果你想看一个取舍略有不同的备选，也可以再看 {second.provider}。"
+                    if second
+                    else ""
+                )
+                return (
+                    f"我目前最推荐的品牌是 {top.provider}，而 {top.plan_name} 是这个品牌下最值得先看的起始计划，因为它和你刚刚提到的成本、可达性以及就医频率偏好更匹配。"
+                    f"{premium_copy}{comparison_tail}"
+                )
+            if language == "Spanish":
+                premium_copy = (
+                    f" La prima estimada es de aproximadamente ${top.monthly_premium_amount:.0f} antes de subsidios."
+                    if top.monthly_premium_amount is not None
+                    else ""
+                )
+                comparison_tail = (
+                    f" Si quieres una alternativa con un equilibrio un poco distinto, también revisa {second.provider}."
+                    if second
+                    else ""
+                )
+                return (
+                    f"Mi mejor opción actual es {top.provider}, con {top.plan_name} como el mejor plan de entrada, porque encaja mejor con lo que contaste sobre costo, acceso y uso de atención."
+                    f"{premium_copy}{comparison_tail}"
+                )
             return (
                 f"My current best fit is {top.provider}, with {top.plan_name} as its best starting plan, because it lines up with the preferences you shared on cost, access, and care usage."
                 f"{premium_copy}{comparison_tail}"
             )
 
+        if language == "Mandarin":
+            return (
+                f"我已经有一个初步候选列表，目前由 {top.provider} 领跑，而 {top.plan_name} 是最值得先看的计划。"
+                "只要你再确认最后几个偏好，我就能把排序进一步收紧。"
+            )
+        if language == "Spanish":
+            return (
+                f"Ya tengo una lista preliminar liderada por {top.provider}, con {top.plan_name} como el primer plan más fuerte para revisar. "
+                "Puedo afinar más la clasificación en cuanto confirmes las últimas preferencias."
+            )
         return (
             f"I have a preliminary shortlist led by {top.provider}, with {top.plan_name} as the strongest first plan to inspect. "
             "I can tighten the ranking once you confirm the last few preferences."
@@ -1085,22 +1384,56 @@ class InsuranceAdvisorService:
         profile: InsuranceAdvisorProfile,
         missing_fields: list[str],
         readiness_label: str,
+        ui_language: str | None,
     ) -> list[str]:
+        language = self._language_name(ui_language)
         if readiness_label == "recommended":
-            prompts = [
-                "I care more about keeping specialist access easy than saving on premium.",
-                "I want the cheapest option that still feels safe for a few visits a year.",
-                "Which of these is safest if I may need regular prescriptions?",
-            ]
+            if language == "Mandarin":
+                prompts = [
+                    "和省月保费相比，我更在意专科就诊是否顺畅。",
+                    "我想要一个一年只看几次病也仍然比较稳妥的最低成本方案。",
+                    "如果我可能需要长期处方药，这几个里哪个更稳？",
+                ]
+            elif language == "Spanish":
+                prompts = [
+                    "Me importa más mantener acceso fácil a especialistas que ahorrar en la prima.",
+                    "Quiero la opción más barata que siga sintiéndose segura para unas pocas visitas al año.",
+                    "Si puedo necesitar recetas regulares, ¿cuál de estas opciones es la más segura?",
+                ]
+            else:
+                prompts = [
+                    "I care more about keeping specialist access easy than saving on premium.",
+                    "I want the cheapest option that still feels safe for a few visits a year.",
+                    "Which of these is safest if I may need regular prescriptions?",
+                ]
             if profile.coverage_channel == "marketplace":
-                prompts.insert(0, "Show me the best PPO-style option even if the premium is higher.")
+                prompts.insert(
+                    0,
+                    {
+                        "English": "Show me the best PPO-style option even if the premium is higher.",
+                        "Mandarin": "即使月保费更高，也请给我看最适合的 PPO 风格方案。",
+                        "Spanish": "Muéstrame la mejor opción tipo PPO aunque la prima sea más alta.",
+                    }[language],
+                )
             return prompts[:3]
 
-        prompts = [
-            "I am a USC student in Los Angeles 90007 and I want something simple.",
-            "I need a Covered California plan in 90007, I am 24, and my budget is around $320 per month.",
-            "I expect regular visits and I also have ongoing prescriptions.",
-        ]
+        prompts = {
+            "English": [
+                "I am a USC student in Los Angeles 90007 and I want something simple.",
+                "I need a Covered California plan in 90007, I am 24, and my budget is around $320 per month.",
+                "I expect regular visits and I also have ongoing prescriptions.",
+            ],
+            "Mandarin": [
+                "我是 USC 学生，在洛杉矶 90007，希望先从简单的方案开始看。",
+                "我想找 90007 可用的 Covered California 计划，我 24 岁，预算大约每月 320 美元。",
+                "我预计会定期看诊，而且也有持续处方药需求。",
+            ],
+            "Spanish": [
+                "Soy estudiante de USC en Los Ángeles 90007 y quiero algo sencillo para empezar.",
+                "Necesito un plan de Covered California en 90007, tengo 24 años y mi presupuesto es de unos $320 al mes.",
+                "Espero visitas regulares y también tengo recetas continuas.",
+            ],
+        }[language]
         if not missing_fields:
             return prompts[:2]
         return prompts

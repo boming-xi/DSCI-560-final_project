@@ -19,6 +19,7 @@ class Settings:
     openai_reasoning_effort: str
     openai_max_output_tokens: int
     demo_users_file: Path
+    community_rooms_file: Path
     demo_auth_secret: str
     postgres_url: str
     provider_directory_source: str
@@ -58,6 +59,9 @@ def get_settings() -> Settings:
     project_root = Path(__file__).resolve().parents[4]
     load_dotenv(project_root / ".env")
     default_demo_users_file = project_root / "apps" / "api" / "data" / "demo_users.json"
+    default_community_rooms_file = (
+        project_root / "apps" / "api" / "data" / "community_rooms.json"
+    )
     return Settings(
         api_host=os.getenv("API_HOST", "0.0.0.0"),
         api_port=int(os.getenv("API_PORT", "8000")),
@@ -74,6 +78,9 @@ def get_settings() -> Settings:
         openai_reasoning_effort=os.getenv("OPENAI_REASONING_EFFORT", "low"),
         openai_max_output_tokens=int(os.getenv("OPENAI_MAX_OUTPUT_TOKENS", "700")),
         demo_users_file=Path(os.getenv("DEMO_USERS_FILE", str(default_demo_users_file))),
+        community_rooms_file=Path(
+            os.getenv("COMMUNITY_ROOMS_FILE", str(default_community_rooms_file))
+        ),
         demo_auth_secret=os.getenv("DEMO_AUTH_SECRET", "change-me-in-demo"),
         postgres_url=os.getenv(
             "POSTGRES_URL", "postgresql://postgres:postgres@localhost:5432/ai_healthcare"

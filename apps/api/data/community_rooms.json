@@ -1,0 +1,62 @@
+{
+  "rooms": [
+    {
+      "id": "room-los-angeles-mandarin-routine-general-care-general-care",
+      "title": "Los Angeles · General Care · General care 经验交流",
+      "care_path": "General care",
+      "urgency_band": "Routine",
+      "symptom_tags": [
+        "general-care"
+      ],
+      "language": "Mandarin",
+      "region": "Los Angeles",
+      "memberships": [
+        {
+          "user_id": "user-4d313fb146",
+          "display_name": "Member 01-E2D",
+          "joined_at": "2026-05-07T08:15:20.923535+00:00"
+        }
+      ],
+      "messages": [
+        {
+          "id": "msg-welcome",
+          "user_id": "moderator",
+          "display_name": "Room Guide",
+          "content": "欢迎来到匿名互助讨论室。这里适合分享就医流程、保险体验、预约经验和看诊前准备，不适合替别人下诊断。",
+          "created_at": "2026-05-07T08:15:20.922400+00:00"
+        }
+      ],
+      "created_at": "2026-05-07T08:15:20.922400+00:00",
+      "updated_at": "2026-05-07T08:15:20.922400+00:00"
+    },
+    {
+      "id": "room-los-angeles-mandarin-routine-general-care-cough",
+      "title": "Los Angeles · Cough · General care experience room",
+      "care_path": "General care",
+      "urgency_band": "Routine",
+      "symptom_tags": [
+        "cough"
+      ],
+      "language": "Mandarin",
+      "region": "Los Angeles",
+      "memberships": [
+        {
+          "user_id": "user-4d313fb146",
+          "display_name": "Member 01-E2D",
+          "joined_at": "2026-05-07T08:27:22.322886+00:00"
+        }
+      ],
+      "messages": [
+        {
+          "id": "msg-welcome",
+          "user_id": "moderator",
+          "display_name": "Room Guide",
+          "content": "欢迎来到匿名互助讨论室。这里适合分享就医流程、保险体验、预约经验和看诊前准备，不适合替别人下诊断。",
+          "created_at": "2026-05-07T08:27:22.321630+00:00"
+        }
+      ],
+      "created_at": "2026-05-07T08:27:22.321630+00:00",
+      "updated_at": "2026-05-07T08:27:22.321630+00:00"
+    }
+  ]
+}

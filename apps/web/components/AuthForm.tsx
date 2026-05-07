@@ -6,6 +6,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 
 import { api } from "@/lib/api";
 import { saveAuthSession } from "@/lib/auth";
+import { useTranslation } from "@/lib/LanguageProvider";
 import type { AuthResponse } from "@/lib/types";
 
 type AuthMode = "login" | "register";
@@ -15,6 +16,7 @@ type AuthFormProps = {
 };
 
 export function AuthForm({ mode }: AuthFormProps) {
+  const { t } = useTranslation();
   const router = useRouter();
   const searchParams = useSearchParams();
   const [name, setName] = useState("");
@@ -49,7 +51,7 @@ export function AuthForm({ mode }: AuthFormProps) {
       setError(
         submissionError instanceof Error
           ? submissionError.message
-          : "We could not complete sign-in right now."
+          : t.auth.signInError
       );
     } finally {
       setIsLoading(false);
@@ -66,7 +68,7 @@ export function AuthForm({ mode }: AuthFormProps) {
       setError(
         submissionError instanceof Error
           ? submissionError.message
-          : "Quick access sign-in is not available right now."
+          : t.auth.quickAccessError
       );
     } finally {
       setIsLoading(false);
@@ -76,44 +78,50 @@ export function AuthForm({ mode }: AuthFormProps) {
   return (
     <form className="panel form-panel auth-form-panel" onSubmit={handleSubmit}>
       <div className="panel-heading">
-        <span className="eyebrow">{isRegister ? "Register" : "Log in"}</span>
-        <h1>{isRegister ? "Create your account" : "Welcome back"}</h1>
+        <span className="eyebrow">
+          {isRegister ? t.auth.registerEyebrow : t.auth.loginEyebrow}
+        </span>
+        <h1>{isRegister ? t.auth.registerTitle : t.auth.loginTitle}</h1>
         <p>
           {isRegister
-            ? "Register once and your password will keep working on your next visit."
-            : "Log in with your saved account or use the quick access login."}
+            ? t.auth.registerSubtitle
+            : t.auth.loginSubtitle}
         </p>
       </div>
 
       {isRegister ? (
         <label className="field">
-          <span>Name</span>
+          <span>{t.auth.name}</span>
           <input
             autoComplete="name"
             onChange={(event) => setName(event.target.value)}
-            placeholder="Enter your full name"
+            placeholder={t.auth.fullNamePlaceholder}
             value={name}
           />
         </label>
       ) : null}
 
       <label className="field">
-        <span>Email</span>
+        <span>{t.auth.email}</span>
         <input
           autoComplete="email"
           onChange={(event) => setEmail(event.target.value)}
-          placeholder="Enter your email address"
+          placeholder={t.auth.emailPlaceholder}
           type="email"
           value={email}
         />
       </label>
 
       <label className="field">
-        <span>Password</span>
+        <span>{t.auth.password}</span>
         <input
           autoComplete={isRegister ? "new-password" : "current-password"}
           onChange={(event) => setPassword(event.target.value)}
-          placeholder={isRegister ? "Create a password with at least 6 characters" : "Enter your password"}
+          placeholder={
+            isRegister
+              ? t.auth.registerPasswordPlaceholder
+              : t.auth.loginPasswordPlaceholder
+          }
           type="password"
           value={password}
         />
@@ -123,7 +131,11 @@ export function AuthForm({ mode }: AuthFormProps) {
 
       <div className="form-actions">
         <button className="button button-primary" disabled={isLoading} type="submit">
-          {isLoading ? "Submitting..." : isRegister ? "Create account" : "Log in"}
+          {isLoading
+            ? t.auth.submitting
+            : isRegister
+            ? t.auth.createAccount
+            : t.auth.login}
         </button>
         {!isRegister ? (
           <button
@@ -132,13 +144,13 @@ export function AuthForm({ mode }: AuthFormProps) {
             onClick={handleDemoLogin}
             type="button"
           >
-            Use quick access login
+            {t.auth.quickAccess}
           </button>
         ) : null}
       </div>
 
       <p className="auth-switch-copy">
-        {isRegister ? "Already have an account?" : "Need an account?"}{" "}
+        {isRegister ? t.auth.alreadyHaveAccount : t.auth.needAccount}{" "}
         <Link
           href={
             isRegister
@@ -146,7 +158,7 @@ export function AuthForm({ mode }: AuthFormProps) {
               : `/register${nextPath ? `?next=${encodeURIComponent(nextPath)}` : ""}`
           }
         >
-          {isRegister ? "Log in here" : "Register here"}
+          {isRegister ? t.auth.logInHere : t.auth.registerHere}
         </Link>
       </p>
     </form>

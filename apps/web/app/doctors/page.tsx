@@ -9,10 +9,12 @@ import { RankingExplanation } from "@/components/RankingExplanation";
 import { api } from "@/lib/api";
 import { beginDoctorBooking } from "@/lib/doctor-booking";
 import { getFlowState, patchFlowState } from "@/lib/flow";
+import { useTranslation } from "@/lib/LanguageProvider";
 import { useProtectedRoute } from "@/lib/useProtectedRoute";
 import type { DoctorSearchResponse } from "@/lib/types";
 
 export default function DoctorsPage() {
+  const { t, lang } = useTranslation();
   const router = useRouter();
   const { isCheckingAuth, session } = useProtectedRoute();
   const flow = getFlowState();
@@ -30,7 +32,7 @@ export default function DoctorsPage() {
       }
       const flow = getFlowState();
       if (!flow.symptomText || !flow.location) {
-        setError("Start with symptoms first so we can narrow the right doctors for you.");
+        setError(t.doctors.missingSymptoms);
         setIsLoading(false);
         return;
       }
@@ -54,7 +56,7 @@ export default function DoctorsPage() {
         setError(
           searchError instanceof Error
             ? searchError.message
-            : "We could not build the doctor shortlist just yet."
+            : t.doctors.buildingShortlist
         );
       } finally {
         setIsLoading(false);
@@ -62,12 +64,12 @@ export default function DoctorsPage() {
     }
 
     void loadDoctors();
-  }, [isCheckingAuth, session]);
+  }, [isCheckingAuth, session, t.doctors.buildingShortlist, t.doctors.missingSymptoms]);
 
   if (isCheckingAuth) {
     return (
       <main className="page-shell">
-        <div className="panel">Preparing your doctor shortlist...</div>
+        <div className="panel">{t.doctors.authLoading}</div>
       </main>
     );
   }
@@ -106,44 +108,41 @@ export default function DoctorsPage() {
   return (
     <main className="page-shell">
       <section className="results-header panel">
-        <span className="eyebrow">Step 3</span>
-        <h1>Top 5 doctor and clinic recommendations</h1>
-        <p>
-          The shortlist below keeps the five strongest overall matches based on
-          specialty fit, insurance, distance, availability, language, and trust signals.
-        </p>
+        <span className="eyebrow">{t.doctors.shortlistStep}</span>
+        <h1>{t.doctors.shortlistTitle}</h1>
+        <p>{t.doctors.shortlistSubtitle}</p>
       </section>
 
-      {isLoading ? <div className="panel">Building your ranked doctor shortlist...</div> : null}
+      {isLoading ? <div className="panel">{t.doctors.buildingShortlist}</div> : null}
       {error ? <div className="panel error-panel">{error}</div> : null}
 
       {result ? (
         <>
           <section className="summary-grid">
             <article className="panel summary-card">
-              <span className="eyebrow">Triage</span>
+              <span className="eyebrow">{t.doctors.triage}</span>
               <h2>{result.triage.urgency_level}</h2>
               <p>{result.triage.summary}</p>
               <p>{result.triage.next_step}</p>
             </article>
             <article className="panel summary-card">
-              <span className="eyebrow">Insurance</span>
+              <span className="eyebrow">{t.doctors.insurance}</span>
               <h2>
                 {flow.insuranceSummary?.matched
                   ? `${flow.insuranceSummary.provider} ${flow.insuranceSummary.plan_name}`
                   : result.insurance_summary?.matched
                   ? `${result.insurance_summary.provider} ${result.insurance_summary.plan_name}`
-                  : "Plan not attached yet"}
+                  : t.doctors.planNotAttached}
               </h2>
               <p>
                 {flow.insuranceSummary?.notes?.[0] ??
                   result.insurance_summary?.notes?.[0] ??
-                  "Doctor ranking is currently based on symptoms, location, and clinician fit."}
+                  t.doctors.fallbackInsuranceNote}
               </p>
               {flow.insuranceNetworkUrl ? (
                 <p>
                   <a href={flow.insuranceNetworkUrl} rel="noreferrer" target="_blank">
-                    Open official network directory
+                    {t.doctors.openOfficialNetworkDirectory}
                   </a>
                 </p>
               ) : null}
@@ -161,6 +160,7 @@ export default function DoctorsPage() {
             onRecommendationChange={(doctorId) => setRecommendedDoctorId(doctorId ?? "")}
             preferredLanguage={flow.preferredLanguage}
             symptomText={flow.symptomText}
+            uiLanguage={lang}
           />
 
           <section className="doctor-list">

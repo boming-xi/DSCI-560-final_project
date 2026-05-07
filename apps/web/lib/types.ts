@@ -1,3 +1,5 @@
+export type UiLanguage = "English" | "Mandarin" | "Spanish";
+
 export type Location = {
   latitude: number;
   longitude: number;
@@ -236,6 +238,39 @@ export type AuthResponse = {
   user: AuthenticatedUser;
 };
 
+export type CommunityRoomSummary = {
+  id: string;
+  title: string;
+  care_path: string;
+  urgency_band: string;
+  symptom_tags: string[];
+  language: string;
+  region: string;
+  member_count: number;
+  message_count: number;
+  latest_activity_at: string;
+};
+
+export type CommunityMessage = {
+  id: string;
+  user_id: string;
+  display_name: string;
+  content: string;
+  created_at: string;
+  is_current_user: boolean;
+};
+
+export type CommunityRoomResponse = {
+  room: CommunityRoomSummary;
+  messages: CommunityMessage[];
+  your_alias: string;
+  safety_notice: string;
+  moderation_notice: string;
+  entry_prompt: string;
+  matching_summary: string;
+  starter_topics: string[];
+};
+
 export type FlowState = {
   symptomText?: string;
   preferredLanguage?: string;
@@ -266,4 +301,6 @@ export type FlowState = {
   documentText?: string;
   documentId?: string;
   documentFocusQuestion?: string;
+  communityRoomId?: string;
+  communityIntakeText?: string;
 };
