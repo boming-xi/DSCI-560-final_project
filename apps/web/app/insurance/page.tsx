@@ -47,6 +47,23 @@ export default function InsurancePage() {
 
   return (
     <main className="page-shell">
+      <section className="panel insurance-guidance-panel">
+        <div className="insurance-guidance-copy">
+          <span className="eyebrow">{t.insurance.pageLabel}</span>
+          <h1>{t.insurance.pageTitle}</h1>
+          <p>{t.insurance.pageSubtitle}</p>
+        </div>
+
+        <div className="insurance-guidance-grid">
+          {t.insurance.pageProofs.map((proof) => (
+            <article className="insurance-guidance-card" key={proof.title}>
+              <h3>{proof.title}</h3>
+              <p>{proof.body}</p>
+            </article>
+          ))}
+        </div>
+      </section>
+
       <section className="panel insurance-entry-panel">
         <div className="panel-heading">
           <span className="eyebrow">{t.insurance.step1}</span>

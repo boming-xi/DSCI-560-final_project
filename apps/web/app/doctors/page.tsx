@@ -147,6 +147,42 @@ export default function DoctorsPage() {
                 </p>
               ) : null}
             </article>
+            {result.doctors[0] ? (
+              <article className="panel summary-card summary-card-highlight">
+                <span className="eyebrow">{t.doctorDecision.currentRecommendation}</span>
+                <h2>{result.doctors[0].name}</h2>
+                <p>
+                  {result.doctors[0].ranking_breakdown?.summary ??
+                    result.doctors[0].profile_blurb}
+                </p>
+                <div className="badge-row compact-badge-row">
+                  <span className="badge">{result.doctors[0].specialty}</span>
+                  <span className="badge">{result.doctors[0].next_opening_label}</span>
+                  <span className="badge">
+                    {t.booking.distanceAway.replace(
+                      "{distance}",
+                      String(result.doctors[0].distance_km),
+                    )}
+                  </span>
+                </div>
+                <div className="form-actions">
+                  <button
+                    className="button button-primary"
+                    onClick={() => handleBookDoctor(result.doctors[0].id)}
+                    type="button"
+                  >
+                    {t.doctorDecision.bookRecommendedDoctor}
+                  </button>
+                  <button
+                    className="button button-secondary"
+                    onClick={() => handleViewDoctor(result.doctors[0].id)}
+                    type="button"
+                  >
+                    {t.doctorCard.viewFullProfile}
+                  </button>
+                </div>
+              </article>
+            ) : null}
           </section>
 
           {result.doctors[0] ? (

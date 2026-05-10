@@ -80,6 +80,20 @@ return(
       </div>
     </section>
 
+    <section className="campus-trust-strip">
+      <div className="campus-trust-header">
+        <span className="eyebrow">{t.home.trustHeader}</span>
+      </div>
+      <div className="campus-trust-grid">
+        {t.home.trustItems.map((item) => (
+          <article className="campus-trust-card" key={item}>
+            <span className="campus-trust-marker" />
+            <p>{item}</p>
+          </article>
+        ))}
+      </div>
+    </section>
+
     {/* FEATURES */}
     <section className="sanctuary-section sanctuary-feature-section">
       <div className="sanctuary-section-header">

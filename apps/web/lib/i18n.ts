@@ -66,60 +66,66 @@ const english = {
     },
   },
   home: {
-    sanctuaryLabel: "The Digital Sanctuary",
-    titleLine1: "Clarity in your",
-    titleLine2: "healing journey.",
+    sanctuaryLabel: "Campus Care Navigator",
+    titleLine1: "Find the right",
+    titleLine2: "care path first.",
     subtitle:
-      "Navigate symptoms, insurance choice, doctor selection, and booking with a calmer interface.",
-    startButton: "Begin Guided Care Plan",
+      "Built for students and new residents who need help choosing insurance, narrowing doctors, and reaching an official booking page.",
+    startButton: "Start my care plan",
     heroNote:
-      "Insurance-first care navigation with real marketplace breadth, doctor matching, and a final decision room.",
-    previewBrand: "Care Guide",
-    previewSub: "Editorial decision support",
-    previewTag: "Live insurance context",
+      "Insurance-first guidance grounded in California marketplace plans, official LA provider systems, and a calmer step-by-step flow.",
+    previewBrand: "Campus care snapshot",
+    previewSub: "What this flow helps you decide",
+    previewTag: "Insurance first",
     previewSystem:
-      "We start by clarifying symptoms, then decide whether insurance selection or direct doctor search should come next.",
+      "We use symptoms, location, and insurance context to narrow the next step instead of sending you straight into a doctor directory.",
     previewUser:
-      "I need a PPO if possible, I live near USC, and I want a doctor who can explain options clearly.",
-    previewFocus: "Current focus",
-    previewTitle: "Insurance-aware care navigation",
+      "I live near USC, I may need a PPO, and I want to understand cost before I choose a doctor.",
+    previewFocus: "Today we help with",
+    previewTitle: "Fewer choices, clearer next steps",
     previewDescription:
-      "Compare coverage, verify in-network matches, and carry the plan into doctor ranking.",
-    featureHeader: "Comprehensive Care Navigation",
-    featureTitle: "One calm flow from symptoms to the next confirmed care step.",
+      "Compare plans, carry coverage into doctor ranking, and hand off to an official provider booking page.",
+    trustHeader: "Why students trust this flow",
+    trustItems: [
+      "California marketplace plan data translated into a simpler comparison view.",
+      "Official UCLA Health and Keck provider pages carried into the booking handoff.",
+      "A ranked top-five shortlist instead of dozens of disconnected doctor profiles.",
+    ],
+    featureHeader: "Why start here",
+    featureTitle: "One guided system for the decisions that usually feel disconnected.",
     featureDescription:
-      "The experience is organized as a guided editorial journey rather than disconnected forms.",
+      "Instead of searching doctors first and figuring out insurance later, the product narrows the next step in the order that matters.",
     featureCards: [
       {
         number: "01",
-        title: "Symptom Triage",
-        body: "Clarify which symptoms need urgent attention and the right care setting.",
+        title: "Start with symptoms",
+        body: "We translate what feels urgent into a clearer care starting point.",
       },
       {
         number: "02",
-        title: "Insurance Matching",
-        body: "Compare marketplace and student coverage in a simplified way.",
+        title: "Compare coverage first",
+        body: "Insurance choice comes before doctor search, so cost and access stay visible.",
       },
       {
         number: "03",
-        title: "Doctor Ranking",
-        body: "Balance specialty, insurance, distance, and trust signals.",
+        title: "See only the top five",
+        body: "Doctor ranking balances specialty, insurance, distance, and trust without overwhelming you.",
       },
       {
         number: "04",
-        title: "Booking Handoff",
-        body: "Move into official booking without losing context.",
+        title: "Book through the official system",
+        body: "When you are ready, we hand you off without dropping the care context you built.",
       },
     ],
-    networkHeader: "The Network Advantage",
-    networkTitle: "Insurance breadth that actually changes the recommendation.",
+    networkHeader: "Coverage and care access",
+    networkTitle: "Real coverage breadth that changes what doctors you can reach.",
     metrics: [
-      "plans in advisor coverage",
+      "plans compared in the advisor",
       "California marketplace carriers",
-      "live booking handoff pilot",
+      "official LA provider systems",
     ],
-    pathHeader: "Your Path to Wellness",
-    pathTitle: "A four-step flow from uncertainty to action.",
+    pathHeader: "How the flow works",
+    pathTitle: "A campus-friendly path from symptoms to a real next step.",
     pathSteps: [
       {
         number: "1",
@@ -223,10 +229,28 @@ const english = {
   },
   insurance: {
     authLoading: "Preparing your insurance step...",
+    pageLabel: "Coverage before doctor search",
+    pageTitle: "Start with coverage before you choose a doctor.",
+    pageSubtitle:
+      "Your plan affects which doctors are easier to access, how much you may pay, and whether booking gets more complicated later.",
+    pageProofs: [
+      {
+        title: "Compare plans before doctor search",
+        body: "Use the advisor to narrow brands and plans before you commit to a shortlist.",
+      },
+      {
+        title: "Carry coverage into doctor ranking",
+        body: "The selected plan flows directly into network checks and estimated access signals.",
+      },
+      {
+        title: "Keep the official booking path",
+        body: "When you are ready, we hand you off to the provider's public booking page.",
+      },
+    ],
     step1: "Step 1",
-    choosePathTitle: "Choose your insurance path",
+    choosePathTitle: "Choose the insurance path that fits your situation.",
     choosePathSubtitle:
-      "If you already have a plan, we can parse it and move straight into doctor search. If you do not have insurance yet, the advisor can help you narrow plans first.",
+      "If you already have a plan, we can review it first. If not, we can help you compare coverage before you search doctors.",
     hasInsurancePill: "I already have insurance",
     hasInsuranceTitle: "Upload or paste my current plan",
     hasInsuranceBody:
@@ -321,9 +345,9 @@ const english = {
     missingSymptoms:
       "Start with symptoms first so we can narrow the right doctors for you.",
     shortlistStep: "Step 3",
-    shortlistTitle: "Top 5 doctor and clinic recommendations",
+    shortlistTitle: "Choose from your top 5 doctors",
     shortlistSubtitle:
-      "The shortlist below keeps the five strongest overall matches based on specialty fit, insurance, distance, availability, language, and trust signals.",
+      "We keep the five strongest matches, then highlight the one that looks like the safest next step right now.",
     buildingShortlist: "Building your ranked doctor shortlist...",
     triage: "Triage",
     insurance: "Insurance",
@@ -355,9 +379,9 @@ const english = {
     promptHint:
       "Ask what should matter most in the final choice, like insurance certainty, communication style, distance, or appointment speed.",
     finalChoiceRoom: "Final choice room",
-    title: "Use a shared discussion room to make the final doctor decision",
+    title: "Use a shared room to confirm your final doctor choice",
     subtitle:
-      "Three specialist roles review the same shortlist, the same insurance context, and the same patient priorities before they recommend the final doctor.",
+      "Three roles review the same shortlist, insurance context, and patient priorities before they recommend the clearest next step.",
     fitAnalyst: "Fit Analyst",
     fitAnalystSummary:
       "Owns symptom fit, specialty alignment, and whether the shortlist clinically matches the problem.",
@@ -464,9 +488,9 @@ const english = {
   booking: {
     preparing: "Preparing your booking handoff...",
     step: "Step 4",
-    title: "Third-party booking handoff",
+    title: "Continue to official booking",
     subtitle:
-      "This project does not complete appointments inside the site. We recommend the doctor, then hand you off to the provider's official booking page.",
+      "We keep your recommendation context together, then send you to the provider's official booking page to finish scheduling.",
     distanceAway: "{distance} km away",
     whatHappens: "What happens on this page",
     handoffPoint1: "We preserve the recommended doctor and insurance context.",
@@ -494,9 +518,9 @@ const english = {
   community: {
     authLoading: "Preparing your peer support room...",
     step: "Group Chat",
-    title: "Peer support rooms for similar care journeys",
+    title: "Join a group chat for a similar care journey",
     subtitle:
-      "This room is for people with similar symptom paths to share booking, clinic, and insurance experience, not diagnosis.",
+      "Talk to people with similar care and booking experiences. This space is for shared experience, not diagnosis.",
     intakeTitle: "Match me to a support room",
     intakeSubtitle:
       "We use your current symptom context and preferred language to place you in a more relevant room.",
@@ -539,13 +563,13 @@ const english = {
     contextSummaryTitle: "Support room context",
     recommendedRoomsTitle: "Recommended rooms for you",
     recommendedRoomsSubtitle:
-      "We keep the best match first, but you can still choose whichever room feels most useful right now.",
+      "The closest match appears first, but you can still join any room that feels more useful right now.",
     availableRoomsTitle: "Available support rooms",
     availableRoomsSubtitle:
-      "You can join any room right away. Matching simply helps move the most relevant rooms to the top.",
+      "You can join any room right away. Matching simply pushes the most relevant rooms to the top.",
     browseRoomsTitle: "Browse support rooms",
     browseRoomsSubtitle:
-      "These rooms stay open if you want to join something a little broader than the top match.",
+      "Browse the full room list if you want something broader than the top match.",
     roomFiltersTitle: "Refine the room list",
     roomFiltersSubtitle:
       "Filter by care path, language, or how recently people were active in the room.",
@@ -653,50 +677,56 @@ const mandarin: TranslationDictionary = {
     },
   },
   home: {
-    sanctuaryLabel: "数字化安心空间",
-    titleLine1: "让你的",
-    titleLine2: "就医之路更清晰。",
-    subtitle: "用更平静、更清楚的方式完成症状判断、保险选择、医生筛选和预约跳转。",
-    startButton: "开始引导式就医规划",
-    heroNote: "以保险为先的就医导航，结合真实计划范围、医生匹配与最终决策支持。",
-    previewBrand: "Care Guide",
-    previewSub: "编辑式决策支持",
-    previewTag: "实时保险背景",
-    previewSystem: "我们会先澄清症状，再判断下一步应该先处理保险，还是直接进入医生筛选。",
-    previewUser: "我希望尽量是 PPO，我住在 USC 附近，也想找一个能把选择讲清楚的医生。",
-    previewFocus: "当前重点",
-    previewTitle: "基于保险的就医导航",
-    previewDescription: "比较保险覆盖，核对网络内匹配，再把计划带入医生排序。",
-    featureHeader: "完整医疗导航",
-    featureTitle: "从症状到下一步确认行动的一条平静路径。",
+    sanctuaryLabel: "校园就医导航",
+    titleLine1: "先找到正确的",
+    titleLine2: "就医路径。",
+    subtitle: "为国际学生和新居民而设计，帮助你先看懂保险，再缩小医生选择，最后进入官方预约页面。",
+    startButton: "开始我的就医规划",
+    heroNote: "以保险为先的就医导航，基于加州 marketplace 计划、洛杉矶官方医疗系统和更平静的分步流程。",
+    previewBrand: "校园就医快照",
+    previewSub: "这个流程会帮你做什么决定",
+    previewTag: "先看保险",
+    previewSystem: "我们会结合症状、位置和保险背景来缩小下一步，而不是直接把你扔进医生目录里。",
+    previewUser: "我住在 USC 附近，可能希望是 PPO，也想在选医生之前先弄清楚费用。",
+    previewFocus: "今天会帮你完成",
+    previewTitle: "更少选择，更清楚的下一步",
+    previewDescription: "先比较计划，再把保险带入医生排序，最后衔接到官方预约页面。",
+    trustHeader: "为什么学生更愿意从这里开始",
+    trustItems: [
+      "把加州 marketplace 官方计划数据整理成更容易比较的形式。",
+      "把 UCLA Health 和 Keck 的官方医生资料与预约入口带入流程中。",
+      "只给综合评分前五的医生，而不是一长串分散的资料页。",
+    ],
+    featureHeader: "为什么先从这里开始",
+    featureTitle: "把通常割裂的医疗决策，变成一条连续的导航流程。",
     featureDescription: "整个体验不是割裂的表单，而是一段连续的引导式决策流程。",
     featureCards: [
       {
         number: "01",
-        title: "症状分诊",
-        body: "判断哪些症状需要更紧急的关注，以及合适的就医场景。",
+        title: "先判断症状",
+        body: "把你觉得紧急的感受翻译成更明确的起始就医场景。",
       },
       {
         number: "02",
-        title: "保险匹配",
-        body: "用更易理解的方式比较 marketplace 和学生保险。",
+        title: "先比较保险",
+        body: "在选医生之前先看保险，这样费用和可达性不会被忽略。",
       },
       {
         number: "03",
-        title: "医生排序",
-        body: "综合专科、保险、距离与可信度信号进行推荐。",
+        title: "只看前五医生",
+        body: "综合专科、保险、距离和可信度，避免让你面对太多分散选择。",
       },
       {
         number: "04",
-        title: "预约跳转",
-        body: "保留上下文并进入官方预约流程。",
+        title: "进入官方预约",
+        body: "准备好后再跳转到医疗机构官方系统，不会丢失前面的上下文。",
       },
     ],
-    networkHeader: "网络覆盖优势",
-    networkTitle: "真正会影响推荐结果的保险覆盖广度。",
-    metrics: ["顾问可比较的计划数", "加州 marketplace 保险品牌", "洛杉矶官方预约试点"],
-    pathHeader: "你的就医路径",
-    pathTitle: "四步把不确定变成行动。",
+    networkHeader: "保险覆盖与就医可达性",
+    networkTitle: "真正会改变医生选择范围的保险覆盖广度。",
+    metrics: ["顾问可比较的计划数", "加州 marketplace 保险品牌", "洛杉矶官方医疗系统"],
+    pathHeader: "流程怎么走",
+    pathTitle: "一条更适合校园场景的四步路径。",
     pathSteps: [
       { number: "1", title: "连接", body: "先输入症状和需求，建立上下文。" },
       { number: "2", title: "分析", body: "选择或进一步明确保险方案。" },
@@ -772,10 +802,28 @@ const mandarin: TranslationDictionary = {
   },
   insurance: {
     authLoading: "正在准备保险步骤...",
+    pageLabel: "先看保险，再看医生",
+    pageTitle: "在选医生之前，先把保险看明白。",
+    pageSubtitle:
+      "保险会直接影响哪些医生更容易预约、可能需要付多少钱，以及后面的预约流程会不会更复杂。",
+    pageProofs: [
+      {
+        title: "先比较计划，再找医生",
+        body: "先用顾问缩小品牌和计划范围，再进入医生候选列表。",
+      },
+      {
+        title: "把保险带进医生排序",
+        body: "你选中的计划会直接进入网络核验和就医可达性判断。",
+      },
+      {
+        title: "最后保留官方预约路径",
+        body: "准备好后，我们会把你带到医疗机构公开预约页面。",
+      },
+    ],
     step1: "第 1 步",
-    choosePathTitle: "选择你的保险路径",
+    choosePathTitle: "选择更适合你当前情况的保险路径。",
     choosePathSubtitle:
-      "如果你已经有保险，我们可以先解析计划再直接进入医生搜索；如果你还没有保险，顾问可以先帮你缩小方案范围。",
+      "如果你已经有保险，我们可以先帮你看懂计划；如果你还没有保险，可以先比较覆盖方案，再进入医生搜索。",
     hasInsurancePill: "我已经有保险",
     hasInsuranceTitle: "上传或粘贴我当前的保险计划",
     hasInsuranceBody: "适合你已经有保险卡、门户截图、计划 PDF，或已经知道计划名称的情况。",
@@ -856,8 +904,8 @@ const mandarin: TranslationDictionary = {
     authLoading: "正在准备医生候选列表...",
     missingSymptoms: "请先从症状步骤开始，这样我们才能更准确地缩小医生范围。",
     shortlistStep: "第 3 步",
-    shortlistTitle: "综合评分前 5 的医生与诊所推荐",
-    shortlistSubtitle: "下面的候选只保留综合专科匹配、保险、距离、可预约性、语言和信任信号最强的五位医生。",
+    shortlistTitle: "从综合评分前 5 的医生中做选择",
+    shortlistSubtitle: "我们先保留最强的五位候选，再把当前最稳妥的下一步推荐放在最前面。",
     buildingShortlist: "正在生成你的医生排序列表...",
     triage: "分诊结果",
     insurance: "保险",
@@ -886,7 +934,7 @@ const mandarin: TranslationDictionary = {
     defaultQuestion: "帮我从当前候选医生里选出最合适的一位。",
     promptHint: "你可以问最后决策里最应该重视什么，比如保险确定性、沟通方式、距离或预约速度。",
     finalChoiceRoom: "最终决策室",
-    title: "用共享讨论室完成最后的医生选择",
+    title: "用共享讨论室确认最后的医生选择",
     subtitle: "三个角色会基于同一份候选列表、同一份保险背景和同样的用户优先级，给出最终医生建议。",
     fitAnalyst: "匹配分析师",
     fitAnalystSummary: "负责症状与专科匹配，判断候选列表在临床上是否贴合问题。",
@@ -988,8 +1036,8 @@ const mandarin: TranslationDictionary = {
   booking: {
     preparing: "正在准备预约跳转...",
     step: "第 4 步",
-    title: "第三方预约跳转",
-    subtitle: "这个网站不会在站内直接完成预约。我们先推荐医生，再把你带到医疗机构的官方预约页面。",
+    title: "继续进入官方预约",
+    subtitle: "我们会保留当前推荐背景，再把你带到医疗机构自己的官方预约页面完成最后一步。",
     distanceAway: "{distance} 公里",
     whatHappens: "这个页面会发生什么",
     handoffPoint1: "我们会保留推荐医生和保险上下文。",
@@ -1012,8 +1060,8 @@ const mandarin: TranslationDictionary = {
   community: {
     authLoading: "正在准备互助讨论室...",
     step: "群组聊天",
-    title: "为相似就医路径准备的匿名互助讨论室",
-    subtitle: "这里适合分享预约、诊所和保险经验，不适合给出诊断结论。",
+    title: "加入与你就医路径相似的群组聊天",
+    subtitle: "这里适合分享预约、诊所和保险经验，不适合替别人下诊断。",
     intakeTitle: "帮我匹配一个互助房间",
     intakeSubtitle: "我们会根据你当前的症状背景和偏好语言，把你放进更相关的讨论室。",
     symptomLabel: "你想围绕什么症状或就医情境来交流？",
@@ -1053,13 +1101,13 @@ const mandarin: TranslationDictionary = {
     contextSummaryTitle: "房间匹配背景",
     recommendedRoomsTitle: "为你推荐的房间",
     recommendedRoomsSubtitle:
-      "最上面是最贴近当前情境的房间，但你也可以自行选择下面任意一个房间进入。",
+      "最上面是最贴近当前情境的房间，但你也可以自由进入任何一个你觉得更有帮助的房间。",
     availableRoomsTitle: "可直接加入的互助房间",
     availableRoomsSubtitle:
-      "你现在就可以进入任意房间。点击匹配后，系统会把更相关的房间优先排到前面。",
+      "你现在就可以直接加入任意房间。匹配只会把更相关的房间排到最前面。",
     browseRoomsTitle: "可浏览的互助房间",
     browseRoomsSubtitle:
-      "如果你想加入更广一点的话题，也可以直接从下面的房间列表中选择。",
+      "如果你想看更广一点的话题，也可以直接从下面的房间列表里选择进入。",
     roomFiltersTitle: "细化房间列表",
     roomFiltersSubtitle: "可以按就医路径、语言和房间活跃度进一步筛选。",
     filterCarePath: "就医路径",
@@ -1151,65 +1199,71 @@ const spanish: TranslationDictionary = {
     },
   },
   home: {
-    sanctuaryLabel: "El Santuario Digital",
-    titleLine1: "Claridad en tu",
-    titleLine2: "camino de salud.",
+    sanctuaryLabel: "Navegador de Salud en Campus",
+    titleLine1: "Encuentra primero",
+    titleLine2: "la ruta correcta de atención.",
     subtitle:
-      "Navega síntomas, elección de seguro, selección de doctor y reserva con una interfaz más tranquila.",
-    startButton: "Comenzar el plan guiado de atención",
+      "Pensado para estudiantes y personas recién llegadas que necesitan elegir seguro, acotar doctores y llegar a una página oficial de reserva.",
+    startButton: "Comenzar mi plan de atención",
     heroNote:
-      "Navegación médica basada en el seguro, con amplitud real de marketplace, selección de doctores y una sala final de decisión.",
-    previewBrand: "Care Guide",
-    previewSub: "Soporte editorial para decisiones",
-    previewTag: "Contexto de seguro en vivo",
+      "Guía de atención basada primero en el seguro, apoyada en planes del marketplace de California, sistemas médicos oficiales de Los Ángeles y un flujo más sereno paso a paso.",
+    previewBrand: "Resumen de atención en campus",
+    previewSub: "Lo que este flujo te ayuda a decidir",
+    previewTag: "Seguro primero",
     previewSystem:
-      "Primero aclaramos los síntomas y luego decidimos si conviene resolver el seguro o pasar directo a la búsqueda de doctores.",
+      "Usamos síntomas, ubicación y contexto de seguro para reducir el siguiente paso, en lugar de enviarte directamente a un directorio de doctores.",
     previewUser:
-      "Si es posible quiero un PPO, vivo cerca de USC y quiero un doctor que explique las opciones con claridad.",
-    previewFocus: "Enfoque actual",
-    previewTitle: "Navegación médica guiada por el seguro",
+      "Vivo cerca de USC, quizá necesito un PPO y quiero entender los costos antes de elegir doctor.",
+    previewFocus: "Hoy te ayudamos con",
+    previewTitle: "Menos opciones, próximos pasos más claros",
     previewDescription:
-      "Compara cobertura, verifica coincidencias dentro de la red y lleva el plan a la clasificación de doctores.",
-    featureHeader: "Navegación integral de atención",
-    featureTitle: "Un flujo sereno desde los síntomas hasta el siguiente paso confirmado.",
+      "Compara planes, lleva la cobertura al ranking de doctores y termina en una página oficial de reserva.",
+    trustHeader: "Por qué los estudiantes confían en este flujo",
+    trustItems: [
+      "Datos oficiales del marketplace de California convertidos en una vista de comparación más simple.",
+      "Perfiles públicos de UCLA Health y Keck integrados directamente en la transición de reserva.",
+      "Una lista corta de cinco doctores mejor clasificados, en lugar de decenas de perfiles desconectados.",
+    ],
+    featureHeader: "Por qué empezar aquí",
+    featureTitle: "Un sistema guiado para decisiones que normalmente se sienten desconectadas.",
     featureDescription:
-      "La experiencia está organizada como un recorrido editorial guiado en lugar de formularios desconectados.",
+      "En lugar de buscar doctores primero y pensar en el seguro después, el producto reduce el siguiente paso en el orden que realmente importa.",
     featureCards: [
       {
         number: "01",
-        title: "Evaluación de síntomas",
-        body: "Aclara qué síntomas requieren atención urgente y cuál es el entorno adecuado de atención.",
+        title: "Empieza con los síntomas",
+        body: "Traducimos lo que sientes como urgente en un punto de partida de atención más claro.",
       },
       {
         number: "02",
-        title: "Comparación de seguro",
-        body: "Compara cobertura de marketplace y planes estudiantiles de forma simplificada.",
+        title: "Compara la cobertura primero",
+        body: "La elección del seguro viene antes de buscar doctor, para que el costo y el acceso sigan visibles.",
       },
       {
         number: "03",
-        title: "Ranking de doctores",
-        body: "Equilibra especialidad, seguro, distancia y señales de confianza.",
+        title: "Mira solo el top cinco",
+        body: "El ranking equilibra especialidad, seguro, distancia y confianza sin saturarte con demasiadas opciones.",
       },
       {
         number: "04",
-        title: "Transición a reserva",
-        body: "Pasa a la reserva oficial sin perder contexto.",
+        title: "Reserva en el sistema oficial",
+        body: "Cuando estés listo, te acompañamos sin perder el contexto médico que ya construiste.",
       },
     ],
-    networkHeader: "La ventaja de la red",
-    networkTitle: "Una amplitud de seguros que sí cambia la recomendación.",
+    networkHeader: "Cobertura y acceso a la atención",
+    networkTitle: "Cobertura real que cambia a qué doctores puedes llegar.",
     metrics: [
-      "planes cubiertos por el asesor",
+      "planes comparados en el asesor",
       "aseguradoras del marketplace en California",
-      "piloto de reserva oficial en LA",
+      "sistemas oficiales de LA",
     ],
-    pathHeader: "Tu camino hacia el bienestar",
-    pathTitle: "Un flujo de cuatro pasos de la incertidumbre a la acción.",
+    pathHeader: "Cómo funciona el flujo",
+    pathTitle: "Un camino pensado para campus, desde síntomas hasta un siguiente paso real.",
     pathSteps: [
-      { number: "1", title: "Conectar", body: "Comienza con síntomas y necesidades para crear contexto." },
-      { number: "2", title: "Analizar", body: "Elegir o refinar la cobertura de seguro." },
-      { number: "3", title: "Emparejar", body: "Encontrar el doctor correcto con ranking guiado." },
-      { number: "4", title: "Reservar", body: "Completar el siguiente paso con más confianza." },
+      { number: "1", title: "Conectar", body: "Empieza con síntomas y necesidades para crear contexto." },
+      { number: "2", title: "Analizar", body: "Elige o aclara tu cobertura de seguro." },
+      { number: "3", title: "Emparejar", body: "Encuentra el doctor correcto con ranking guiado." },
+      { number: "4", title: "Reservar", body: "Completa el siguiente paso con más confianza." },
     ],
   },
   auth: {
@@ -1293,10 +1347,28 @@ const spanish: TranslationDictionary = {
   },
   insurance: {
     authLoading: "Preparando tu paso de seguro...",
+    pageLabel: "Cobertura antes de buscar doctor",
+    pageTitle: "Empieza por la cobertura antes de elegir doctor.",
+    pageSubtitle:
+      "Tu plan cambia qué doctores son más accesibles, cuánto podrías pagar y si la reserva se complica más adelante.",
+    pageProofs: [
+      {
+        title: "Compara planes antes de buscar doctor",
+        body: "Usa el asesor para reducir marcas y planes antes de comprometerte con una lista corta.",
+      },
+      {
+        title: "Lleva la cobertura al ranking de doctores",
+        body: "El plan seleccionado pasa directamente a verificaciones de red y señales estimadas de acceso.",
+      },
+      {
+        title: "Mantén la ruta de reserva oficial",
+        body: "Cuando estés listo, te llevamos a la página pública de reserva del proveedor.",
+      },
+    ],
     step1: "Paso 1",
-    choosePathTitle: "Elige tu ruta de seguro",
+    choosePathTitle: "Elige la ruta de seguro que mejor encaja con tu situación.",
     choosePathSubtitle:
-      "Si ya tienes un plan, podemos interpretarlo y pasar directamente a la búsqueda de doctores. Si todavía no tienes seguro, el asesor puede ayudarte a reducir opciones primero.",
+      "Si ya tienes un plan, primero podemos revisarlo. Si todavía no tienes seguro, podemos ayudarte a comparar cobertura antes de buscar doctores.",
     hasInsurancePill: "Ya tengo seguro",
     hasInsuranceTitle: "Subir o pegar mi plan actual",
     hasInsuranceBody:
@@ -1391,9 +1463,9 @@ const spanish: TranslationDictionary = {
     missingSymptoms:
       "Empieza primero con los síntomas para que podamos reducir los doctores correctos para ti.",
     shortlistStep: "Paso 3",
-    shortlistTitle: "Top 5 recomendaciones de doctores y clínicas",
+    shortlistTitle: "Elige entre tus 5 mejores doctores",
     shortlistSubtitle:
-      "La lista siguiente conserva las cinco coincidencias más fuertes según especialidad, seguro, distancia, disponibilidad, idioma y señales de confianza.",
+      "Conservamos las cinco coincidencias más fuertes y destacamos primero la opción que parece el siguiente paso más seguro.",
     buildingShortlist: "Construyendo tu lista clasificada de doctores...",
     triage: "Triaje",
     insurance: "Seguro",
@@ -1425,9 +1497,9 @@ const spanish: TranslationDictionary = {
     promptHint:
       "Pregunta qué debería importar más en la decisión final, como certeza del seguro, estilo de comunicación, distancia o rapidez de cita.",
     finalChoiceRoom: "Sala de decisión final",
-    title: "Usa una sala de discusión compartida para tomar la decisión final del doctor",
+    title: "Usa una sala compartida para confirmar tu elección final de doctor",
     subtitle:
-      "Tres roles especialistas revisan la misma lista, el mismo contexto de seguro y las mismas prioridades del paciente antes de recomendar al doctor final.",
+      "Tres roles revisan la misma lista, el contexto de seguro y tus prioridades antes de recomendar el siguiente paso más claro.",
     fitAnalyst: "Analista de ajuste",
     fitAnalystSummary:
       "Se encarga del ajuste de síntomas, la alineación de especialidad y de si la lista coincide clínicamente con el problema.",
@@ -1536,9 +1608,9 @@ const spanish: TranslationDictionary = {
   booking: {
     preparing: "Preparando tu transición de reserva...",
     step: "Paso 4",
-    title: "Transición de reserva con terceros",
+    title: "Continuar a la reserva oficial",
     subtitle:
-      "Este proyecto no completa citas dentro del sitio. Recomendamos al doctor y luego te llevamos a la página oficial de reserva del proveedor.",
+      "Conservamos el contexto de tu recomendación y luego te enviamos a la página oficial del proveedor para terminar la cita.",
     distanceAway: "{distance} km de distancia",
     whatHappens: "Qué ocurre en esta página",
     handoffPoint1: "Conservamos el contexto del doctor recomendado y del seguro.",
@@ -1565,9 +1637,9 @@ const spanish: TranslationDictionary = {
   community: {
     authLoading: "Preparando tu sala de apoyo entre pacientes...",
     step: "Chat grupal",
-    title: "Salas de apoyo para trayectorias de atención similares",
+    title: "Únete a un chat grupal para una trayectoria de atención similar",
     subtitle:
-      "Esta sala es para compartir experiencias sobre clínicas, reservas y seguro, no para dar diagnósticos.",
+      "Habla con personas que pasaron por decisiones parecidas de atención y reserva. Este espacio es para compartir experiencia, no diagnósticos.",
     intakeTitle: "Encuéntrame una sala de apoyo",
     intakeSubtitle:
       "Usamos tu contexto actual de síntomas y tu idioma preferido para llevarte a una sala más relevante.",
@@ -1609,13 +1681,13 @@ const spanish: TranslationDictionary = {
     contextSummaryTitle: "Contexto de la recomendacion",
     recommendedRoomsTitle: "Salas recomendadas para ti",
     recommendedRoomsSubtitle:
-      "La mejor coincidencia aparece primero, pero puedes entrar en cualquiera de las salas siguientes.",
+      "La coincidencia más cercana aparece primero, pero puedes entrar en cualquier sala que te parezca más útil.",
     availableRoomsTitle: "Salas disponibles de apoyo",
     availableRoomsSubtitle:
-      "Puedes entrar en cualquier sala ahora mismo. La coincidencia solo ayuda a subir las salas más relevantes.",
+      "Puedes entrar en cualquier sala ahora mismo. La coincidencia solo mueve arriba las salas más relevantes.",
     browseRoomsTitle: "Explorar salas de apoyo",
     browseRoomsSubtitle:
-      "Estas salas siguen disponibles si quieres entrar en un tema un poco mas amplio que la coincidencia principal.",
+      "Explora toda la lista si quieres un tema un poco más amplio que la coincidencia principal.",
     roomFiltersTitle: "Ajusta la lista de salas",
     roomFiltersSubtitle:
       "Filtra por tipo de atencion, idioma o por lo reciente que estuvo activa la sala.",

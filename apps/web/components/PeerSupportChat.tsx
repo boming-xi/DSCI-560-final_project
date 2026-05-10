@@ -190,9 +190,6 @@ export function PeerSupportChat({
       void loadExistingRoom(initialRoomId).catch(() => undefined);
       return;
     }
-    if (flow.communityRoomId && !roomOnly) {
-      void loadExistingRoom(flow.communityRoomId).catch(() => undefined);
-    }
     if (!roomOnly) {
       void discoverRooms(flow.communityIntakeText ?? flow.symptomText ?? "");
     }
@@ -220,9 +217,6 @@ export function PeerSupportChat({
     }
     const flow = getFlowState();
     void discoverRooms(flow.communityIntakeText ?? intakeText);
-    if (flow.communityRoomId) {
-      void loadExistingRoom(flow.communityRoomId).catch(() => undefined);
-    }
   }, [initialRoomId, lang, roomOnly]);
 
   const roomPool = useMemo(() => {
@@ -295,11 +289,40 @@ export function PeerSupportChat({
 
   return (
     <main className="page-shell">
-      <section className="results-header panel">
-        <span className="eyebrow">{t.community.step}</span>
-        <h1>{t.community.title}</h1>
-        <p>{t.community.subtitle}</p>
-      </section>
+      {roomOnly ? (
+        roomState ? (
+          <section className="panel community-room-page-header">
+            <button
+              className="button button-secondary"
+              onClick={() => router.push("/group-chat")}
+              type="button"
+            >
+              {t.community.backToRooms}
+            </button>
+            <div className="community-room-page-copy">
+              <span className="eyebrow">{t.community.roomTitle}</span>
+              <h1>{roomState.room.title}</h1>
+              <p>{roomState.entry_prompt}</p>
+            </div>
+          </section>
+        ) : (
+          <section className="panel community-room-page-header">
+            <button
+              className="button button-secondary"
+              onClick={() => router.push("/group-chat")}
+              type="button"
+            >
+              {t.community.backToRooms}
+            </button>
+          </section>
+        )
+      ) : (
+        <section className="results-header panel">
+          <span className="eyebrow">{t.community.step}</span>
+          <h1>{t.community.title}</h1>
+          <p>{t.community.subtitle}</p>
+        </section>
+      )}
 
       {!roomOnly ? (
         <div className="community-top-grid">
@@ -363,17 +386,7 @@ export function PeerSupportChat({
             </form>
           </section>
         </div>
-      ) : (
-        <section className="panel community-room-only-toolbar">
-          <button
-            className="button button-secondary"
-            onClick={() => router.push("/group-chat")}
-            type="button"
-          >
-            {t.community.backToRooms}
-          </button>
-        </section>
-      )}
+      ) : null}
 
       {error ? <div className="panel error-panel">{error}</div> : null}
 
@@ -656,11 +669,13 @@ export function PeerSupportChat({
       {roomState ? (
         <section className="community-layout" id="current-support-room">
           <article className="panel community-room-panel">
-            <div className="panel-heading">
-              <span className="eyebrow">{t.community.roomTitle}</span>
-              <h2>{roomState.room.title}</h2>
-              <p>{roomState.entry_prompt}</p>
-            </div>
+            {roomOnly ? null : (
+              <div className="panel-heading">
+                <span className="eyebrow">{t.community.roomTitle}</span>
+                <h2>{roomState.room.title}</h2>
+                <p>{roomState.entry_prompt}</p>
+              </div>
+            )}
 
             <div className="badge-row compact-badge-row">
               <span className="badge">{roomState.room.care_path}</span>

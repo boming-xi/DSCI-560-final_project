@@ -74,13 +74,30 @@ export default function BookingPage() {
                 {doctor.provider_system ? <span className="badge">{doctor.provider_system}</span> : null}
                 {doctor.pilot_region ? <span className="badge">{doctor.pilot_region}</span> : null}
               </div>
+              <div className="booking-step-grid">
+                <article className="booking-step-card">
+                  <span className="eyebrow">{t.booking.step}</span>
+                  <strong>{t.booking.handoffPoint1}</strong>
+                </article>
+                <article className="booking-step-card">
+                  <span className="eyebrow">{t.booking.whatHappens}</span>
+                  <strong>{t.booking.handoffPoint2}</strong>
+                </article>
+                <article className="booking-step-card">
+                  <span className="eyebrow">{t.booking.thirdPartyHandoff}</span>
+                  <strong>{t.booking.handoffPoint3}</strong>
+                </article>
+              </div>
               <div className="info-box booking-handoff-box">
                 <strong>{t.booking.whatHappens}</strong>
-                <ul className="detail-list">
-                  <li>{t.booking.handoffPoint1}</li>
-                  <li>{t.booking.handoffPoint2}</li>
-                  <li>{t.booking.handoffPoint3}</li>
-                </ul>
+                <p className="subtle-copy">
+                  {officialBookingUrl
+                    ? t.booking.officialBookingReadyBody.replace(
+                        "{provider}",
+                        doctor.provider_system ?? t.booking.providerFallback,
+                      )
+                    : t.booking.officialBookingUnavailableBody}
+                </p>
               </div>
             </div>
 
